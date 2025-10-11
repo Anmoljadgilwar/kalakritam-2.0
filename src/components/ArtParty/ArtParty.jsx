@@ -93,7 +93,7 @@ const ArtParty = () => {
               '/images/og-image.jpg',
               '/images/twitter-card.jpg'
             ]}
-            height="350px"
+            height="300px"
             speedSec={15}
             gap="1px"
           />
