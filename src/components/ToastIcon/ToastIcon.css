@@ -28,20 +28,6 @@
   flex-shrink: 0;
 }
 
-/* Spinning animation for loading icons */
-.toast-icon-spin {
-  animation: toast-spin 1s linear infinite;
-}
-
-@keyframes toast-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* Icon color variations for different notification types */
 .notification.success .toast-icon-svg {
   color: #48bb78;
@@ -71,10 +57,6 @@
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .toast-icon-spin {
-    animation: none;
-  }
-  
   .toast-icon-svg:hover {
     transform: none;
   }

@@ -46,7 +46,12 @@ export const apiCall = async (endpoint, method = 'GET', data = null) => {
 
 // Gallery API functions
 export const galleryApi = {
-  getArtworks: () => apiCall('admin/gallery'),
+  // Fetch artworks with optional pagination/search; default to a high limit so admin sees all
+  getArtworks: ({ page = 1, limit = 1000, search } = {}) => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search) params.set('search', search);
+    return apiCall(`admin/gallery?${params.toString()}`);
+  },
   addArtwork: (artwork) => apiCall('admin/gallery', 'POST', artwork),
   updateArtwork: async (id, artwork) => {
     // If there's an old image and a new one, delete the old one

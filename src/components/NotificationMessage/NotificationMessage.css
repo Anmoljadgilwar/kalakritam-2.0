@@ -172,7 +172,6 @@
 
 .notification.loading .notification-icon {
   color: #667eea;
-  animation: spin 1s linear infinite;
 }
 
 /* Progress bar for timed notifications */
@@ -204,14 +203,6 @@
 }
 
 /* Animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 @keyframes progress {
   from {
@@ -281,6 +272,7 @@
   }
 
   .notification-icon {
+    /* No icon rotation for reduced motion as well */
     animation: none;
   }
 

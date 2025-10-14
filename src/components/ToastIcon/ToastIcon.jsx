@@ -69,7 +69,6 @@ const ToastIcons = {
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="toast-icon-spin"
     >
       <path
         d="M10 2V6M10 14V18M4.22 4.22L6.34 6.34M13.66 13.66L15.78 15.78M2 10H6M14 10H18M4.22 15.78L6.34 13.66M13.66 6.34L15.78 4.22"

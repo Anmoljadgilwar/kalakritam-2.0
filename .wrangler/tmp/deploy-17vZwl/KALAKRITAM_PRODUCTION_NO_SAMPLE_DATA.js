@@ -14077,7 +14077,7 @@ var setupGalleryRoutes = /* @__PURE__ */ __name2((app2) => {
       const isAuthenticated = c.get("isAuthenticated");
       const offset = (page - 1) * limit;
       const db = createDatabase(c.env);
-      let whereClause = "WHERE available = true";
+  let whereClause = "WHERE COALESCE(available, true) = true";
       let params = [];
       let paramIndex = 1;
       if (category) {
@@ -14093,11 +14093,11 @@ var setupGalleryRoutes = /* @__PURE__ */ __name2((app2) => {
       const total = countResult.success ? parseInt(countResult.data[0]?.total || 0) : 0;
       const query = `
         SELECT id, title, description, image_url, thumbnail_url, artist, 
-               category, medium, dimensions, year, price, featured, 
+               category, medium, dimensions, year, price, 
                available, slug, created_at, updated_at
         FROM artworks 
         ${whereClause}
-        ORDER BY featured DESC, created_at DESC 
+        ORDER BY created_at DESC 
         LIMIT $${paramIndex++} OFFSET $${paramIndex++}
       `;
       params.push(limit, offset);
@@ -14129,7 +14129,7 @@ var setupGalleryRoutes = /* @__PURE__ */ __name2((app2) => {
       const db = createDatabase(c.env);
       const query = `
         SELECT id, title, description, image_url, thumbnail_url, artist, 
-               category, medium, dimensions, year, price, featured, 
+               category, medium, dimensions, year, price, 
                available, slug, meta_title, meta_description, meta_keywords,
                og_title, og_description, og_image, created_at, updated_at
         FROM artworks 
@@ -14218,7 +14218,7 @@ var setupEventsRoutes = /* @__PURE__ */ __name2((app2) => {
       const search = c.req.query("search");
       const offset = (page - 1) * limit;
       const db = createDatabase(c.env);
-      let whereClause = "WHERE active = true";
+  let whereClause = "WHERE COALESCE(active, true) = true";
       let params = [];
       let paramIndex = 1;
       if (upcoming) {
@@ -14372,11 +14372,11 @@ var setupWorkshopsRoutes = /* @__PURE__ */ __name2((app2) => {
       const total = countResult.success ? parseInt(countResult.data[0]?.total || 0) : 0;
       const query = `
         SELECT id, title, description, instructor, start_date, end_date, 
-               duration, price, max_participants, current_participants, 
+               venue, duration, price, max_participants, current_participants, 
                image_url, featured, active, slug, created_at, updated_at
         FROM workshops 
         ${whereClause}
-        ORDER BY featured DESC, start_date ASC 
+        ORDER BY start_date ASC 
         LIMIT $${paramIndex++} OFFSET $${paramIndex++}
       `;
       params.push(limit, offset);
@@ -14407,7 +14407,7 @@ var setupWorkshopsRoutes = /* @__PURE__ */ __name2((app2) => {
       const db = createDatabase(c.env);
       const query = `
         SELECT id, title, description, instructor, start_date, end_date, 
-               duration, price, max_participants, current_participants, 
+               venue, duration, price, max_participants, current_participants, 
                image_url, featured, active, slug, meta_title, meta_description, 
                meta_keywords, og_title, og_description, og_image, created_at, updated_at
         FROM workshops 
@@ -15885,15 +15885,11 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
   }));
   app2.get("/admin/gallery", catchAsync(async (c) => {
     const db = createDatabase(c.env);
-    const { page = 1, limit = 10, search, featured } = c.req.query();
+    const { page = 1, limit = 10, search } = c.req.query();
     try {
       let whereConditions = [];
       let params = [];
       let paramIndex = 1;
-      if (featured !== void 0) {
-        whereConditions.push(`featured = $${paramIndex++}`);
-        params.push(featured === "true");
-      }
       if (search) {
         whereConditions.push(`(title ILIKE $${paramIndex++} OR description ILIKE $${paramIndex++})`);
         params.push(`%${search}%`, `%${search}%`);
@@ -15906,12 +15902,12 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       params.push(limit, offset);
       const query = `
         SELECT id, title, description, image_url, thumbnail_url, artist, 
-               category, medium, dimensions, year, price, featured, 
+               category, medium, dimensions, year, price, 
                available, slug, meta_title, meta_description, meta_keywords,
                og_title, og_description, og_image, created_at, updated_at
         FROM artworks 
         ${whereClause}
-        ORDER BY featured DESC, created_at DESC 
+        ORDER BY created_at DESC 
         LIMIT $${paramIndex++} OFFSET $${paramIndex++}
       `;
       const result = await db.query(query, params);
@@ -15944,10 +15940,10 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const query = `
         INSERT INTO artworks (
           id, title, artist, description, medium, dimensions, 
-          year, price, category, image_url, available, featured,
+          year, price, category, image_url, available,
           meta_title, meta_description, meta_keywords, slug,
           og_title, og_description, og_image, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
         RETURNING *
       `;
       const result = await db.query(query, [
@@ -15962,7 +15958,6 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         artworkData.category || null,
         artworkData.image_url || null,
         artworkData.available !== false,
-        artworkData.featured || false,
         artworkData.meta_title || null,
         artworkData.meta_description || null,
         artworkData.meta_keywords || null,
@@ -15999,9 +15994,9 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const query = `
         UPDATE artworks SET
           title = $2, artist = $3, description = $4, medium = $5, dimensions = $6,
-          year = $7, price = $8, category = $9, image_url = $10, available = $11, 
-          featured = $12, meta_title = $13, meta_description = $14, meta_keywords = $15,
-          slug = $16, og_title = $17, og_description = $18, og_image = $19, updated_at = $20
+          year = $7, price = $8, category = $9, image_url = $10, available = $11,
+          meta_title = $12, meta_description = $13, meta_keywords = $14,
+          slug = $15, og_title = $16, og_description = $17, og_image = $18, updated_at = $19
         WHERE id = $1
         RETURNING *
       `;
@@ -16017,7 +16012,6 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         artworkData.category || null,
         artworkData.image_url || null,
         artworkData.available !== false,
-        artworkData.featured || false,
         artworkData.meta_title || null,
         artworkData.meta_description || null,
         artworkData.meta_keywords || null,
@@ -16258,15 +16252,11 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
   }));
   app2.get("/admin/workshops", catchAsync(async (c) => {
     const db = createDatabase(c.env);
-    const { page = 1, limit = 10, search, featured } = c.req.query();
+    const { page = 1, limit = 10, search } = c.req.query();
     try {
       let whereConditions = [];
       let params = [];
       let paramIndex = 1;
-      if (featured !== void 0) {
-        whereConditions.push(`featured = $${paramIndex++}`);
-        params.push(featured === "true");
-      }
       if (search) {
         whereConditions.push(`(title ILIKE $${paramIndex++} OR description ILIKE $${paramIndex++})`);
         params.push(`%${search}%`, `%${search}%`);
@@ -16278,13 +16268,13 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const offset = (page - 1) * limit;
       params.push(limit, offset);
       const query = `
-        SELECT id, title, description, instructor, start_date, end_date, duration,
+        SELECT id, title, description, instructor, start_date, end_date, venue, duration,
                price, max_participants, current_participants, image_url, featured, active,
                meta_title, meta_description, meta_keywords, slug, og_title, 
                og_description, og_image, created_at, updated_at
         FROM workshops 
         ${whereClause}
-        ORDER BY featured DESC, start_date DESC 
+        ORDER BY start_date DESC 
         LIMIT $${paramIndex++} OFFSET $${paramIndex++}
       `;
       const result = await db.query(query, params);
@@ -16316,11 +16306,11 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const now = (/* @__PURE__ */ new Date()).toISOString();
       const query = `
         INSERT INTO workshops (
-          id, title, description, instructor, start_date, end_date, duration,
+          id, title, description, instructor, start_date, end_date, venue, duration,
           price, max_participants, current_participants, image_url, featured, active,
           meta_title, meta_description, meta_keywords, slug, og_title,
           og_description, og_image, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
         RETURNING *
       `;
       const result = await db.query(query, [
@@ -16330,6 +16320,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         workshopData.instructor || null,
         workshopData.start_date || null,
         workshopData.end_date || null,
+        (workshopData.venue ?? workshopData.venue_name) || null,
         workshopData.duration || null,
         workshopData.price || null,
         workshopData.max_participants || null,
@@ -16373,10 +16364,10 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const query = `
         UPDATE workshops SET
           title = $2, description = $3, instructor = $4, start_date = $5, end_date = $6,
-          duration = $7, price = $8, max_participants = $9, current_participants = $10,
-          image_url = $11, featured = $12, active = $13, meta_title = $14,
-          meta_description = $15, meta_keywords = $16, slug = $17, og_title = $18,
-          og_description = $19, og_image = $20, updated_at = $21
+          venue = $7, duration = $8, price = $9, max_participants = $10, current_participants = $11,
+          image_url = $12, featured = $13, active = $14, meta_title = $15,
+          meta_description = $16, meta_keywords = $17, slug = $18, og_title = $19,
+          og_description = $20, og_image = $21, updated_at = $22
         WHERE id = $1
         RETURNING *
       `;
@@ -16387,6 +16378,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         workshopData.instructor || null,
         workshopData.start_date || null,
         workshopData.end_date || null,
+        (workshopData.venue ?? workshopData.venue_name) || null,
         workshopData.duration || null,
         workshopData.price || null,
         workshopData.max_participants || null,

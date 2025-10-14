@@ -46,7 +46,7 @@ const AdminGallery = () => {
   const fetchArtworks = async () => {
     try {
       setLoading(true);
-      const response = await galleryApi.getArtworks();
+  const response = await galleryApi.getArtworks({ limit: 1000 });
       
       if (response.success) {
         // Transform image URLs to handle localhost URLs
@@ -363,7 +363,11 @@ const AdminGallery = () => {
                     <td>{artwork.year}</td>
                     <td>
                       <div className="status-badges">
-                        {artwork.available && <span className="status-badge available">Available</span>}
+                        {artwork.available ? (
+                          <span className="status-badge available">Available</span>
+                        ) : (
+                          <span className="status-badge unavailable">Unavailable</span>
+                        )}
                       </div>
                     </td>
                     <td>
