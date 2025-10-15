@@ -13,6 +13,12 @@
     "start": "vite preview --host --port 4173",
     "dev:fast": "vite --force --host"
   },
+  "overrides": {
+    "react-helmet-async": {
+      "react": "^19.1.0",
+      "react-dom": "^19.1.0"
+    }
+  },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
     "@react-three/drei": "^10.6.1",
