@@ -44,6 +44,14 @@ const Workshops = React.lazy(() => {
   });
 });
 
+const WorkshopDetail = React.lazy(() => {
+  const measure = measureLazyLoadTime('WorkshopDetail');
+  return import('./components/WorkshopDetail').then(module => {
+    measure();
+    return module;
+  });
+});
+
 const Artists = React.lazy(() => {
   const measure = measureLazyLoadTime('Artists');
   return import('./components/Artists').then(module => {
@@ -399,6 +407,7 @@ const AppContent = () => {
                   <Route path="/gallery" element={<Gallery />} />
                   <Route path="/gallery/:slug" element={<ArtworkDetail />} />
                   <Route path="/workshops" element={<Workshops />} />
+                  <Route path="/workshops/:slug" element={<WorkshopDetail />} />
                   <Route path="/artists" element={<Artists />} />
                   <Route path="/arts" element={<Navigate to="/artists" replace />} />
                   <Route path="/contact" element={<Contact />} />

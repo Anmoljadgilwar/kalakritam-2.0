@@ -91,6 +91,42 @@ const Workshops = () => {
     }
   }, []);
 
+  // Helper to transform workshop data from backend (snake_case to camelCase)
+  const transformWorkshop = (workshop) => {
+    return {
+      id: workshop.id,
+      title: workshop.title,
+      instructor: workshop.instructor,
+      description: workshop.description,
+      startDate: workshop.start_date || workshop.startDate,
+      endDate: workshop.end_date || workshop.endDate,
+      venue: workshop.venue,
+      duration: workshop.duration,
+      price: workshop.price,
+      maxParticipants: workshop.max_participants || workshop.maxParticipants,
+      currentParticipants: workshop.current_participants || workshop.currentParticipants,
+      imageUrl: workshop.image_url || workshop.imageUrl,
+      active: workshop.active,
+      slug: workshop.slug,
+      createdAt: workshop.created_at || workshop.createdAt,
+      updatedAt: workshop.updated_at || workshop.updatedAt
+    };
+  };
+
+  // Helper function to generate slug from title
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
+  const handleViewDetails = (workshop) => {
+    const slug = workshop.slug || generateSlug(workshop.title);
+    // Navigate to slug-based URL like /workshops/example-workshop
+    navigateWithLoading(`/workshops/${slug}`);
+  };
+
   const fetchWorkshops = async (page = 1, append = false) => {
     try {
       if (append) {
@@ -108,11 +144,14 @@ const Workshops = () => {
       
       toast.dismiss(loadingId);
       
-      if (data.success) {
+      if (data.success && data.data) {
+        // Transform the data from snake_case to camelCase
+        const transformedData = data.data.map(transformWorkshop);
+        
         if (append) {
-          setWorkshops(prev => [...prev, ...data.data]);
+          setWorkshops(prev => [...prev, ...transformedData]);
         } else {
-          setWorkshops(data.data);
+          setWorkshops(transformedData);
         }
         
         // Update pagination info
@@ -122,7 +161,7 @@ const Workshops = () => {
           setTotalItems(data.pagination.total || 0);
         }
         
-        toast.dataLoaded(`Loaded ${data.data.length} workshops`);
+        toast.dataLoaded(`Loaded ${transformedData.length} workshops`);
       } else {
         setError('Failed to load workshops');
         toast.error('Failed to load workshops');
@@ -141,12 +180,6 @@ const Workshops = () => {
     if (currentPage < totalPages && !loadingMore) {
       fetchWorkshops(currentPage + 1, true);
     }
-  };
-
-  const handleViewDetails = (workshop) => {
-    setSelectedWorkshop(workshop);
-    setIsModalOpen(true);
-    toast.info(`Viewing details for: ${workshop.title}`);
   };
 
   const closeModal = () => {
@@ -297,10 +330,6 @@ const Workshops = () => {
                     <div className="detail-row universal-card-detail-row">
                       <span className="detail-label universal-card-detail-label">Max Participants:</span>
                       <span className="detail-value universal-card-detail-value">{workshop.maxParticipants}</span>
-                    </div>
-                    <div className="detail-row universal-card-detail-row">
-                      <span className="detail-label universal-card-detail-label">Available Spots:</span>
-                      <span className="detail-value universal-card-detail-value">{workshop.maxParticipants - workshop.currentParticipants}</span>
                     </div>
                   </div>
                   
@@ -500,10 +529,6 @@ const Workshops = () => {
                     <div className="spec-item">
                       <span className="spec-label">Max Participants</span>
                       <span className="spec-value">{selectedWorkshop.maxParticipants}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Available Spots</span>
-                      <span className="spec-value">{selectedWorkshop.maxParticipants - selectedWorkshop.currentParticipants}</span>
                     </div>
                   </div>
                 </div>

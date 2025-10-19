@@ -14373,7 +14373,7 @@ var setupWorkshopsRoutes = /* @__PURE__ */ __name2((app2) => {
       const query = `
         SELECT id, title, description, instructor, start_date, end_date, 
                venue, duration, price, max_participants, current_participants, 
-               image_url, featured, active, slug, created_at, updated_at
+               image_url, active, slug, created_at, updated_at
         FROM workshops 
         ${whereClause}
         ORDER BY start_date ASC 
@@ -14405,13 +14405,17 @@ var setupWorkshopsRoutes = /* @__PURE__ */ __name2((app2) => {
     try {
       const id = c.req.param("id");
       const db = createDatabase(c.env);
+      
+      // Check if id is a UUID or a slug
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      
       const query = `
         SELECT id, title, description, instructor, start_date, end_date, 
                venue, duration, price, max_participants, current_participants, 
-               image_url, featured, active, slug, meta_title, meta_description, 
+               image_url, active, slug, meta_title, meta_description, 
                meta_keywords, og_title, og_description, og_image, created_at, updated_at
         FROM workshops 
-        WHERE id = $1 AND active = true
+        WHERE ${isUUID ? 'id' : 'slug'} = $1 AND active = true
       `;
       const result = await db.query(query, [id]);
       if (!result.success || result.data.length === 0) {
@@ -16269,7 +16273,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       params.push(limit, offset);
       const query = `
         SELECT id, title, description, instructor, start_date, end_date, venue, duration,
-               price, max_participants, current_participants, image_url, featured, active,
+               price, max_participants, current_participants, image_url, active,
                meta_title, meta_description, meta_keywords, slug, og_title, 
                og_description, og_image, created_at, updated_at
         FROM workshops 
@@ -16307,10 +16311,10 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       const query = `
         INSERT INTO workshops (
           id, title, description, instructor, start_date, end_date, venue, duration,
-          price, max_participants, current_participants, image_url, featured, active,
+          price, max_participants, current_participants, image_url, active,
           meta_title, meta_description, meta_keywords, slug, og_title,
           og_description, og_image, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
         RETURNING *
       `;
       const result = await db.query(query, [
@@ -16326,7 +16330,6 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         workshopData.max_participants || null,
         workshopData.current_participants || 0,
         workshopData.image_url || null,
-        workshopData.featured || false,
         workshopData.active !== false,
         workshopData.meta_title || null,
         workshopData.meta_description || null,
@@ -16365,9 +16368,9 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         UPDATE workshops SET
           title = $2, description = $3, instructor = $4, start_date = $5, end_date = $6,
           venue = $7, duration = $8, price = $9, max_participants = $10, current_participants = $11,
-          image_url = $12, featured = $13, active = $14, meta_title = $15,
-          meta_description = $16, meta_keywords = $17, slug = $18, og_title = $19,
-          og_description = $20, og_image = $21, updated_at = $22
+          image_url = $12, active = $13, meta_title = $14,
+          meta_description = $15, meta_keywords = $16, slug = $17, og_title = $18,
+          og_description = $19, og_image = $20, updated_at = $21
         WHERE id = $1
         RETURNING *
       `;
@@ -16384,7 +16387,6 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         workshopData.max_participants || null,
         workshopData.current_participants || 0,
         workshopData.image_url || null,
-        workshopData.featured || false,
         workshopData.active !== false,
         workshopData.meta_title || null,
         workshopData.meta_description || null,

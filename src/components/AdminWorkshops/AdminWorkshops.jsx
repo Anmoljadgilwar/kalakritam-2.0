@@ -31,12 +31,12 @@ const AdminWorkshops = () => {
     description: '',
     startDate: '',
     endDate: '',
+    venue: '',
     duration: '',
     price: '',
     maxParticipants: '',
     currentParticipants: 0,
     imageUrl: '',
-    featured: false,
     active: true,
     // SEO fields
     metaTitle: '',
@@ -110,12 +110,12 @@ const AdminWorkshops = () => {
       description: '',
       startDate: '',
       endDate: '',
+      venue: '',
       duration: '',
       price: '',
       maxParticipants: '',
       currentParticipants: 0,
       imageUrl: '',
-      featured: false,
       active: true,
       // SEO fields
       metaTitle: '',
@@ -132,34 +132,40 @@ const AdminWorkshops = () => {
   };
 
   const handleEdit = (workshop) => {
-    // Format date for input field  
-    const formatDate = (dateString) => {
+    // Format date for datetime-local input field  
+    const formatDateTimeLocal = (dateString) => {
       if (!dateString) return '';
       const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
+      // Format as YYYY-MM-DDTHH:mm for datetime-local input
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
 
     setFormData({
       title: workshop.title || '',
       instructor: workshop.instructor || '',
       description: workshop.description || '',
-      startDate: formatDate(workshop.start_date) || '',
-      endDate: formatDate(workshop.end_date) || '',
+      startDate: formatDateTimeLocal(workshop.startDate) || '',
+      endDate: formatDateTimeLocal(workshop.endDate) || '',
+      venue: workshop.venue || '',
       duration: workshop.duration || '',
       price: workshop.price || '',
-      maxParticipants: workshop.max_participants || '',
-      currentParticipants: workshop.current_participants || 0,
-      imageUrl: workshop.image_url || '',
-      featured: workshop.featured || false,
+      maxParticipants: workshop.maxParticipants || '',
+      currentParticipants: workshop.currentParticipants || 0,
+      imageUrl: workshop.imageUrl || '',
       active: workshop.active !== false,
       // SEO fields
-      metaTitle: workshop.meta_title || '',
-      metaDescription: workshop.meta_description || '',
-      metaKeywords: workshop.meta_keywords || '',
+      metaTitle: workshop.metaTitle || '',
+      metaDescription: workshop.metaDescription || '',
+      metaKeywords: workshop.metaKeywords || '',
       slug: workshop.slug || '',
-      ogTitle: workshop.og_title || '',
-      ogDescription: workshop.og_description || '',
-      ogImage: workshop.og_image || ''
+      ogTitle: workshop.ogTitle || '',
+      ogDescription: workshop.ogDescription || '',
+      ogImage: workshop.ogImage || ''
     });
     setImageFile(null);
     setSelectedWorkshop(workshop);
@@ -222,6 +228,7 @@ const AdminWorkshops = () => {
         description: formData.description,
         start_date: formData.startDate,
         end_date: formData.endDate,
+        venue: formData.venue,
         duration: formData.duration,
         price: parseFloat(formData.price) || 0,
         max_participants: parseInt(formData.maxParticipants) || 0,
@@ -343,7 +350,7 @@ const AdminWorkshops = () => {
             </button>
             <div className="gallery-stats">
               <span className="stat">Total: {workshops.length}</span>
-              <span className="stat">Featured: {workshops.filter(w => w.featured).length}</span>
+              <span className="stat">Active: {workshops.filter(w => w.active).length}</span>
             </div>
           </div>
         </section>
@@ -369,7 +376,7 @@ const AdminWorkshops = () => {
                     <td>
                       <div className="artwork-image-cell">
                         <img 
-                          src={workshop.image_url} 
+                          src={workshop.imageUrl} 
                           alt={workshop.title}
                           className="table-artwork-image"
                           onError={(e) => {
@@ -387,12 +394,11 @@ const AdminWorkshops = () => {
                     <td>{workshop.duration}</td>
                     <td className="price-cell">₹{workshop.price}</td>
                     <td>
-                      <span className="category-badge">{workshop.level}</span>
+                      <span className="category-badge">{workshop.level || 'All Levels'}</span>
                     </td>
                     <td>
                       <div className="status-badges">
-                        {workshop.available && <span className="status-badge available">Available</span>}
-                        {workshop.featured && <span className="status-badge featured">Featured</span>}
+                        {workshop.active && <span className="status-badge available">Active</span>}
                       </div>
                     </td>
                     <td>
@@ -487,20 +493,50 @@ const AdminWorkshops = () => {
                       <span>₹{selectedWorkshop?.price}</span>
                     </div>
                     <div className="detail-item">
-                      <label>Level:</label>
-                      <span>{selectedWorkshop?.level}</span>
+                      <label>Start Date:</label>
+                      <span>{selectedWorkshop?.startDate ? new Date(selectedWorkshop.startDate).toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                      }) : 'N/A'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <label>End Date:</label>
+                      <span>{selectedWorkshop?.endDate ? new Date(selectedWorkshop.endDate).toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                      }) : 'N/A'}</span>
                     </div>
                     <div className="detail-item">
                       <label>Max Participants:</label>
                       <span>{selectedWorkshop?.maxParticipants}</span>
                     </div>
                     <div className="detail-item">
-                      <label>Schedule:</label>
-                      <span>{selectedWorkshop?.schedule}</span>
+                      <label>Current Participants:</label>
+                      <span>{selectedWorkshop?.currentParticipants}</span>
                     </div>
                     <div className="detail-item">
-                      <label>Materials:</label>
-                      <span>{selectedWorkshop?.materials}</span>
+                      <label>Venue:</label>
+                      <span>{selectedWorkshop?.venue || 'N/A'}</span>
+                    </div>
+                    <div className="detail-item full-width">
+                      <label>Image:</label>
+                      {selectedWorkshop?.imageUrl && (
+                        <img 
+                          src={selectedWorkshop.imageUrl} 
+                          alt={selectedWorkshop.title}
+                          style={{ maxWidth: '300px', marginTop: '0.5rem', borderRadius: '8px' }}
+                        />
+                      )}
                     </div>
                     <div className="detail-item full-width">
                       <label>Description:</label>
@@ -637,6 +673,18 @@ const AdminWorkshops = () => {
                     </div>
                     
                     <div className="form-group full-width">
+                      <label htmlFor="venue">Venue</label>
+                      <input
+                        type="text"
+                        id="venue"
+                        name="venue"
+                        value={formData.venue}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Art Studio, Cafe Name"
+                      />
+                    </div>
+                    
+                    <div className="form-group full-width">
                       <FileUpload
                         label="Workshop Image"
                         onFileSelect={handleFileSelect}
@@ -660,23 +708,11 @@ const AdminWorkshops = () => {
                       <label className="checkbox-label">
                         <input
                           type="checkbox"
-                          name="available"
-                          checked={formData.available}
+                          name="active"
+                          checked={formData.active}
                           onChange={handleInputChange}
                         />
-                        Available for Enrollment
-                      </label>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="checkbox-label">
-                        <input
-                          type="checkbox"
-                          name="featured"
-                          checked={formData.featured}
-                          onChange={handleInputChange}
-                        />
-                        Featured Workshop
+                        Active
                       </label>
                     </div>
                   </div>

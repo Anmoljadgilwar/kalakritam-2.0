@@ -110,11 +110,47 @@ export const galleryApi = {
   },
 };
 
+// Helper function to transform workshop data from snake_case to camelCase
+const transformWorkshopFromDB = (workshop) => {
+  if (!workshop) return null;
+  return {
+    id: workshop.id,
+    title: workshop.title,
+    instructor: workshop.instructor,
+    description: workshop.description,
+    startDate: workshop.start_date,
+    endDate: workshop.end_date,
+    venue: workshop.venue,
+    duration: workshop.duration,
+    price: workshop.price,
+    maxParticipants: workshop.max_participants,
+    currentParticipants: workshop.current_participants,
+    imageUrl: workshop.image_url,
+    active: workshop.active,
+    slug: workshop.slug,
+    metaTitle: workshop.meta_title,
+    metaDescription: workshop.meta_description,
+    metaKeywords: workshop.meta_keywords,
+    ogTitle: workshop.og_title,
+    ogDescription: workshop.og_description,
+    ogImage: workshop.og_image,
+    createdAt: workshop.created_at,
+    updatedAt: workshop.updated_at
+  };
+};
+
 // Workshops API functions
 export const workshopsApi = {
-  getAll: ({ page = 1, limit = 1000 } = {}) => {
+  getAll: async ({ page = 1, limit = 1000 } = {}) => {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    return apiCall(`admin/workshops?${params.toString()}`);
+    const response = await apiCall(`admin/workshops?${params.toString()}`);
+    
+    // Transform the data from snake_case to camelCase
+    if (response.success && response.data) {
+      response.data = response.data.map(transformWorkshopFromDB);
+    }
+    
+    return response;
   },
   create: (workshop) => apiCall('admin/workshops', 'POST', workshop),
   update: async (id, workshop) => {

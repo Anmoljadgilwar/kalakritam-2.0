@@ -1,0 +1,478 @@
+/* Import mobile optimizations */
+@import '../../mobile-optimizations.css';
+
+/* Workshop Detail Container - Matching Gallery Theme */
+.workshop-detail-container {
+  min-height: 100vh;
+  background-color: #000000;
+  color: white;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Particles Background - Matching Gallery */
+.workshop-detail-particles-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Blur Overlay Layer - Matching Gallery */
+.workshop-detail-blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.workshop-detail-container.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.workshop-detail-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1rem, 4vw, 2rem);
+  padding-top: 140px;
+  padding-bottom: 4rem;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* Workshop Layout */
+.workshop-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.workshop-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.workshop-image-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.workshop-detail-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px -10px rgba(195, 143, 33, 0.4);
+  object-fit: cover;
+  background: #111;
+  border: 2px solid rgba(195, 143, 33, 0.2);
+}
+
+/* Image Placeholder - Matching Gallery */
+.workshop-image-placeholder {
+  width: 100%;
+  min-height: 400px;
+  background: linear-gradient(135deg, #002f2f 0%, #003838 100%);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(195, 143, 33, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.kalakritam-logo-text {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: #c38f21;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+
+.image-not-available {
+  color: #d4af85;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.image-meta-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #c38f21;
+  border-radius: 20px;
+  color: #c38f21;
+  font-weight: 600;
+}
+
+.badge.active {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+/* Workshop Info Panel */
+.workshop-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.workshop-title {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: #c38f21;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: clamp(1px, 0.5vw, 2px);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.workshop-instructor {
+  font-size: 1.3rem;
+  color: #d4af85;
+  font-weight: 300;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.workshop-price {
+  color: #c38f21;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 2rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(195, 143, 33, 0.1);
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  border-radius: 25px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+}
+
+/* About This Workshop Section */
+.workshop-about-section {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(145deg, #003333 0%, #004040 100%);
+  border-radius: 15px;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+}
+
+.workshop-about-section h3 {
+  color: #c38f21;
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem;
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-weight: 600;
+  text-align: center;
+}
+
+.workshop-description {
+  line-height: 1.7;
+  color: #cccccc;
+  font-size: 1rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Specifications */
+.workshop-specifications {
+  margin-bottom: 2rem;
+}
+
+.workshop-specifications h3 {
+  color: #c38f21;
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem;
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-weight: 600;
+  text-align: center;
+}
+
+.workshop-specs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.spec-item {
+  font-size: 0.95rem;
+  background: rgba(195, 143, 33, 0.1);
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.spec-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.spec-item:hover {
+  background: rgba(195, 143, 33, 0.15);
+  border-color: rgba(195, 143, 33, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(195, 143, 33, 0.2);
+}
+
+.spec-item .label {
+  color: #c38f21;
+  font-weight: 600;
+  margin-right: 1rem;
+}
+
+.spec-item .value {
+  color: #d4af85;
+  font-weight: 500;
+}
+
+/* Additional Info Cards */
+.workshop-additional-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: linear-gradient(145deg, #003333 0%, #004040 100%);
+  padding: 1.5rem;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(195, 143, 33, 0.4);
+  box-shadow: 0 6px 20px rgba(195, 143, 33, 0.2);
+}
+
+.info-card h4 {
+  color: #c38f21;
+  font-size: 1.2rem;
+  margin: 0 0 1rem;
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-weight: 600;
+}
+
+.info-card p {
+  color: #cccccc;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Actions - Matching Gallery View Details Button */
+.workshop-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(195, 143, 33, 0.2);
+  justify-content: center;
+}
+
+/* Back button uses universal-card-btn classes; only add layout tweaks if needed */
+.back-button, .back-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Enhanced Themed Animated Button (optional upgrade layer) */
+.themed-animated-btn {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg,#c38f21 0%,#d4af85 50%,#c38f21 100%);
+  background-size: 250% 250%;
+  animation: btnGradientShift 6s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(195,143,33,0.4), 0 4px 18px rgba(195,143,33,0.35);
+}
+
+/* Glow ring using ::after */
+.themed-animated-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(130deg, rgba(195,143,33,0.8), rgba(212,175,133,0.4), rgba(195,143,33,0.8));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .5s ease;
+  z-index: -1;
+}
+
+.themed-animated-btn:hover::after, .themed-animated-btn:focus-visible::after {
+  opacity: 1;
+}
+
+.themed-animated-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,47,47,0.6), 0 0 0 5px rgba(195,143,33,0.5);
+}
+
+.themed-animated-btn:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 8px 28px -4px rgba(195,143,33,0.5), 0 0 18px -2px rgba(195,143,33,0.4);
+}
+
+.themed-animated-btn:active {
+  transform: translateY(0) scale(.99);
+  box-shadow: 0 4px 15px rgba(195,143,33,0.3);
+}
+
+.themed-animated-btn::before {
+  mix-blend-mode: normal;
+}
+
+.themed-animated-btn,
+.themed-animated-btn:hover,
+.themed-animated-btn:focus-visible,
+.themed-animated-btn:active {
+  color: #002f2f !important;
+}
+
+@keyframes btnGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .themed-animated-btn { animation: none; background-size: 100% 100%; }
+  .themed-animated-btn:hover { transform: translateY(-2px); }
+}
+
+/* Loading & Error States */
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(195, 143, 33, 0.2);
+  border-top-color: #c38f21;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-state h2 {
+  color: #c38f21;
+  font-size: 2rem;
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.error-state p {
+  color: #d4af85;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.loading-state p {
+  color: #d4af85;
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .workshop-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .workshop-detail-content {
+    padding-top: 120px;
+  }
+
+  .workshop-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .workshop-detail-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .workshop-title {
+    font-size: 1.5rem;
+  }
+
+  .workshop-price {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .kalakritam-logo-text {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button,
+  .back-link {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
