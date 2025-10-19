@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
 import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
@@ -13,6 +14,7 @@ import '../Gallery/Gallery.css'; // Import Gallery CSS for modal styles
 
 const Artists = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('artists'); // Validate username in URL
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

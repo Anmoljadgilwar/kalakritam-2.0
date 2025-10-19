@@ -1,7 +1,10 @@
 import React, { Suspense, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import RequireAuth from './components/RequireAuth'
+import GuestOnly from './components/GuestOnly'
 import { LoadingProvider, useLoading } from './contexts/LoadingContext.jsx'
 import { NotificationProvider } from './contexts/NotificationContext.jsx'
+import { UserAuthProvider } from './contexts/UserAuthContext.jsx'
 import Loading from './components/Loading'
 import GlobalToastContainer from './components/GlobalToastContainer'
 import Particles from './components/Particles'
@@ -231,6 +234,31 @@ const TicketVerification = React.lazy(() => {
   });
 });
 
+// User Authentication Components
+const UserLogin = React.lazy(() => {
+  const measure = measureLazyLoadTime('UserLogin');
+  return import('./components/UserLogin').then(module => {
+    measure();
+    return module;
+  });
+});
+
+const UserDashboard = React.lazy(() => {
+  const measure = measureLazyLoadTime('UserDashboard');
+  return import('./components/UserDashboard').then(module => {
+    measure();
+    return module;
+  });
+});
+
+const AdminUsers = React.lazy(() => {
+  const measure = measureLazyLoadTime('AdminUsers');
+  return import('./components/AdminUsers').then(module => {
+    measure();
+    return module;
+  });
+});
+
 
 
 // Preload commonly visited components for better UX
@@ -441,10 +469,30 @@ const AppContent = () => {
                   <Route path="/admin/tickets" element={<AdminTickets />} />
                   <Route path="/admin/artpartyimages" element={<AdminArtPartyImages />} />
                   <Route path="/admin/hero-banners" element={<AdminHeroBanners />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
                   
                   {/* Public Ticket Verification Routes */}
                   <Route path="/verify-ticket/:ticketId" element={<TicketVerification />} />
                   <Route path="/verify/:ticketId" element={<TicketVerification />} />
+                  
+                  {/* User Authentication Routes with guards */}
+                  <Route path="/user/login" element={<GuestOnly><UserLogin /></GuestOnly>} />
+                  <Route path="/user/signup" element={<GuestOnly><UserLogin /></GuestOnly>} />
+                  <Route path="/user/dashboard" element={<RequireAuth><UserDashboard /></RequireAuth>} />
+                  
+                  {/* Username-based routes for logged-in users - MUST be at the end to avoid conflicts */}
+                  <Route path="/u/:username/home" element={<RequireAuth><Home /></RequireAuth>} />
+                  <Route path="/u/:username/dashboard" element={<RequireAuth><UserDashboard /></RequireAuth>} />
+                  <Route path="/u/:username/gallery" element={<RequireAuth><Gallery /></RequireAuth>} />
+                  <Route path="/u/:username/gallery/:slug" element={<RequireAuth><ArtworkDetail /></RequireAuth>} />
+                  <Route path="/u/:username/workshops" element={<RequireAuth><Workshops /></RequireAuth>} />
+                  <Route path="/u/:username/workshops/:slug" element={<RequireAuth><WorkshopDetail /></RequireAuth>} />
+                  <Route path="/u/:username/contact" element={<RequireAuth><Contact /></RequireAuth>} />
+                  <Route path="/u/:username/about" element={<RequireAuth><About /></RequireAuth>} />
+                  <Route path="/u/:username/events" element={<RequireAuth><Events /></RequireAuth>} />
+                  <Route path="/u/:username/artblogs" element={<RequireAuth><ArtBlogs /></RequireAuth>} />
+                  <Route path="/u/:username/artists" element={<RequireAuth><Artists /></RequireAuth>} />
+                  <Route path="/u/:username/artparty" element={<RequireAuth><ArtParty /></RequireAuth>} />
                   
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
@@ -466,7 +514,9 @@ function App() {
   return (
     <LoadingProvider>
       <NotificationProvider>
-        <AppContent />
+        <UserAuthProvider>
+          <AppContent />
+        </UserAuthProvider>
       </NotificationProvider>
     </LoadingProvider>
   )

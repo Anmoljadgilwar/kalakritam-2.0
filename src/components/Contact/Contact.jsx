@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
 import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
@@ -12,6 +13,7 @@ import './Contact.css';
 
 const Contact = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('contact'); // Validate username in URL
   const [formData, setFormData] = useState({
     name: '',
     email: '',

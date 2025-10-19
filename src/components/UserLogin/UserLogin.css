@@ -1,0 +1,494 @@
+/* User Login Component Styles - Matching Admin Login Theme */
+.user-login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #001818 0%, #002020 50%, #002f2f 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Orb background styles */
+.user-login-container .orb-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+.user-login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(195, 143, 33, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(195, 143, 33, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.01) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.user-login-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 450px;
+}
+
+.user-login-card {
+  background: rgba(0, 24, 24, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  border-radius: 20px;
+  padding: 3rem 2.5rem 2.5rem;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(195, 143, 33, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.5), transparent);
+}
+
+.user-login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.user-title {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: #c38f21;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(195, 143, 33, 0.3);
+}
+
+.user-subtitle {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: #d4af85;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.user-description {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 1rem;
+  color: #d4af85;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.user-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  color: #fca5a5;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideInDown 0.3s ease-out;
+}
+
+.error-message svg {
+  flex-shrink: 0;
+  color: #ef4444;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-label {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 1rem;
+  color: #d4af85;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  color: #d4af85;
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  font-size: 1rem;
+  color: #ffffff;
+  background: rgba(0, 47, 47, 0.6);
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  backdrop-filter: blur(10px);
+  text-transform: none;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #c38f21;
+  background: rgba(0, 47, 47, 0.8);
+  box-shadow: 
+    0 0 0 3px rgba(195, 143, 33, 0.1),
+    0 4px 12px rgba(195, 143, 33, 0.15);
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: #d4af85;
+  opacity: 0.6;
+}
+
+.form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input#email {
+  text-transform: lowercase !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #d4af85;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover {
+  color: #c38f21;
+  background: rgba(195, 143, 33, 0.1);
+}
+
+.password-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 1.25rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000000;
+  background: linear-gradient(135deg, #b8821e 0%, #c38f21 50%, #d4a124 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'The Seasons', 'Cinzel', serif;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.login-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.login-submit-btn:hover {
+  background: linear-gradient(135deg, #c38f21 0%, #d4a124 50%, #e6b526 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(195, 143, 33, 0.4),
+    0 0 0 1px rgba(195, 143, 33, 0.2);
+}
+
+.login-submit-btn:hover::before {
+  left: 100%;
+}
+
+.login-submit-btn:active {
+  transform: translateY(0);
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-submit-btn.loading {
+  pointer-events: none;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem 0;
+  color: #d4af85;
+  opacity: 0.6;
+  font-size: 0.9rem;
+  font-family: 'The Seasons', 'Cinzel', serif;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(195, 143, 33, 0.2);
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.google-signin-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Override Google button styles to match theme */
+.google-signin-wrapper > div {
+  width: 100% !important;
+}
+
+.google-signin-wrapper iframe {
+  border-radius: 12px !important;
+}
+
+.form-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.toggle-mode {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: #d4af85;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.toggle-mode-btn {
+  background: none;
+  border: none;
+  color: #c38f21;
+  font-weight: 600;
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: underline;
+}
+
+.toggle-mode-btn:hover {
+  color: #d4a124;
+}
+
+.toggle-mode-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.user-login-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.back-to-home-btn {
+  background: none;
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  color: #d4af85;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'The Seasons', 'Cinzel', serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.back-to-home-btn:hover {
+  color: #c38f21;
+  border-color: #c38f21;
+  background: rgba(195, 143, 33, 0.1);
+  transform: translateY(-1px);
+}
+
+.back-to-home-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-login-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .user-login-card {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .user-title {
+    font-size: 2rem;
+  }
+  
+  .user-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .form-input {
+    padding: 0.875rem 0.875rem 0.875rem 2.75rem;
+  }
+  
+  .input-icon {
+    left: 0.875rem;
+  }
+  
+  .password-toggle {
+    right: 0.875rem;
+  }
+  
+  .login-submit-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-login-card {
+    padding: 1.5rem 1rem;
+    margin: 0.5rem;
+  }
+  
+  .user-title {
+    font-size: 1.75rem;
+  }
+  
+  .user-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .user-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .user-login-card {
+    border: 2px solid #c38f21;
+    background: rgba(0, 0, 0, 0.95);
+  }
+  
+  .form-input {
+    border: 2px solid rgba(195, 143, 33, 0.5);
+  }
+  
+  .form-input:focus {
+    border: 2px solid #c38f21;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .user-login-card::before,
+  .login-submit-btn::before,
+  .loading-spinner,
+  .error-message {
+    animation: none;
+  }
+  
+  .form-input:focus,
+  .login-submit-btn:hover,
+  .back-to-home-btn:hover {
+    transform: none;
+  }
+}

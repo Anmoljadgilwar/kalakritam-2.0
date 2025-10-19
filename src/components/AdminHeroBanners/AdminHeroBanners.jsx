@@ -253,12 +253,12 @@ const AdminHeroBanners = () => {
       <div className="admin-page-container">
         <VideoLogo />
         <AdminHeader currentPage="/admin/hero-banners" />
-        <div className="admin-hero-banners">
-        <div className="admin-header">
-          <div className="admin-header-left">
+        <main className="admin-hero-banners">
+        <section className="admin-header">
+          <div className="header-content">
             <h1>Hero Banners</h1>
           </div>
-        </div>
+        </section>
         <div className="error-container">
           <div className="error-icon">⚠️</div>
           <h2>Setup Required</h2>
@@ -299,7 +299,7 @@ CREATE INDEX idx_hero_banners_order ON hero_banners(order_index);`}</pre>
             </button>
           )}
         </div>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -310,19 +310,22 @@ CREATE INDEX idx_hero_banners_order ON hero_banners(order_index);`}</pre>
       <VideoLogo />
       <AdminHeader currentPage="/admin/hero-banners" />
       
-      <div className="admin-hero-banners">
-        <div className="admin-header">
-        <div className="admin-header-left">
-          <h1>Hero Banners</h1>
-          <div className="admin-stats">
-            <span className="stat">Active: {activeCount}</span>
-            <span className="stat">Total: {totalCount}</span>
+      <main className="admin-hero-banners">
+        <section className="admin-header">
+          <div className="header-content">
+            <h1>Hero Banners</h1>
+            <p>Manage home page hero banners with images or videos</p>
           </div>
-        </div>
-        <button className="btn-primary" onClick={() => setShowModal(true)}>
-          Add Hero Banner
-        </button>
-      </div>
+          <div className="header-actions">
+            <button className="create-btn" onClick={() => setShowModal(true)}>
+              + Add Hero Banner
+            </button>
+            <div className="gallery-stats">
+              <span className="stat">Active: {activeCount}</span>
+              <span className="stat">Total: {totalCount}</span>
+            </div>
+          </div>
+        </section>
 
       <div className="banners-grid">
         {banners.length === 0 ? (
@@ -352,7 +355,7 @@ CREATE INDEX idx_hero_banners_order ON hero_banners(order_index);`}</pre>
                 </div>
                 {banner.link_url && (
                   <div className="banner-link">
-                    <small>Link: {banner.link_url}</small>
+                    <small>🔗 {banner.link_url}</small>
                   </div>
                 )}
               </div>
@@ -470,7 +473,7 @@ CREATE INDEX idx_hero_banners_order ON hero_banners(order_index);`}</pre>
           </div>
         </div>
       )}
-      </div>
+      </main>
       
       <Footer />
     </div>

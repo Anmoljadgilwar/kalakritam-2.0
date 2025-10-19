@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -26,7 +27,8 @@ import './ArtworkDetail.css';
  * Fetches all artworks (simple approach) then finds matching slug.
  */
 const ArtworkDetail = () => {
-  const { slug } = useParams();
+  const { slug, username } = useParams();
+  useUsernameValidation('gallery'); // Validate username in URL (if present)
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,6 +40,16 @@ const ArtworkDetail = () => {
   const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
   const [networkOptimizations, setNetworkOptimizations] = useState({});
   const [batteryOptimizations, setBatteryOptimizations] = useState({});
+
+  // Helper function to generate gallery URL
+  const getGalleryPath = () => {
+    // If user has username in URL, use personalized path
+    if (username) {
+      return `/u/${username}/gallery`;
+    }
+    // Otherwise use regular path
+    return `/gallery`;
+  };
 
   // Initialize mobile optimizations (matching Gallery approach)
   useEffect(() => {
@@ -228,7 +240,7 @@ const ArtworkDetail = () => {
         <div className="artwork-detail-content error-state">
           <h2>Artwork Not Found</h2>
             <p>{error}</p>
-            <Link to="/gallery" className="back-link">Back to Gallery</Link>
+            <Link to={getGalleryPath()} className="back-link">Back to Gallery</Link>
         </div>
         <Footer />
       </div>
@@ -347,7 +359,7 @@ const ArtworkDetail = () => {
             
             <div className="artwork-actions">
               {/* Reuse universal card button styling for exact visual parity */}
-              <Link to="/gallery" className="universal-card-btn themed-animated-btn back-button">← Back to Gallery</Link>
+              <Link to={getGalleryPath()} className="universal-card-btn themed-animated-btn back-button">← Back to Gallery</Link>
             </div>
           </div>
         </div>

@@ -1,12 +1,21 @@
 import React from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUserAuth } from '../../contexts/UserAuthContext';
+import { getNavigationPath } from '../../utils/userHelpers';
 import './Footer.css';
 
 const Footer = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  const { user, isAuthenticated } = useUserAuth();
+
+  const handleNavigation = (path) => {
+    // Use personalized path for logged-in users, regular path for guests
+    const navigationPath = getNavigationPath(path, user, isAuthenticated);
+    navigateWithLoading(navigationPath);
+  };
 
   const handleAdminLogin = () => {
-    // Navigate to admin login page
+    // Navigate to admin login page (always uses regular path)
     navigateWithLoading('/admin/login');
   };
 
@@ -14,7 +23,7 @@ const Footer = () => {
     <footer className="shared-footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h3 className="footer-title">Kalakritam</h3>
+          <h3 className="footer-title" onClick={() => handleNavigation('/home')} style={{ cursor: 'pointer' }}>Kalakritam</h3>
           <p className="footer-description">Manifesting Through Arts</p>
           <div className="social-links">
             <div className="social-item">
@@ -39,19 +48,21 @@ const Footer = () => {
         <div className="footer-section">
           <h4 className="footer-subtitle">Quick Links</h4>
           <ul className="footer-links">
-            <li><button onClick={() => navigateWithLoading('/gallery')} className="footer-nav-btn">Gallery</button></li>
-            <li><button onClick={() => navigateWithLoading('/workshops')} className="footer-nav-btn">Workshops</button></li>
-            <li><button onClick={() => navigateWithLoading('/contact')} className="footer-nav-btn">Contact</button></li>
-            <li><button onClick={() => navigateWithLoading('/about')} className="footer-nav-btn">About Us</button></li>
+            <li><button onClick={() => handleNavigation('/home')} className="footer-nav-btn">Home</button></li>
+            <li><button onClick={() => handleNavigation('/gallery')} className="footer-nav-btn">Gallery</button></li>
+            <li><button onClick={() => handleNavigation('/workshops')} className="footer-nav-btn">Workshops</button></li>
+            <li><button onClick={() => handleNavigation('/contact')} className="footer-nav-btn">Contact</button></li>
+            <li><button onClick={() => handleNavigation('/about')} className="footer-nav-btn">About Us</button></li>
           </ul>
         </div>
         
         <div className="footer-section">
           <h4 className="footer-subtitle">Explore</h4>
           <ul className="footer-links">
-            <li><button onClick={() => navigateWithLoading('/events')} className="footer-nav-btn">Events</button></li>
-            <li><button onClick={() => navigateWithLoading('/artblogs')} className="footer-nav-btn">Art Blogs</button></li>
-            <li><button onClick={() => navigateWithLoading('/artparty')} className="footer-nav-btn">Art at your party</button></li>
+            <li><button onClick={() => handleNavigation('/artists')} className="footer-nav-btn">Artists</button></li>
+            <li><button onClick={() => handleNavigation('/events')} className="footer-nav-btn">Events</button></li>
+            <li><button onClick={() => handleNavigation('/artblogs')} className="footer-nav-btn">Art Blogs</button></li>
+            <li><button onClick={() => handleNavigation('/artparty')} className="footer-nav-btn">Art at your party</button></li>
           </ul>
         </div>
         
@@ -67,9 +78,9 @@ const Footer = () => {
         <div className="footer-bottom-content">
           <p className="copyright">© 2025 Kalakritam. All rights reserved.</p>
           <div className="footer-legal">
-            <button className="footer-nav-btn" onClick={() => navigateWithLoading('/privacy')}>Privacy Policy</button>
+            <button className="footer-nav-btn" onClick={() => handleNavigation('/privacy')}>Privacy Policy</button>
             <span className="separator">|</span>
-            <button className="footer-nav-btn" onClick={() => navigateWithLoading('/terms')}>Terms of Service</button>
+            <button className="footer-nav-btn" onClick={() => handleNavigation('/terms')}>Terms of Service</button>
           </div>
         </div>
       </div>

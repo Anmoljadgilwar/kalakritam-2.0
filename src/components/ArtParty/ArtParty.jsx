@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -12,6 +13,7 @@ import { config } from '../../config/environment';
 
 const ArtParty = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('artparty'); // Validate username in URL
   const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
   const [bannerImages, setBannerImages] = useState([]);
 

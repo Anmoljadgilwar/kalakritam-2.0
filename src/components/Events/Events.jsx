@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
 import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
@@ -12,6 +13,7 @@ import './Events.css';
 
 const Events = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('events'); // Validate username in URL
   const [selectedView, setSelectedView] = useState('upcoming');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

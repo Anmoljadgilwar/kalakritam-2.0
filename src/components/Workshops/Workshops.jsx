@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
+import { useUserAuth } from '../../contexts/UserAuthContext';
 import { toast } from '../../utils/notifications.js';
 import { 
   getMobileParticleConfig, 
@@ -21,6 +24,9 @@ import '../Gallery/Gallery.css';
 
 const Workshops = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  const { username } = useParams();
+  const { user, isAuthenticated } = useUserAuth();
+  useUsernameValidation('workshops'); // Validate username in URL
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,8 +129,17 @@ const Workshops = () => {
 
   const handleViewDetails = (workshop) => {
     const slug = workshop.slug || generateSlug(workshop.title);
-    // Navigate to slug-based URL like /workshops/example-workshop
-    navigateWithLoading(`/workshops/${slug}`);
+    
+    // If user is authenticated and has username in URL, use personalized path
+    let workshopPath;
+    if (username && isAuthenticated && user) {
+      workshopPath = `/u/${username}/workshops/${slug}`;
+    } else {
+      workshopPath = `/workshops/${slug}`;
+    }
+    
+    // Navigate to slug-based URL
+    navigateWithLoading(workshopPath);
   };
 
   const fetchWorkshops = async (page = 1, append = false) => {

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { 
   getMobileBlurConfig,
@@ -13,6 +14,7 @@ import './About.css';
 
 const About = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('about'); // Validate username in URL
   const toastShown = useRef(false);
   
   // Mobile optimization states

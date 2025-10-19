@@ -860,3 +860,255 @@ export const heroBannersApi = {
     return apiCall(`admin/hero-banners/${id}`, 'DELETE');
   }
 };
+
+// User Authentication API functions
+export const userAuthApi = {
+  // User login
+  login: async (credentials) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || result.message || 'Login failed');
+      }
+      
+      if (result.success && result.token) {
+        localStorage.setItem('userToken', result.token);
+        localStorage.setItem('userData', JSON.stringify(result.data));
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('User login error:', error);
+      throw error;
+    }
+  },
+  
+  // User signup
+  signup: async (userData) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(userData),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || result.message || 'Signup failed');
+      }
+      
+      if (result.success && result.token) {
+        localStorage.setItem('userToken', result.token);
+        localStorage.setItem('userData', JSON.stringify(result.data));
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('User signup error:', error);
+      throw error;
+    }
+  },
+  
+  // Google authentication
+  googleAuth: async (googleToken) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ token: googleToken }),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || result.message || 'Google authentication failed');
+      }
+      
+      if (result.success && result.token) {
+        localStorage.setItem('userToken', result.token);
+        localStorage.setItem('userData', JSON.stringify(result.data));
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Google auth error:', error);
+      throw error;
+    }
+  },
+  
+  // Verify user token
+  verifyToken: async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      throw new Error('No token found');
+    }
+    
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/me`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Token verification failed');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Token verification error:', error);
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userData');
+      throw error;
+    }
+  },
+  
+  // Update user profile
+  updateProfile: async (updates) => {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updates),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Profile update failed');
+      }
+      
+      if (result.success && result.data) {
+        localStorage.setItem('userData', JSON.stringify(result.data));
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      throw error;
+    }
+  },
+  
+  // User logout
+  logout: () => {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userData');
+  },
+  
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    return localStorage.getItem('userToken') !== null;
+  },
+  
+  // Admin: Get all users
+  getAllUsers: async () => {
+    // Try userToken first (for regular users who are admins), then adminToken (for admin portal)
+    let token = localStorage.getItem('userToken');
+    let tokenType = 'user';
+    
+    if (!token) {
+      token = localStorage.getItem('adminToken');
+      tokenType = 'admin';
+    }
+    
+    console.log('getAllUsers - Using token type:', tokenType);
+    console.log('getAllUsers - Token exists:', !!token);
+    console.log('getAllUsers - Token value:', token ? token.substring(0, 20) + '...' : 'null');
+    
+    if (!token) {
+      console.error('getAllUsers - No token found. Must log in first.');
+      throw new Error('Not authenticated - Please log in as admin first');
+    }
+    
+    try {
+      console.log('getAllUsers - Fetching from:', `${config.apiBaseUrl}/api/admin/users`);
+      const response = await fetch(`${config.apiBaseUrl}/api/admin/users`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      
+      console.log('getAllUsers - Response status:', response.status);
+      const result = await response.json();
+      console.log('getAllUsers - Response data:', result);
+      
+      if (!response.ok) {
+        throw new Error(result.error || `Failed to fetch users (${response.status})`);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('getAllUsers - Error:', error);
+      throw error;
+    }
+  },
+  
+  // Admin: Delete user
+  deleteUser: async (userId) => {
+    // Try userToken first, then adminToken
+    let token = localStorage.getItem('userToken');
+    if (!token) {
+      token = localStorage.getItem('adminToken');
+    }
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
+  },
+};

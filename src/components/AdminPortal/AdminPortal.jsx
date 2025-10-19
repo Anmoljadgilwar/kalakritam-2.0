@@ -112,9 +112,16 @@ const AdminPortal = () => {
     {
       title: 'ArtParty Images',
       description: 'Upload and manage banners for the ArtParty page',
-  path: '/admin/artpartyimages',
+      path: '/admin/artpartyimages',
       icon: '🖼️',
       color: '#d4af85'
+    },
+    {
+      title: 'User Management',
+      description: 'View and manage registered users, track activity and statistics',
+      path: '/admin/users',
+      icon: '👥',
+      color: '#c38f21'
     }
   ];
 

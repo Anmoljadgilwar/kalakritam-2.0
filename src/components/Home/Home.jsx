@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUserAuth } from '../../contexts/UserAuthContext';
+import { validateUsernameMatch, getUserPath } from '../../utils/userHelpers';
 import { toast } from '../../utils/notifications.js';
 import { 
   getMobileParticleConfig, 
@@ -15,14 +17,34 @@ import Header from '../Header';
 import Footer from '../Footer';
 import Particles from '../Particles';
 import HeroBanner from '../HeroBanner';
+import TextType from './TextType';
 import './Home.css';
 import '../../assets/fonts/fonts.css';
 
 const Home = () => {
   const [showVideoLogo, setShowVideoLogo] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { username } = useParams();
   const { navigateWithLoading } = useNavigationWithLoading();
+  const { isAuthenticated, user } = useUserAuth();
   const toastShown = useRef(false);
+  
+  // Validate username in URL matches logged-in user
+  useEffect(() => {
+    if (username && user) {
+      const isValid = validateUsernameMatch(username, user);
+      if (!isValid) {
+        toast.error('Access denied. Redirecting to your home page...');
+        const correctPath = getUserPath(user, 'home');
+        navigate(correctPath, { replace: true });
+      }
+    } else if (!username && user && isAuthenticated && location.pathname === '/home') {
+      // If accessing /home while logged in, redirect to personalized home
+      const correctPath = getUserPath(user, 'home');
+      navigate(correctPath, { replace: true });
+    }
+  }, [username, user, isAuthenticated, location.pathname, navigate]);
   
   // Mobile optimization states
   const [isMobile, setIsMobile] = useState(shouldOptimizeForMobile());
@@ -233,6 +255,26 @@ const Home = () => {
       )}
       
       <Header currentPage="home" />
+      
+      {/* Promotional Banner with Typing Effect - Only show on home page for non-authenticated users */}
+      {!isAuthenticated && !username && (location.pathname === '/home' || location.pathname === '/') ? (
+        <div className="promo-banner">
+          <div className="promo-banner__text">
+            <TextType 
+              text={[
+                "Want to get free Pass worth ₹1199/- of below event?",
+                "Do sign up for more details!",
+                "Limited time offer - Register now!"
+              ]}
+              typingSpeed={75}
+              pauseDuration={1500}
+              showCursor={true}
+              cursorCharacter="|"
+              className="promo-banner__highlight"
+            />
+          </div>
+        </div>
+      ) : null}
       
       {/* Hero Banner - 16:9 ratio image/video carousel */}
       <HeroBanner />

@@ -7779,6 +7779,8 @@ var init_database_workers = __esm({
 var auth_workers_exports = {};
 __export(auth_workers_exports, {
   authenticateToken: /* @__PURE__ */ __name(() => authenticateToken, "authenticateToken"),
+  authenticateUser: /* @__PURE__ */ __name(() => authenticateUser, "authenticateUser"),
+  authenticateAdminOrUser: /* @__PURE__ */ __name(() => authenticateAdminOrUser, "authenticateAdminOrUser"),
   comparePassword: /* @__PURE__ */ __name(() => comparePassword, "comparePassword"),
   generateToken: /* @__PURE__ */ __name(() => generateToken, "generateToken"),
   hashPassword: /* @__PURE__ */ __name(() => hashPassword, "hashPassword"),
@@ -7924,6 +7926,8 @@ async function comparePassword(password, hash) {
 }
 __name(comparePassword, "comparePassword");
 var authenticateToken;
+var authenticateUser;
+var authenticateAdminOrUser;
 var optionalAuth;
 var requireAdmin;
 var init_auth_workers = __esm({
@@ -7976,6 +7980,83 @@ var init_auth_workers = __esm({
         }, 500);
       }
     }, "authenticateToken");
+    authenticateUser = /* @__PURE__ */ __name2(async (c, next) => {
+      try {
+        const authHeader = c.req.header("authorization");
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token) {
+          return c.json({
+            success: false,
+            message: "Access token is required"
+          }, 401);
+        }
+        const secret = c.env?.JWT_SECRET || "default-secret";
+        const payload = await verifyToken(token, secret);
+        if (!payload) {
+          return c.json({
+            success: false,
+            message: "Invalid or expired token"
+          }, 403);
+        }
+        const db = createDatabase(c.env);
+        const userResult = await db.query("SELECT * FROM users WHERE id = $1 AND is_active = true", [payload.userId]);
+        if (!userResult.success || userResult.data.length === 0) {
+          return c.json({
+            success: false,
+            message: "User not found"
+          }, 403);
+        }
+        c.set("user", payload);
+        c.set("isAuthenticated", true);
+        await next();
+      } catch (error3) {
+        console.error("User authentication error:", error3);
+        return c.json({
+          success: false,
+          message: "Authentication failed"
+        }, 500);
+      }
+    }, "authenticateUser");
+    authenticateAdminOrUser = /* @__PURE__ */ __name2(async (c, next) => {
+      try {
+        const authHeader = c.req.header("authorization");
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token) {
+          return c.json({
+            success: false,
+            message: "Access token is required"
+          }, 401);
+        }
+        const secret = c.env?.JWT_SECRET || "default-secret";
+        const payload = await verifyToken(token, secret);
+        if (!payload) {
+          return c.json({
+            success: false,
+            message: "Invalid or expired token"
+          }, 403);
+        }
+        const db = createDatabase(c.env);
+        let userResult = await db.query("SELECT * FROM admin_users WHERE id = $1 AND active = true", [payload.userId]);
+        if (!userResult.success || userResult.data.length === 0) {
+          userResult = await db.query("SELECT * FROM users WHERE id = $1 AND is_active = true", [payload.userId]);
+        }
+        if (!userResult.success || userResult.data.length === 0) {
+          return c.json({
+            success: false,
+            message: "User not found"
+          }, 403);
+        }
+        c.set("user", payload);
+        c.set("isAuthenticated", true);
+        await next();
+      } catch (error3) {
+        console.error("Admin/User authentication error:", error3);
+        return c.json({
+          success: false,
+          message: "Authentication failed"
+        }, 500);
+      }
+    }, "authenticateAdminOrUser");
     optionalAuth = /* @__PURE__ */ __name2(async (c, next) => {
       try {
         const authHeader = c.req.header("authorization");
@@ -14062,6 +14143,487 @@ var setupAuthRoutes = /* @__PURE__ */ __name2((app2) => {
     }
   }));
 }, "setupAuthRoutes");
+
+// User Authentication Routes (Public Users)
+var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
+  // User Signup
+  app2.post("/api/auth/signup", catchAsync(async (c) => {
+    try {
+      const { name, email, password } = await c.req.json();
+      
+      if (!name || !email || !password) {
+        return c.json({
+          success: false,
+          error: "Missing required fields: name, email, password"
+        }, 400);
+      }
+      
+      if (password.length < 8) {
+        return c.json({
+          success: false,
+          error: "Password must be at least 8 characters"
+        }, 400);
+      }
+      
+      const db = createDatabase(c.env);
+      
+      // Check if email exists
+      const existingResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      if (existingResult.success && existingResult.data.length > 0) {
+        return c.json({
+          success: false,
+          error: "Email already exists"
+        }, 409);
+      }
+      
+      // Hash password
+      const hashedPassword = await hashPassword(password);
+      const now = new Date().toISOString();
+      
+      // Create user
+      const insertResult = await db.query(`
+        INSERT INTO users (name, email, password, provider, last_login, created_at, updated_at)
+        VALUES ($1, $2, $3, 'email', $4, $5, $6)
+        RETURNING *
+      `, [name, email, hashedPassword, now, now, now]);
+      
+      if (!insertResult.success || insertResult.data.length === 0) {
+        throw new Error('Failed to create user');
+      }
+      
+      const user = insertResult.data[0];
+      
+      // Generate token
+      const token = await generateToken({
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days
+      }, c.env?.JWT_SECRET);
+      
+      return c.json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          provider: user.provider,
+          photoUrl: user.photo_url,
+          phone: user.phone,
+          bio: user.bio,
+          isActive: user.is_active,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+          lastLogin: user.last_login
+        },
+        token
+      }, 201);
+    } catch (error3) {
+      console.error('Signup error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to create account'
+      }, 500);
+    }
+  }));
+  
+  // User Login
+  app2.post("/api/auth/login", catchAsync(async (c) => {
+    try {
+      const { email, password } = await c.req.json();
+      
+      if (!email || !password) {
+        return c.json({
+          success: false,
+          error: "Missing email or password"
+        }, 400);
+      }
+      
+      const db = createDatabase(c.env);
+      
+      // Find user
+      const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      if (!userResult.success || userResult.data.length === 0) {
+        return c.json({
+          success: false,
+          error: "Invalid credentials"
+        }, 401);
+      }
+      
+      const user = userResult.data[0];
+      
+      // Verify password
+      const isValid = await comparePassword(password, user.password);
+      if (!isValid) {
+        return c.json({
+          success: false,
+          error: "Invalid credentials"
+        }, 401);
+      }
+      
+      // Update last login
+      const now = new Date().toISOString();
+      await db.query('UPDATE users SET last_login = $1, updated_at = $2 WHERE id = $3', [now, now, user.id]);
+      
+      // Generate token
+      const token = await generateToken({
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days
+      }, c.env?.JWT_SECRET);
+      
+      return c.json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          provider: user.provider,
+          photoUrl: user.photo_url,
+          phone: user.phone,
+          bio: user.bio,
+          isActive: user.is_active,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+          lastLogin: now
+        },
+        token
+      });
+    } catch (error3) {
+      console.error('Login error:', error3);
+      return c.json({
+        success: false,
+        error: 'Login failed'
+      }, 500);
+    }
+  }));
+  
+  // Google OAuth
+  app2.post("/api/auth/google", catchAsync(async (c) => {
+    try {
+      const { token: googleToken } = await c.req.json();
+      
+      if (!googleToken) {
+        return c.json({
+          success: false,
+          error: "Missing Google token"
+        }, 400);
+      }
+      
+      // Verify Google token
+      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${googleToken}`);
+      if (!response.ok) {
+        return c.json({
+          success: false,
+          error: "Invalid Google token"
+        }, 401);
+      }
+      
+      const googleUser = await response.json();
+      const email = googleUser.email;
+      const name = googleUser.name;
+      const photoUrl = googleUser.picture;
+      const googleId = googleUser.sub;
+      
+      const db = createDatabase(c.env);
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const now = new Date().toISOString();
+      const existingUserResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      let user = existingUserResult?.data?.[0] || null;
+      
+      if (user) {
+        // Update existing user
+        const updateResult = await db.query(`
+          UPDATE users SET google_id = $1, photo_url = $2, last_login = $3, updated_at = $4 
+          WHERE id = $5 RETURNING *
+        `, [googleId, photoUrl, now, now, user.id]);
+        user = updateResult?.data?.[0] || null;
+      } else {
+        // Create new user
+        const insertResult = await db.query(`
+          INSERT INTO users (name, email, provider, google_id, photo_url, last_login, created_at, updated_at)
+          VALUES ($1, $2, 'google', $3, $4, $5, $6, $7) RETURNING *
+        `, [name, email, googleId, photoUrl, now, now, now]);
+        user = insertResult?.data?.[0] || null;
+      }
+      
+      if (!user) {
+        return c.json({
+          success: false,
+          error: "Failed to create or update user"
+        }, 500);
+      }
+      
+      // Generate token
+      const token = await generateToken({
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days
+      }, c.env?.JWT_SECRET);
+      
+      return c.json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          provider: user.provider,
+          googleId: user.google_id,
+          photoUrl: user.photo_url,
+          phone: user.phone,
+          bio: user.bio,
+          isActive: user.is_active,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+          lastLogin: now
+        },
+        token
+      });
+    } catch (error3) {
+      console.error('Google auth error:', error3);
+      return c.json({
+        success: false,
+        error: 'Google authentication failed'
+      }, 500);
+    }
+  }));
+  
+  // Get Current User
+  app2.get("/api/auth/me", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const db = createDatabase(c.env);
+      
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const userResult = await db.query('SELECT * FROM users WHERE id = $1', [tokenUser.userId]);
+      const user = userResult?.data?.[0] || null;
+      
+      if (!user) {
+        return c.json({
+          success: false,
+          error: "User not found"
+        }, 404);
+      }
+      
+      return c.json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          provider: user.provider,
+          googleId: user.google_id,
+          photoUrl: user.photo_url,
+          phone: user.phone,
+          bio: user.bio,
+          isActive: user.is_active,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+          lastLogin: user.last_login
+        }
+      });
+    } catch (error3) {
+      console.error('Get user error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to get user data'
+      }, 500);
+    }
+  }));
+  
+  // Update Profile
+  app2.put("/api/auth/profile", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const { name, phone, bio } = await c.req.json();
+      
+      const db = createDatabase(c.env);
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const now = new Date().toISOString();
+      const updateResult = await db.query(`
+        UPDATE users SET name = $1, phone = $2, bio = $3, updated_at = $4 
+        WHERE id = $5 RETURNING *
+      `, [name || null, phone || null, bio || null, now, tokenUser.userId]);
+      
+      const user = updateResult?.data?.[0] || null;
+      
+      if (!user) {
+        return c.json({
+          success: false,
+          error: "Failed to update profile"
+        }, 500);
+      }
+      
+      return c.json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          provider: user.provider,
+          googleId: user.google_id,
+          photoUrl: user.photo_url,
+          phone: user.phone,
+          bio: user.bio,
+          isActive: user.is_active,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at,
+          lastLogin: user.last_login
+        }
+      });
+    } catch (error3) {
+      console.error('Update profile error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to update profile'
+      }, 500);
+    }
+  }));
+  
+  // Admin: Get All Users
+  app2.get("/api/admin/users", authenticateAdminOrUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const adminEmails = ['admin@kalakritam.in', 'gowtham@kalakritam.in'];
+      const envAdmins = c.env?.ADMIN_EMAILS?.split(',') || [];
+      const allAdmins = [...adminEmails, ...envAdmins];
+      
+      if (!allAdmins.includes(tokenUser.email?.toLowerCase())) {
+        return c.json({
+          success: false,
+          error: "Unauthorized. Admin access required."
+        }, 403);
+      }
+      
+      const db = createDatabase(c.env);
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const result = await db.query('SELECT * FROM users ORDER BY created_at DESC');
+      const users = (result?.data || []).map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        provider: user.provider,
+        googleId: user.google_id,
+        photoUrl: user.photo_url,
+        phone: user.phone,
+        bio: user.bio,
+        isActive: user.is_active,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        lastLogin: user.last_login
+      }));
+      
+      // Calculate stats
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+      
+      const stats = {
+        totalUsers: users.length,
+        activeUsers: users.filter(user => 
+          user.lastLogin && new Date(user.lastLogin) > thirtyDaysAgo
+        ).length,
+        googleUsers: users.filter(user => user.provider === 'google').length,
+        emailUsers: users.filter(user => user.provider === 'email').length
+      };
+      
+      return c.json({
+        success: true,
+        data: users,
+        stats
+      });
+    } catch (error3) {
+      console.error('Get all users error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to get users'
+      }, 500);
+    }
+  }));
+  
+  // Admin: Delete User
+  app2.delete("/api/admin/users/:id", authenticateAdminOrUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const adminEmails = ['admin@kalakritam.in', 'gowtham@kalakritam.in'];
+      const envAdmins = c.env?.ADMIN_EMAILS?.split(',') || [];
+      const allAdmins = [...adminEmails, ...envAdmins];
+      
+      if (!allAdmins.includes(tokenUser.email?.toLowerCase())) {
+        return c.json({
+          success: false,
+          error: "Unauthorized. Admin access required."
+        }, 403);
+      }
+      
+      const userId = parseInt(c.req.param("id"));
+      
+      if (tokenUser.userId === userId) {
+        return c.json({
+          success: false,
+          error: "Cannot delete your own account"
+        }, 400);
+      }
+      
+      const db = createDatabase(c.env);
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+      
+      if (!result?.success || !result?.data || result.data.length === 0) {
+        return c.json({
+          success: false,
+          error: "User not found"
+        }, 404);
+      }
+      
+      return c.json({
+        success: true,
+        message: "User deleted successfully"
+      });
+    } catch (error3) {
+      console.error('Delete user error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to delete user'
+      }, 500);
+    }
+  }));
+}, "setupUserAuthRoutes");
+
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
@@ -18182,6 +18744,7 @@ var setupHeroBannersRoutes = /* @__PURE__ */ __name2((app2) => {
 }, "setupHeroBannersRoutes");
 
 setupAuthRoutes(app);
+setupUserAuthRoutes(app);
 setupGalleryRoutes(app);
 setupEventsRoutes(app);
 setupWorkshopsRoutes(app);
@@ -18202,6 +18765,8 @@ app.get("/api/info", (c) => {
     environment: c.env?.NODE_ENV || "production",
     endpoints: {
       auth: "/auth/*",
+      userAuth: "/api/auth/* (signup, login, google, me, profile)",
+      adminUsers: "/api/admin/users (GET, DELETE)",
       gallery: "/gallery/*",
       events: "/events/*",
       workshops: "/workshops/*",

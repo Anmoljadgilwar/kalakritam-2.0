@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUserAuth } from '../../contexts/UserAuthContext';
+import { getUserPath, getNavigationPath } from '../../utils/userHelpers';
 import './Header.css';
 import Artists from '../Artists';
 
 const Header = ({ currentPage = 'home' }) => {
+  const navigate = useNavigate();
   const { navigateWithLoading } = useNavigationWithLoading();
+  const { user, isAuthenticated, logout } = useUserAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const mobileMenuRef = useRef(null);
+  const userMenuRef = useRef(null);
 
   const navItems = [
     { path: '/home', label: 'Home' },
@@ -87,7 +94,14 @@ const Header = ({ currentPage = 'home' }) => {
   }, [isMobile]);
 
   const handleNavigation = (path) => {
-    navigateWithLoading(path);
+    // For dashboard path that already includes username, use it directly
+    if (path.includes('/u/') || path === '/user/login' || path === '/admin/login') {
+      navigate(path); // Direct navigation for dashboard
+    } else {
+      // Use personalized path for logged-in users, regular path for guests
+      const navigationPath = getNavigationPath(path, user, isAuthenticated);
+      navigateWithLoading(navigationPath);
+    }
     setIsMobileMenuOpen(false); // Close mobile menu after navigation
   };
 
@@ -108,16 +122,31 @@ const Header = ({ currentPage = 'home' }) => {
           mobileSidebar && !mobileSidebar.contains(event.target)) {
         setIsMobileMenuOpen(false);
       }
+
+      // Close user menu when clicking outside
+      const userMenuButton = userMenuRef.current;
+      const userMenuDropdown = document.querySelector('.user-menu-dropdown');
+      
+      if (userMenuButton && !userMenuButton.contains(event.target) &&
+          userMenuDropdown && !userMenuDropdown.contains(event.target)) {
+        setShowUserMenu(false);
+      }
     };
 
-    if (isMobileMenuOpen) {
+    if (isMobileMenuOpen || showUserMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, showUserMenu]);
+
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+    navigateWithLoading('/home');
+  };
 
   return (
     <header className="shared-header">
@@ -145,6 +174,73 @@ const Header = ({ currentPage = 'home' }) => {
                   {item.label}
                 </button>
               ))}
+              
+              {/* User Login/Profile Button */}
+              <div className="header-user-section" ref={userMenuRef}>
+                {isAuthenticated && user ? (
+                  <button 
+                    className="user-profile-btn"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                  >
+                    <div className="user-avatar">
+                      {user.photoUrl ? (
+                        <img src={user.photoUrl} alt={user.name} />
+                      ) : (
+                        <span className="user-initials">
+                          {user.name?.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <span className="user-name-display">{user.name?.split(' ')[0]}</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                ) : (
+                  <button 
+                    className="nav-link login-btn"
+                    onClick={() => handleNavigation('/user/login')}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                      <polyline points="10 17 15 12 10 7"></polyline>
+                      <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    Login
+                  </button>
+                )}
+
+                {/* User Dropdown Menu */}
+                {showUserMenu && isAuthenticated && (
+                  <div className="user-menu-dropdown">
+                    <button 
+                      className="user-menu-item"
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        const dashboardPath = getUserPath(user, 'dashboard');
+                        handleNavigation(dashboardPath);
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      My Dashboard
+                    </button>
+                    <button 
+                      className="user-menu-item logout"
+                      onClick={handleLogout}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </nav>
         )}
@@ -203,8 +299,60 @@ const Header = ({ currentPage = 'home' }) => {
                   {item.label}
                 </button>
               ))}
+              
+              {/* Mobile User Section */}
+              <div className="mobile-user-section">
+                {isAuthenticated && user ? (
+                  <>
+                    <button 
+                      className="sidebar-nav-link"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        const dashboardPath = getUserPath(user, 'dashboard');
+                        handleNavigation(dashboardPath);
+                      }}
+                    >
+                      <span className="nav-icon">👤</span>
+                      My Dashboard
+                    </button>
+                    <button 
+                      className="sidebar-nav-link logout-mobile"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      <span className="nav-icon">🚪</span>
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    className="sidebar-nav-link login-mobile"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleNavigation('/user/login');
+                    }}
+                  >
+                    <span className="nav-icon">🔐</span>
+                    Login
+                  </button>
+                )}
+              </div>
             </div>
             <div className="sidebar-footer">
+              {isAuthenticated && user && (
+                <div className="sidebar-user-info">
+                  <div className="sidebar-user-avatar">
+                    {user.photoUrl ? (
+                      <img src={user.photoUrl} alt={user.name} />
+                    ) : (
+                      <span>{user.name?.charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <p className="sidebar-user-name">{user.name}</p>
+                </div>
+              )}
               <p>Kalakritam</p>
               <small>Art Gallery & Cultural Hub</small>
             </div>

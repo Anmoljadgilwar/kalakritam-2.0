@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
 import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
@@ -13,6 +14,7 @@ import './ArtBlogs.css';
 
 const ArtBlogs = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  useUsernameValidation('artblogs'); // Validate username in URL
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBlog, setSelectedBlog] = useState(null);
   

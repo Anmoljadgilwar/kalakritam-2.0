@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
+import { useUserAuth } from '../../contexts/UserAuthContext';
 import { config } from '../../config/environment';
 import { toast } from '../../utils/notifications.js';
 import { 
@@ -22,6 +24,9 @@ import './Gallery.css';
 
 const Gallery = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
+  const { username } = useParams();
+  const { user, isAuthenticated } = useUserAuth();
+  useUsernameValidation('gallery'); // Validate username in URL
   const [selectedCategory, setSelectedCategory] = useState('all');
   // Removed inline modal detail view in favor of dedicated route /gallery/:slug
   const [artworks, setArtworks] = useState([]);
@@ -42,6 +47,18 @@ const Gallery = () => {
   const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
   const [networkOptimizations, setNetworkOptimizations] = useState({});
   const [batteryOptimizations, setBatteryOptimizations] = useState({});
+
+  // Helper function to generate artwork detail URL
+  const getArtworkDetailPath = (artwork) => {
+    const slug = artwork.slug || (artwork.title ? artwork.title.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'') : artwork.id);
+    
+    // If user is authenticated and has username in URL, use personalized path
+    if (username && isAuthenticated && user) {
+      return `/u/${username}/gallery/${slug}`;
+    }
+    // Otherwise use regular path
+    return `/gallery/${slug}`;
+  };
 
   // Initialize mobile optimizations
   useEffect(() => {
@@ -337,7 +354,7 @@ const Gallery = () => {
                   <div className="artwork-actions universal-card-actions">
                     <Link 
                       className="btn-view universal-card-btn"
-                      to={`/gallery/${artwork.slug || (artwork.title ? artwork.title.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'') : artwork.id)}`}
+                      to={getArtworkDetailPath(artwork)}
                       onClick={() => {
                         // Force instant scroll (no smooth) for quicker perceived navigation
                         try { sessionStorage.setItem('__forceInstantScroll', '1'); } catch {}

@@ -1,0 +1,487 @@
+/* Admin Users Management Styles */
+.admin-users-container {
+  min-height: 100vh;
+  background-color: #000000;
+  color: white;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.admin-users-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 3rem) clamp(1rem, 4vw, 2rem);
+  width: 100%;
+}
+
+/* Header Section */
+.admin-users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(195, 143, 33, 0.2);
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.header-content h1 {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  color: #c38f21;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.header-content p {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  color: #d4af85;
+  margin-bottom: 1rem;
+}
+
+.header-nav-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid rgba(195, 143, 33, 0.5);
+  color: #d4af85;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'The Seasons', 'Cinzel', serif;
+}
+
+.back-btn:hover {
+  background: rgba(195, 143, 33, 0.1);
+  color: #c38f21;
+  border-color: #c38f21;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.users-stats-summary {
+  display: flex;
+  gap: 1rem;
+}
+
+.users-stats-summary .stat {
+  background: rgba(195, 143, 33, 0.1);
+  color: #d4af85;
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.users-stats-summary .stat-label {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  opacity: 0.8;
+}
+
+.users-stats-summary .stat-value {
+  font-weight: 600;
+  color: #c38f21;
+  font-family: 'The Seasons', 'Cinzel', serif;
+}
+
+.admin-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: #c38f21;
+  margin-bottom: 2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(195, 143, 33, 0.1);
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  border-radius: 8px;
+  opacity: 0.9;
+  width: fit-content;
+}
+
+.admin-notice svg {
+  stroke: #c38f21;
+  flex-shrink: 0;
+}
+
+/* Stats Grid */
+.users-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(0, 24, 24, 0.95) 0%, rgba(0, 32, 32, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(195, 143, 33, 0.4);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card.active .stat-icon {
+  color: #10b981;
+}
+
+.stat-card.google .stat-icon {
+  color: #4285F4;
+}
+
+.stat-card.email .stat-icon {
+  color: #c38f21;
+}
+
+.stat-icon {
+  color: #c38f21;
+  flex-shrink: 0;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-value {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.stat-label {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: #d4af85;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: rgba(0, 47, 47, 0.6);
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  color: #d4af85;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: rgba(195, 143, 33, 0.1);
+  border-color: #c38f21;
+  color: #c38f21;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #b8821e 0%, #c38f21 50%, #d4a124 100%);
+  border-color: #c38f21;
+  color: #000000;
+  font-weight: 600;
+}
+
+/* Users Table */
+.users-table-container {
+  background: linear-gradient(135deg, rgba(0, 24, 24, 0.95) 0%, rgba(0, 32, 32, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-x: auto;
+}
+
+.no-users {
+  text-align: center;
+  padding: 3rem;
+  color: #d4af85;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.no-users svg {
+  opacity: 0.5;
+}
+
+.no-users p {
+  font-family: 'The Seasons', 'Cinzel', serif;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'The Seasons', 'Cinzel', serif;
+}
+
+.users-table thead tr {
+  border-bottom: 2px solid rgba(195, 143, 33, 0.3);
+}
+
+.users-table th {
+  text-align: left;
+  padding: 1rem;
+  color: #c38f21;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.users-table tbody tr {
+  border-bottom: 1px solid rgba(195, 143, 33, 0.1);
+  transition: all 0.3s ease;
+}
+
+.users-table tbody tr:hover {
+  background: rgba(195, 143, 33, 0.05);
+}
+
+.users-table td {
+  padding: 1rem;
+  color: #d4af85;
+  font-size: 0.95rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b8821e 0%, #c38f21 50%, #d4a124 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-initials {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.user-name {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.user-email {
+  color: #d4af85;
+  opacity: 0.8;
+}
+
+.provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.provider-badge.google {
+  background: rgba(66, 133, 244, 0.1);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  color: #4285F4;
+}
+
+.provider-badge.email {
+  background: rgba(195, 143, 33, 0.1);
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  color: #c38f21;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.status-badge.inactive {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.delete-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .users-table-container {
+    overflow-x: scroll;
+  }
+
+  .users-table {
+    min-width: 900px;
+  }
+  
+  .admin-users-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-actions {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-users-content {
+    padding: clamp(1.5rem, 4vw, 2rem) clamp(0.75rem, 3vw, 1rem);
+  }
+
+  .header-content h1 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+  }
+
+  .header-content p {
+    font-size: clamp(1rem, 2vw, 1.1rem);
+  }
+
+  .users-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .filter-buttons {
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .users-table-container {
+    padding: 1rem;
+  }
+  
+  .users-stats-summary {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .users-stats-summary .stat {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .filter-btn {
+    width: 100%;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card:hover,
+  .filter-btn:hover,
+  .delete-btn:hover {
+    transform: none;
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -26,7 +27,8 @@ import './WorkshopDetail.css';
  * Fetches all workshops then finds matching slug.
  */
 const WorkshopDetail = () => {
-  const { slug } = useParams();
+  const { slug, username } = useParams();
+  useUsernameValidation('workshops'); // Validate username in URL (if present)
   const [workshop, setWorkshop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,6 +40,16 @@ const WorkshopDetail = () => {
   const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
   const [networkOptimizations, setNetworkOptimizations] = useState({});
   const [batteryOptimizations, setBatteryOptimizations] = useState({});
+
+  // Helper function to generate workshops URL
+  const getWorkshopsPath = () => {
+    // If user has username in URL, use personalized path
+    if (username) {
+      return `/u/${username}/workshops`;
+    }
+    // Otherwise use regular path
+    return `/workshops`;
+  };
 
   // Initialize mobile optimizations (matching Gallery approach)
   useEffect(() => {
@@ -240,7 +252,7 @@ const WorkshopDetail = () => {
         <div className="workshop-detail-content error-state">
           <h2>Workshop Not Found</h2>
           <p>{error}</p>
-          <Link to="/workshops" className="back-link">Back to Workshops</Link>
+          <Link to={getWorkshopsPath()} className="back-link">Back to Workshops</Link>
         </div>
         <Footer />
       </div>
@@ -393,7 +405,7 @@ const WorkshopDetail = () => {
             
             <div className="workshop-actions">
               {/* Reuse universal card button styling for exact visual parity */}
-              <Link to="/workshops" className="universal-card-btn themed-animated-btn back-button">← Back to Workshops</Link>
+              <Link to={getWorkshopsPath()} className="universal-card-btn themed-animated-btn back-button">← Back to Workshops</Link>
             </div>
           </div>
         </div>
