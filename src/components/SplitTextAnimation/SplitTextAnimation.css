@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&family=Poppins:wght@100;500;600;800;900&family=Lobster+Two:ital,wght@0,400;0,700;1,400&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.split-text-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: auto;
+  padding: 1rem 0;
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.box {
+  transform-style: preserve-3d;
+  animation: animate 7s ease-in-out infinite alternate;
+}
+
+.box span {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5) 90%, transparent);
+  text-transform: uppercase;
+  line-height: 0.76em;
+  position: absolute;
+  color: #fff;
+  font-size: 3.5em;
+  white-space: nowrap;
+  font-weight: bold;
+  font-family: 'The Seasons', 'Poppins', sans-serif;
+  padding: 0px 10px;
+  transform-style: preserve-3d;
+  text-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%) rotateX(calc(var(--i) * 22.5deg)) translateZ(109px);
+}
+
+.box span i {
+  font-style: initial;
+}
+
+.box span i:nth-child(1) {
+  color: #c38f21;
+}
+
+.box span i:nth-child(2) {
+  color: #d4af37;
+}
+
+@keyframes animate {
+  0% {
+    transform: perspective(500px) rotateX(0deg) rotate(5deg);
+  }
+  100% {
+    transform: perspective(50px) rotateX(360deg) rotate(5deg);
+  }
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+  .box span {
+    font-size: 2.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  .box span {
+    font-size: 1.8em;
+  }
+  
+  .split-text-wrapper {
+    padding: 1rem 0;
+  }
+}

@@ -189,6 +189,7 @@ const AdminEvents = () => {
       bookMyShowUrl: event.book_my_show_url || event.bookMyShowUrl
     });
 
+    // Use the already transformed event data (districtUrl and bookMyShowUrl are already camelCase)
     setFormData({
       title: event.title || '',
       description: event.description || '',
@@ -199,9 +200,9 @@ const AdminEvents = () => {
       ticketPrice: event.ticket_price || event.ticketPrice || '',
       maxAttendees: event.max_attendees || event.maxAttendees || '',
       imageUrl: config.transformImageUrl(event.image_url || event.imageUrl) || '',
-      videoUrl: event.video_url || event.videoUrl || '',
-      districtUrl: event.district_url || event.districtUrl || '',
-      bookMyShowUrl: event.book_my_show_url || event.bookMyShowUrl || '',
+      videoUrl: event.videoUrl || event.video_url || '',
+      districtUrl: event.districtUrl || event.district_url || '',
+      bookMyShowUrl: event.bookMyShowUrl || event.book_my_show_url || '',
       active: event.active !== false,
       metaTitle: event.meta_title || event.metaTitle || '',
       metaDescription: event.meta_description || event.metaDescription || '',
@@ -213,10 +214,12 @@ const AdminEvents = () => {
     });
     
     console.log('📝 Form data being set:', {
-      districtUrl: event.district_url || event.districtUrl || '',
-      bookMyShowUrl: event.book_my_show_url || event.bookMyShowUrl || '',
+      districtUrl: event.districtUrl || event.district_url || '',
+      bookMyShowUrl: event.bookMyShowUrl || event.book_my_show_url || '',
+      videoUrl: event.videoUrl || event.video_url || '',
       hasDistrictInEvent: 'district_url' in event || 'districtUrl' in event,
       hasBookMyShowInEvent: 'book_my_show_url' in event || 'bookMyShowUrl' in event,
+      hasVideoUrl: 'video_url' in event || 'videoUrl' in event,
       eventKeys: Object.keys(event)
     });
     

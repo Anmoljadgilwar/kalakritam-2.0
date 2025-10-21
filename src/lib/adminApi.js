@@ -154,6 +154,8 @@ const transformEventFromDB = (event) => {
     maxAttendees: event.max_attendees,
     imageUrl: event.image_url,
     videoUrl: event.video_url,
+    districtUrl: event.district_url,
+    bookMyShowUrl: event.book_my_show_url,
     active: event.active,
     slug: event.slug,
     metaTitle: event.meta_title,

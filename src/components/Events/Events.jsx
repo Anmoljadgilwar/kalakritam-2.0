@@ -22,6 +22,7 @@ const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedEventId, setExpandedEventId] = useState(null); // Track which event is expanded
   const fetchCalled = useRef(false);
   
   // Pagination state
@@ -63,6 +64,16 @@ const Events = () => {
     
     // Navigate to slug-based URL
     navigateWithLoading(eventPath);
+  };
+
+  const toggleEventDetails = (eventId, e) => {
+    e.stopPropagation();
+    setExpandedEventId(expandedEventId === eventId ? null : eventId);
+  };
+
+  const handleCardClick = (event, e) => {
+    // Navigate to detail page when clicking poster
+    handleViewDetails(event);
   };
 
   const fetchEvents = async (page = 1, append = false) => {
@@ -214,93 +225,36 @@ const Events = () => {
           
           <div className="events-grid">
             {filteredEvents.map(event => (
-              <div key={event.id} className="event-card universal-card flip-card" onClick={() => handleViewDetails(event)}>
+              <div 
+                key={event.id} 
+                className={`event-card-poster flip-card ${expandedEventId === event.id ? 'expanded' : ''} ${event.videoUrl ? 'has-video' : ''}`}
+              >
                 <div className="flip-card-inner">
-                  {/* Front Side - Image and Event Info */}
+                  {/* Front Side - Poster Image */}
                   <div className="flip-card-front">
-                    <div className="event-image-container universal-card-image-container">
+                    <div className="event-poster-image">
                       <img 
                         src={event.imageUrl || '/events/art poster.png'} 
                         alt={event.title}
-                        className="event-image universal-card-image"
+                        className="poster-img"
                         onError={(e) => {
                           e.target.style.display = 'none';
-                          const placeholder = e.target.parentNode.querySelector('.event-image-placeholder');
+                          const placeholder = e.target.parentNode.querySelector('.poster-placeholder');
                           if (placeholder) {
                             placeholder.style.display = 'flex';
                           }
                         }}
                       />
-                      <div className="event-image-placeholder universal-card-image-placeholder" style={{ display: 'none' }}>
-                        <div className="universal-card-logo-text">Kalakritam</div>
-                        <div className="universal-card-image-not-available">Image not available</div>
-                      </div>
-                      <div className="event-overlay universal-card-overlay">
-                        <div className="event-overlay-content universal-card-overlay-content">
-                          <h3>{event.title}</h3>
-                          <p>{event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric',
-                            year: 'numeric'
-                          }) : 'TBA'}</p>
-                          <span className="highlight-text">₹{event.ticketPrice || '0'}</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="event-info universal-card-content">
-                      <h4 className="event-title universal-card-title">{event.title}</h4>
-                      <p className="event-venue universal-card-subtitle">{event.venue}</p>
-                      <p className="event-description universal-card-description">{event.description}</p>
-                      
-                      <div className="event-details universal-card-details">
-                        <div className="detail-row universal-card-detail-row">
-                          <span className="detail-label universal-card-detail-label">Date:</span>
-                          <span className="detail-value universal-card-detail-value">
-                            {event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { 
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            }) : 'TBA'}
-                          </span>
-                        </div>
-                        <div className="detail-row universal-card-detail-row">
-                          <span className="detail-label universal-card-detail-label">Time:</span>
-                          <span className="detail-value universal-card-detail-value">
-                            {event.startDate ? new Date(event.startDate).toLocaleTimeString('en-US', { 
-                              hour: 'numeric', 
-                              minute: '2-digit', 
-                              hour12: true 
-                            }) : 'TBA'}
-                          </span>
-                        </div>
-                        <div className="detail-row universal-card-detail-row">
-                          <span className="detail-label universal-card-detail-label">Location:</span>
-                          <span className="detail-value universal-card-detail-value">{event.venue || 'TBA'}</span>
-                        </div>
-                        <div className="detail-row universal-card-detail-row">
-                          <span className="detail-label universal-card-detail-label">Max Attendees:</span>
-                          <span className="detail-value universal-card-detail-value">{event.maxAttendees || 'No limit'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="event-actions universal-card-actions">
-                        <button 
-                          className="btn-details universal-card-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(event);
-                          }}
-                        >
-                          View Details
-                        </button>
+                      <div className="poster-placeholder" style={{ display: 'none' }}>
+                        <div className="kalakritam-logo-text">Kalakritam</div>
+                        <div className="image-not-available">Image not available</div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Back Side - Video Only */}
-                  {event.videoUrl && (
-                    <div className="flip-card-back">
+                  {/* Back Side - Video with Details */}
+                  {event.videoUrl ? (
+                    <div className="flip-card-back" onClick={(e) => handleCardClick(event, e)}>
                       <div className="event-video-container">
                         <video 
                           className="event-video"
@@ -318,9 +272,92 @@ const Events = () => {
                           }}
                         />
                         <div className="video-fallback" style={{ display: 'none' }}>
-                          <div className="universal-card-logo-text">Kalakritam</div>
-                          <div className="universal-card-image-not-available">Video unavailable</div>
+                          <div className="kalakritam-logo-text">Kalakritam</div>
+                          <div className="image-not-available">Video unavailable</div>
                         </div>
+                      </div>
+                      
+                      {/* Tap indicator on video */}
+                      <div className="tap-indicator">
+                        <span>Click to see the complete information</span>
+                      </div>
+                      
+                      {/* Details Panel - Shows on click */}
+                      {expandedEventId === event.id && (
+                        <div className="event-details-panel" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            className="close-details-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedEventId(null);
+                            }}
+                          >
+                            ×
+                          </button>
+                          
+                          <h3 className="event-detail-title">{event.title}</h3>
+                          <p className="event-detail-venue">{event.venue}</p>
+                          <p className="event-detail-description">{event.description}</p>
+                          
+                          <div className="event-detail-specs">
+                            <div className="spec-row">
+                              <span className="spec-label">DATE:</span>
+                              <span className="spec-value">
+                                {event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { 
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                }) : 'TBA'}
+                              </span>
+                            </div>
+                            <div className="spec-row">
+                              <span className="spec-label">TIME:</span>
+                              <span className="spec-value">
+                                {event.startDate ? new Date(event.startDate).toLocaleTimeString('en-US', { 
+                                  hour: 'numeric', 
+                                  minute: '2-digit', 
+                                  hour12: true 
+                                }) : 'TBA'}
+                              </span>
+                            </div>
+                            <div className="spec-row">
+                              <span className="spec-label">LOCATION:</span>
+                              <span className="spec-value">{event.venue || 'TBA'}</span>
+                            </div>
+                            <div className="spec-row">
+                              <span className="spec-label">MAX ATTENDEES:</span>
+                              <span className="spec-value">{event.maxAttendees || 'No limit'}</span>
+                            </div>
+                            <div className="spec-row price-row">
+                              <span className="spec-label">PRICE:</span>
+                              <span className="spec-value price">₹{event.ticketPrice || '0'}</span>
+                            </div>
+                          </div>
+                          
+                          <button 
+                            className="view-full-details-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewDetails(event);
+                            }}
+                          >
+                            View Full Details →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flip-card-back" onClick={(e) => handleCardClick(event, e)}>
+                      <div className="event-poster-image">
+                        <div className="poster-placeholder" style={{ display: 'flex' }}>
+                          <div className="kalakritam-logo-text">Kalakritam</div>
+                          <div className="image-not-available">No video available</div>
+                        </div>
+                      </div>
+                      
+                      {/* Tap indicator */}
+                      <div className="tap-indicator">
+                        <span>Click to see the complete information</span>
                       </div>
                     </div>
                   )}

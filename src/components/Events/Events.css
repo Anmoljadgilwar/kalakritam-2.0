@@ -98,7 +98,309 @@
   margin: 0;
 }
 
-/* Events Grid - Same as Workshops */
+/* Events Grid - A2 Poster Layout */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+  justify-items: center;
+}
+
+/* A2 Poster Card (420mm x 594mm aspect ratio = 1:1.414) with Flip */
+.event-card-poster {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1.414; /* A2 poster proportions */
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.event-card-poster.has-video:not(.expanded):hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(195, 143, 33, 0.3);
+  border: 2px solid rgba(195, 143, 33, 0.2);
+  background: #000;
+}
+
+.flip-card-front {
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flip-card-front:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(195, 143, 33, 0.5);
+  border-color: rgba(195, 143, 33, 0.6);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+.event-card-poster.expanded .flip-card-front {
+  transform: scale(1.05);
+  z-index: 100;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+}
+
+/* Video Container for Flip Back */
+.event-video-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #002f2f 0%, #003838 100%);
+  color: #c38f21;
+  gap: 1rem;
+}
+
+/* Tap Indicator */
+.tap-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(195, 143, 33, 0.9);
+  color: #1a1a1a;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.flip-card-front:hover .tap-indicator {
+  opacity: 1;
+}
+
+.event-card-poster.expanded .tap-indicator {
+  display: none;
+}
+
+/* Poster Image */
+.event-poster-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.event-card-poster:hover .poster-img {
+  transform: scale(1.05);
+}
+
+.poster-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #002f2f 0%, #003838 100%);
+  color: #c38f21;
+  gap: 1rem;
+}
+
+.kalakritam-logo-text {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.image-not-available {
+  color: #d4af85;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Details Panel - Overlay on click */
+.event-details-panel {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 24, 24, 0.97) 0%, rgba(0, 32, 32, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-details-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(195, 143, 33, 0.2);
+  border: 2px solid rgba(195, 143, 33, 0.4);
+  color: #c38f21;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.close-details-btn:hover {
+  background: rgba(195, 143, 33, 0.4);
+  transform: rotate(90deg);
+  border-color: #c38f21;
+}
+
+.event-detail-title {
+  font-family: 'Samarkan', 'Cinzel', serif;
+  font-size: 2rem;
+  color: #c38f21;
+  margin: 0.5rem 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.event-detail-venue {
+  font-size: 1.1rem;
+  color: #d4af85;
+  margin: 0 0 1rem 0;
+  font-style: italic;
+}
+
+.event-detail-description {
+  font-size: 0.95rem;
+  color: #cccccc;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.event-detail-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(0, 47, 47, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+  margin-bottom: 1rem;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.spec-row.price-row {
+  border-top: 1px solid rgba(195, 143, 33, 0.3);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.spec-label {
+  color: #c38f21;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.spec-value {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.spec-value.price {
+  color: #c38f21;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.view-full-details-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #c38f21 0%, #d4af85 100%);
+  border: 2px solid rgba(195, 143, 33, 0.3);
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
+}
+
+.view-full-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(195, 143, 33, 0.4);
+  background: linear-gradient(135deg, #d4af85 0%, #c38f21 100%);
+}
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -662,7 +964,19 @@
 
   .events-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
+  }
+
+  .event-card-poster {
+    max-width: 100%;
+  }
+
+  .event-detail-title {
+    font-size: 1.5rem;
+  }
+
+  .event-details-panel {
+    padding: 1.5rem;
   }
 
   .event-actions {
@@ -727,6 +1041,33 @@
 @media (max-width: 480px) {
   .events-title {
     font-size: 2rem;
+  }
+
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .event-card-poster {
+    max-width: 100%;
+  }
+
+  .event-detail-title {
+    font-size: 1.3rem;
+  }
+
+  .event-details-panel {
+    padding: 1rem;
+  }
+
+  .event-detail-specs {
+    padding: 0.75rem;
+  }
+
+  .close-details-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
   }
 
   .events-subtitle {
