@@ -54,9 +54,11 @@ const IntroVideo = () => {
 
     const handleVideoError = (error) => {
       console.warn('Video loading error:', error);
+      // Start transition animation even on error
+      setIsTransitioning(true);
       setShowFallback(true);
-      // Auto-redirect after 2 seconds if no video (reduced from 3s)
-      setTimeout(navigateToHome, 2000);
+      // Auto-redirect after showing animation
+      setTimeout(navigateToHome, 1500);
     };
 
     const handleVideoLoad = () => {
@@ -84,9 +86,10 @@ const IntroVideo = () => {
       // Set a timeout for video loading (reduced from 5s to 3s)
       loadingTimeoutRef.current = setTimeout(() => {
         if (!videoLoaded) {
-          console.warn('Video loading timeout - showing fallback');
+          console.warn('Video loading timeout - showing fallback with animation');
+          setIsTransitioning(true);
           setShowFallback(true);
-          setTimeout(navigateToHome, 2000);
+          setTimeout(navigateToHome, 1500);
         }
       }, 3000);
       
@@ -95,8 +98,9 @@ const IntroVideo = () => {
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
           console.warn('Video autoplay failed:', error);
+          setIsTransitioning(true);
           setShowFallback(true);
-          setTimeout(navigateToHome, 2000);
+          setTimeout(navigateToHome, 1500);
         });
       }
 
@@ -115,9 +119,10 @@ const IntroVideo = () => {
         }
       };
     } else {
-      // If no video element, show fallback and redirect
+      // If no video element, show fallback with animation and redirect
+      setIsTransitioning(true);
       setShowFallback(true);
-      setTimeout(navigateToHome, 2000);
+      setTimeout(navigateToHome, 1500);
     }
   }, [navigateToHome, videoLoaded]);
 
@@ -153,7 +158,6 @@ const IntroVideo = () => {
             <span></span>
           </div>
         </div>
-        <p>Welcome to the world of art and creativity</p>
       </div>
     </div>
   );

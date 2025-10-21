@@ -207,9 +207,7 @@ export class SEOManager {
   // Performance optimization
   preloadCriticalResources() {
     const criticalResources = [
-      { href: '/fonts/samarkan.ttf', as: 'font', type: 'font/ttf', crossorigin: 'anonymous' },
       { href: '/intro-video.mp4', as: 'video' },
-      { href: '/src/index.css', as: 'style' },
       { href: '/images/og-image.jpg', as: 'image' }
     ];
 

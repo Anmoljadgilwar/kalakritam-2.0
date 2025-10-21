@@ -143,13 +143,10 @@ export const performanceConfig = {
     '/contact'
   ],
   preload: [
-    '/fonts/samarkan.ttf',
     '/intro-video.mp4'
   ],
   critical: [
-    '/src/index.css',
-    '/src/App.css',
-    '/src/responsive-utilities.css'
+    // CSS is bundled by Vite and injected automatically
   ]
 };
 

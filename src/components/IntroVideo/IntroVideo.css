@@ -75,11 +75,28 @@
   color: white;
   z-index: 10;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 90vw;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .video-fallback.show {
   opacity: 1;
+}
+
+/* Transition animation for fallback when intro-video-container has transitioning class */
+.intro-video-container.transitioning .video-fallback {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 80px;
+  height: 80px;
+  transform: translate(0, 0) scale(0.5);
+  opacity: 0;
 }
 
 .logo-animation h1 {
