@@ -29,15 +29,13 @@ export default defineConfig({
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
               return 'react-vendor';
             }
-            if (id.includes('@mui/material') || id.includes('@emotion')) {
-              return 'mui-vendor';
-            }
             if (id.includes('three') || id.includes('@react-three') || id.includes('ogl')) {
               return 'graphics-vendor';
             }
             if (id.includes('gsap')) {
               return 'animation-vendor';
             }
+            // Keep MUI with main vendor to avoid circular dependency issues
             return 'vendor';
           }
           // Split admin components into separate chunk
