@@ -314,6 +314,38 @@
   padding: 0 clamp(0.5rem, 2vw, 1rem);
 }
 
+/* Simple App Purpose Statement for Google OAuth Verification */
+.app-purpose-simple {
+  background: rgba(195, 143, 33, 0.1);
+  border-left: 4px solid #c38f21;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 900px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.app-purpose-simple p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #ffffff;
+  text-align: left;
+  margin: 0;
+}
+
+.app-purpose-simple .oauth-link {
+  color: #c38f21;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.app-purpose-simple .oauth-link:hover {
+  color: #d4af85;
+  text-decoration: underline;
+}
+
 .cta-button {
   background: linear-gradient(135deg, #b8821e 0%, #c38f21 100%);
   color: #000000;
@@ -588,6 +620,21 @@
     font-size: clamp(1.8rem, 7vw, 2.5rem);
     line-height: 1;
     margin-bottom: 0.5rem;
+  }
+
+  /* Mobile responsive for app purpose */
+  .app-purpose-simple {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .app-purpose-simple p {
+    font-size: 0.95rem;
+  }
+
+  .app-purpose-simple .oauth-link {
+    display: block;
+    margin-top: 0.5rem;
   }
   
   .sub-title {

@@ -1,30 +1,100 @@
+# Robots.txt for Kalakritam - Art Workshops Platform
+# Updated: October 22, 2025
+
+# Allow all search engines
 User-agent: *
 Allow: /
 
-# Sitemaps
+# Sitemap location
 Sitemap: https://kalakritam.in/sitemap.xml
 
-# Allow all search engines to access main content
-Allow: /
+# Allow main public pages
+Allow: /home
 Allow: /about
 Allow: /workshops
+Allow: /workshops/
 Allow: /gallery
+Allow: /gallery/
 Allow: /artists
 Allow: /events
+Allow: /events/
+Allow: /artblogs
+Allow: /artparty
 Allow: /contact
-Allow: /blogs
+Allow: /privacy
+Allow: /terms
+
+# Allow dynamic detail pages (individual artworks, workshops, events)
+Allow: /gallery/*
+Allow: /workshops/*
+Allow: /events/*
 
 # Disallow admin and private areas
 Disallow: /admin/
+Disallow: /admin/*
 Disallow: /api/
+Disallow: /api/*
+Disallow: /user/
+Disallow: /user/*
+
+# Disallow user-specific paths (these have canonical tags pointing to public URLs)
+Disallow: /u/
+Disallow: /u/*
+
+# Disallow authentication pages
 Disallow: /login
+Disallow: /signup
+Disallow: /user/login
+Disallow: /user/signup
+Disallow: /admin/login
+
+# Disallow internal/build files
 Disallow: /_app/
 Disallow: /_document
 Disallow: /static/
 Disallow: /.well-known/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /assets/
 
-# Crawl delay (optional)
+# Disallow verification pages (not for indexing)
+Disallow: /verify-ticket/
+Disallow: /verify/
+
+# Crawl delay (be polite to server)
 Crawl-delay: 1
 
 # Host declaration
 Host: https://kalakritam.in
+
+# Google-specific rules
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /u/
+Crawl-delay: 0.5
+
+# Bing-specific rules
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /u/
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

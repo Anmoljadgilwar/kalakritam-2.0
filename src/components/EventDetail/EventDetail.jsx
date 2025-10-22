@@ -183,6 +183,17 @@ const EventDetail = () => {
               document.head.appendChild(metaDesc);
             }
             metaDesc.content = desc;
+            
+            // Set canonical URL to non-user-specific path for SEO
+            const canonicalSlug = found.slug || slug;
+            const canonicalUrl = `https://kalakritam.in/events/${canonicalSlug}`;
+            let canonical = document.querySelector('link[rel="canonical"]');
+            if (!canonical) {
+              canonical = document.createElement('link');
+              canonical.rel = 'canonical';
+              document.head.appendChild(canonical);
+            }
+            canonical.href = canonicalUrl;
             toast.dataLoaded('Event loaded');
           } else {
             setError('Event not found');

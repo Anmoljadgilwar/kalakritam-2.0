@@ -46,7 +46,7 @@ const PrivacyPolicy = () => {
       <main className="policy-content" role="main">
         <section className="policy-hero">
           <h1 className="policy-title">Privacy Policy</h1>
-          <p className="policy-updated">Last updated: October 13, 2025</p>
+          <p className="policy-updated">Last updated: October 22, 2025</p>
         </section>
 
         <section className="policy-body">
@@ -81,16 +81,39 @@ const PrivacyPolicy = () => {
           </ul>
 
           <h2>Collecting and Using Your Personal Data</h2>
+          <h3 id="google-oauth">Google OAuth 2.0 Authentication</h3>
+          <p>
+            Kalakritam uses <strong>Google OAuth 2.0</strong> as an authentication method to allow users to sign in securely using their Google account. When you choose to sign in with Google, we request access to the following information from your Google account:
+          </p>
+          <ul>
+            <li><strong>Email address:</strong> Used to identify your account and send workshop registration confirmations, event notifications, and important updates</li>
+            <li><strong>Name (First and Last):</strong> Used to personalize your experience and for workshop registration purposes</li>
+            <li><strong>Profile Picture:</strong> Optionally displayed in your user profile within the Kalakritam platform</li>
+            <li><strong>Google User ID:</strong> A unique identifier used to link your Google account to your Kalakritam account</li>
+          </ul>
+          <p>
+            <strong>Important:</strong> We never access your Google password, and we do not request access to any other Google services (Gmail, Drive, Calendar, etc.). 
+            You can revoke Kalakritam's access to your Google account at any time by visiting your{' '}
+            <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account Permissions</a>.
+          </p>
+          <p>
+            Kalakritam's use of information received from Google APIs adheres to the{' '}
+            <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">
+              Google API Services User Data Policy
+            </a>, including the Limited Use requirements.
+          </p>
+
           <h3>Types of Data Collected</h3>
           <h4>Personal Data</h4>
           <p>
             While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
           </p>
           <ul>
-            <li>Email address</li>
+            <li>Email address (via Google OAuth or direct registration)</li>
             <li>First name and last name</li>
-            <li>Phone number</li>
-            <li>Address, State, Province, ZIP/Postal code, City</li>
+            <li>Phone number (for workshop bookings)</li>
+            <li>Address, State, Province, ZIP/Postal code, City (if provided for event registration)</li>
+            <li>Profile picture (via Google OAuth)</li>
             <li>Usage Data</li>
           </ul>
 
@@ -117,17 +140,26 @@ const PrivacyPolicy = () => {
           </ul>
 
           <h2>Use of Your Personal Data</h2>
-          <p>The Company may use Personal Data for the following purposes:</p>
+          <p>The Company may use Personal Data (including information obtained via Google OAuth) for the following purposes:</p>
           <ul>
+            <li><strong>Account Authentication:</strong> To verify your identity and provide secure access to your account via Google OAuth.</li>
+            <li><strong>Workshop Registration:</strong> To register you for art workshops and send confirmation emails.</li>
+            <li><strong>Event Notifications:</strong> To notify you about upcoming workshops, events, and cultural programs.</li>
+            <li><strong>Personalized Experience:</strong> To customize your dashboard and display your workshop history.</li>
             <li>To provide and maintain our Service, including to monitor the usage of our Service.</li>
             <li>To manage Your Account as a user of the Service.</li>
-            <li>For the performance of a contract for products, items or services.</li>
-            <li>To contact You regarding updates or informative communications.</li>
-            <li>To provide You with news, special offers, and general information about goods, services and events.</li>
+            <li>For the performance of a contract for products, items or services (workshop bookings, event tickets).</li>
+            <li>To contact You regarding updates or informative communications related to workshops and events.</li>
+            <li>To provide You with news, special offers, and general information about art workshops, services and events.</li>
             <li>To manage Your requests to Us.</li>
             <li>For business transfers such as mergers or acquisitions.</li>
             <li>For other purposes like data analysis, usage trends, and improving our Service.</li>
           </ul>
+          <p>
+            <strong>Data from Google OAuth:</strong> Information obtained through Google OAuth (email, name, profile picture) is used solely for the purposes 
+            listed above and is never sold, rented, or shared with third parties for marketing purposes. We comply with Google's API Services User Data Policy, 
+            including the Limited Use requirements.
+          </p>
 
           <h3>Sharing Your Personal Information</h3>
           <ul>

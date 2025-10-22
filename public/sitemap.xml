@@ -9,15 +9,23 @@
   <!-- Homepage - Primary landing page -->
   <url>
     <loc>https://kalakritam.in/</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+
+  <!-- Home (alternate route) -->
+  <url>
+    <loc>https://kalakritam.in/home</loc>
+    <lastmod>2025-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <!-- About Page - High priority static page -->
   <url>
     <loc>https://kalakritam.in/about</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -25,7 +33,7 @@
   <!-- Workshops - Main service page -->
   <url>
     <loc>https://kalakritam.in/workshops</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -33,7 +41,7 @@
   <!-- Gallery - High priority content page -->
   <url>
     <loc>https://kalakritam.in/gallery</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -41,7 +49,7 @@
   <!-- Artists - Content page -->
   <url>
     <loc>https://kalakritam.in/artists</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -49,15 +57,23 @@
   <!-- Events - Dynamic content page -->
   <url>
     <loc>https://kalakritam.in/events</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <!-- Art Blogs - Blog section -->
+  <url>
+    <loc>https://kalakritam.in/artblogs</loc>
+    <lastmod>2025-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <!-- Art at your party - Service page -->
   <url>
     <loc>https://kalakritam.in/artparty</loc>
-    <lastmod>2025-10-11</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -65,43 +81,38 @@
   <!-- Contact - Important page -->
   <url>
     <loc>https://kalakritam.in/contact</loc>
-    <lastmod>2025-01-08</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- Privacy Policy -->
+  <!-- Privacy Policy - Updated with Google OAuth info -->
   <url>
     <loc>https://kalakritam.in/privacy</loc>
-    <lastmod>2025-10-13</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
+    <priority>0.3</priority>
   </url>
 
   <!-- Terms of Service -->
   <url>
     <loc>https://kalakritam.in/terms</loc>
-    <lastmod>2025-10-13</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
 
-  <!-- Blog Section -->
-  <url>
-    <loc>https://kalakritam.in/blogs</loc>
-    <lastmod>2025-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Ticket Verification -->
-  <url>
-    <loc>https://kalakritam.in/ticket-verification</loc>
-    <lastmod>2025-01-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <!-- Additional pages can be dynamically added here -->
+  <!-- Note: Dynamic pages (individual artworks, workshops, events) should be added via:
+       1. Server-side sitemap generation, or
+       2. Dynamic sitemap.xml endpoint that fetches current items from database
+       
+       Example dynamic URLs to be generated:
+       - https://kalakritam.in/gallery/{slug}
+       - https://kalakritam.in/workshops/{slug}
+       - https://kalakritam.in/events/{slug}
+       
+       These URLs use canonical tags to consolidate SEO signals from user-specific paths
+       like /u/{username}/gallery/{slug} to the canonical /gallery/{slug} URL.
+  -->
 
 </urlset>

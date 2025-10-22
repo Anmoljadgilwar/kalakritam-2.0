@@ -1,0 +1,268 @@
+.oauth-info-section {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, rgba(195, 143, 33, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+  margin: 3rem 0;
+  border-top: 2px solid rgba(195, 143, 33, 0.3);
+  border-bottom: 2px solid rgba(195, 143, 33, 0.3);
+}
+
+.oauth-info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.oauth-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #c38f21;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Samarkan', 'The Seasons', serif;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.oauth-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.oauth-purpose,
+.oauth-data-usage,
+.oauth-purpose-usage,
+.oauth-security {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+}
+
+.oauth-purpose h3,
+.oauth-data-usage h3,
+.oauth-purpose-usage h3,
+.oauth-security h3 {
+  color: #c38f21;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+}
+
+.oauth-purpose p,
+.oauth-data-usage > p {
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.oauth-data-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.oauth-data-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  color: #ffffff;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  padding: 1rem;
+  background: rgba(195, 143, 33, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #c38f21;
+}
+
+.oauth-data-list li svg {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  color: #c38f21;
+}
+
+.purpose-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.purpose-card {
+  background: rgba(195, 143, 33, 0.1);
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid rgba(195, 143, 33, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.purpose-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(195, 143, 33, 0.3);
+}
+
+.purpose-card svg {
+  color: #c38f21;
+  margin-bottom: 1rem;
+}
+
+.purpose-card h4 {
+  color: #c38f21;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-family: 'Cinzel', serif;
+}
+
+.purpose-card p {
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.security-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.security-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(195, 143, 33, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(195, 143, 33, 0.3);
+}
+
+.security-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.security-item p {
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.oauth-links {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(195, 143, 33, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(195, 143, 33, 0.3);
+}
+
+.oauth-links p {
+  color: #ffffff;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.oauth-links a {
+  color: #c38f21;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.oauth-links a:hover {
+  color: #d4af85;
+}
+
+.google-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(195, 143, 33, 0.2);
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.oauth-revoke-info {
+  margin-top: 1.5rem !important;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(195, 143, 33, 0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .oauth-info-section {
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+  }
+
+  .oauth-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .oauth-purpose,
+  .oauth-data-usage,
+  .oauth-purpose-usage,
+  .oauth-security {
+    padding: 1.5rem;
+  }
+
+  .oauth-purpose h3,
+  .oauth-data-usage h3,
+  .oauth-purpose-usage h3,
+  .oauth-security h3 {
+    font-size: 1.4rem;
+  }
+
+  .oauth-purpose p,
+  .oauth-data-usage > p {
+    font-size: 1rem;
+  }
+
+  .oauth-data-list li {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .purpose-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .security-highlights {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .oauth-links {
+    padding: 1.5rem;
+  }
+
+  .oauth-links p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .oauth-title {
+    font-size: 1.5rem;
+  }
+
+  .oauth-data-list li {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .purpose-card,
+  .security-item {
+    padding: 1rem;
+  }
+}
