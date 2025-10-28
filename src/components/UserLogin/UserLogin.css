@@ -351,21 +351,21 @@ input#email {
 }
 
 .google-signin-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 52px;
+  display: block;
   width: 100%;
+  min-height: 52px;
   position: relative;
   padding: 0;
+  margin: 0;
+  text-align: center;
 }
 
 /* Custom styled Google button container */
 .google-signin-wrapper > div {
   width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  display: block !important;
+  margin: 0 !important;
+  text-align: center !important;
 }
 
 /* Style the Google button iframe to match website theme */
@@ -373,6 +373,9 @@ input#email {
   border-radius: 12px !important;
   overflow: hidden !important;
   max-width: 100% !important;
+  margin: 0 auto !important;
+  display: block !important;
+  width: 100% !important;
 }
 
 /* Custom wrapper styling to match form inputs */
@@ -385,6 +388,8 @@ input#email {
   padding: 0.75rem 1rem !important;
   width: 100% !important;
   max-width: 100% !important;
+  margin: 0 auto !important;
+  display: block !important;
 }
 
 .google-signin-wrapper div[role="button"]:hover {
@@ -394,9 +399,18 @@ input#email {
   transform: translateY(-1px) !important;
 }
 
-/* Override Google's default styling */
+/* Override Google's default styling and ensure centering */
 .google-signin-wrapper [data-client-id] {
   background: transparent !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Ensure all nested divs are centered */
+.google-signin-wrapper > div > div {
+  margin: 0 auto !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 .form-footer {
@@ -568,23 +582,30 @@ input#email {
     width: 100%;
     min-height: 48px;
     padding: 0;
+    text-align: center;
+    display: block;
   }
   
   .google-signin-wrapper > div {
     width: 100% !important;
     max-width: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
+    display: block !important;
+    text-align: center !important;
+    margin: 0 !important;
   }
   
   .google-signin-wrapper > div > div {
     width: 100% !important;
     max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 
   .google-signin-wrapper iframe {
     width: 100% !important;
     max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 
   .form-footer {
@@ -687,19 +708,26 @@ input#email {
     width: 100%;
     padding: 0;
     margin-bottom: 0.75rem;
+    text-align: center;
+    display: block;
   }
 
   .google-signin-wrapper > div {
     width: 100% !important;
+    display: block !important;
+    text-align: center !important;
   }
 
   .google-signin-wrapper iframe {
     width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 
   .google-signin-wrapper div[role="button"] {
     padding: 0.65rem 0.875rem !important;
     font-size: 0.875rem !important;
+    width: 100% !important;
   }
   
   .form-footer {
@@ -849,17 +877,22 @@ input#email {
     min-height: 40px;
     margin-bottom: 0.65rem;
     width: 100%;
+    text-align: center;
+    display: block;
   }
 
   .google-signin-wrapper > div,
   .google-signin-wrapper iframe {
     width: 100% !important;
     max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 
   .google-signin-wrapper div[role="button"] {
     padding: 0.6rem 0.75rem !important;
     font-size: 0.8rem !important;
+    width: 100% !important;
   }
   
   .form-footer {
