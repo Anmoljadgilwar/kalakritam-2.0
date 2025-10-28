@@ -14149,7 +14149,7 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
   // User Signup
   app2.post("/api/auth/signup", catchAsync(async (c) => {
     try {
-      const { name, email, password } = await c.req.json();
+      const { name, email, password, phone } = await c.req.json();
       
       if (!name || !email || !password) {
         return c.json({
@@ -14180,12 +14180,12 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
       const hashedPassword = await hashPassword(password);
       const now = new Date().toISOString();
       
-      // Create user
+      // Create user with optional phone
       const insertResult = await db.query(`
-        INSERT INTO users (name, email, password, provider, last_login, created_at, updated_at)
-        VALUES ($1, $2, $3, 'email', $4, $5, $6)
+        INSERT INTO users (name, email, password, phone, provider, last_login, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, 'email', $5, $6, $7)
         RETURNING *
-      `, [name, email, hashedPassword, now, now, now]);
+      `, [name, email, hashedPassword, phone || null, now, now, now]);
       
       if (!insertResult.success || insertResult.data.length === 0) {
         throw new Error('Failed to create user');

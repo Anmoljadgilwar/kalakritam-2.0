@@ -149,11 +149,20 @@
   letter-spacing: 0.5px;
 }
 
+.optional-label {
+  font-size: 0.85rem;
+  color: #a88f6e;
+  font-weight: 400;
+  font-style: italic;
+  margin-left: 0.25rem;
+}
+
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
+  isolation: isolate;
 }
 
 .input-icon {
@@ -186,7 +195,7 @@
   backdrop-filter: blur(10px);
   text-transform: none;
   position: relative;
-  z-index: 0;
+  z-index: 2;
 }
 
 .form-input:focus {
@@ -225,7 +234,7 @@ input#email {
   padding: 0.5rem;
   border-radius: 6px;
   transition: all 0.3s ease;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
