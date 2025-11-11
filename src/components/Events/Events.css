@@ -82,6 +82,46 @@
   margin: 0;
 }
 
+/* View Toggle Buttons */
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.view-toggle-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid #c38f21;
+  background: transparent;
+  color: #c38f21;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(195, 143, 33, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(195, 143, 33, 0.3);
+}
+
+.view-toggle-btn.active {
+  background: linear-gradient(135deg, #c38f21, #f4d03f);
+  color: #000;
+  border-color: #f4d03f;
+  box-shadow: 0 4px 15px rgba(195, 143, 33, 0.5);
+}
+
+.view-toggle-btn.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(195, 143, 33, 0.6);
+}
+
 /* Events Content */
 .events-content {
   margin-bottom: 4rem;

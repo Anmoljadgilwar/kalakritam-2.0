@@ -28,6 +28,7 @@ const Workshops = () => {
   const { user, isAuthenticated } = useUserAuth();
   useUsernameValidation('workshops'); // Validate username in URL
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedView, setSelectedView] = useState('upcoming'); // Add view state
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workshops, setWorkshops] = useState([]);
@@ -96,6 +97,24 @@ const Workshops = () => {
       fetchCalled.current = true;
     }
   }, []);
+
+  // Auto-switch to past workshops if no upcoming workshops
+  useEffect(() => {
+    if (!loading && workshops.length > 0 && selectedView === 'upcoming') {
+      const now = new Date();
+      const upcomingWorkshops = workshops.filter(workshop => {
+        const workshopEndDate = workshop.endDate ? new Date(workshop.endDate) : null;
+        const isUpcoming = workshopEndDate ? workshopEndDate >= now : true;
+        return workshop.active && isUpcoming;
+      });
+      
+      // If no upcoming workshops, switch to past workshops
+      if (upcomingWorkshops.length === 0) {
+        setSelectedView('past');
+        toast.info('No upcoming workshops. Showing past workshops.');
+      }
+    }
+  }, [workshops, loading, selectedView]);
 
   // Helper to transform workshop data from backend (snake_case to camelCase)
   const transformWorkshop = (workshop) => {
@@ -202,8 +221,20 @@ const Workshops = () => {
     setSelectedWorkshop(null);
   };
 
-  // Since the API doesn't return categories, show all workshops
-  const filteredWorkshops = workshops;
+  // Filter workshops based on selected view and date
+  const now = new Date();
+  const filteredWorkshops = selectedView === 'upcoming'
+    ? workshops.filter(workshop => {
+        // Check if workshop is active AND the end date hasn't passed
+        const workshopEndDate = workshop.endDate ? new Date(workshop.endDate) : null;
+        const isUpcoming = workshopEndDate ? workshopEndDate >= now : true;
+        return workshop.active && isUpcoming;
+      })
+    : workshops.filter(workshop => {
+        // Show all past workshops (end date has passed)
+        const workshopEndDate = workshop.endDate ? new Date(workshop.endDate) : null;
+        return workshopEndDate ? workshopEndDate < now : false;
+      });
 
   if (loading) {
     return (
@@ -279,6 +310,22 @@ const Workshops = () => {
           <p className="workshops-subtitle">Learn from Master Artists & Preserve Cultural Heritage</p>
           <div className="workshops-description">
             <p>Join our expert-led workshops and immerse yourself in the world of traditional and contemporary Indian art forms. Learn techniques passed down through generations from master artists and explore modern artistic expressions.</p>
+          </div>
+          
+          {/* View Toggle */}
+          <div className="view-toggle">
+            <button 
+              className={`view-toggle-btn ${selectedView === 'upcoming' ? 'active' : ''}`}
+              onClick={() => setSelectedView('upcoming')}
+            >
+              Upcoming Workshops
+            </button>
+            <button 
+              className={`view-toggle-btn ${selectedView === 'past' ? 'active' : ''}`}
+              onClick={() => setSelectedView('past')}
+            >
+              Past Workshops
+            </button>
           </div>
         </header>
 

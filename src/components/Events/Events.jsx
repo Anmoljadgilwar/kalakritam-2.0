@@ -43,6 +43,24 @@ const Events = () => {
     }
   }, []);
 
+  // Auto-switch to past events if no upcoming events
+  useEffect(() => {
+    if (!loading && events.length > 0 && selectedView === 'upcoming') {
+      const now = new Date();
+      const upcomingEvents = events.filter(event => {
+        const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+        const isUpcoming = eventEndDate ? eventEndDate >= now : true;
+        return event.active && isUpcoming;
+      });
+      
+      // If no upcoming events, switch to past events
+      if (upcomingEvents.length === 0) {
+        setSelectedView('past');
+        toast.info('No upcoming events. Showing past events.');
+      }
+    }
+  }, [events, loading, selectedView]);
+
   // Helper function to generate slug from title
   const generateSlug = (title) => {
     return title
@@ -181,10 +199,20 @@ const Events = () => {
     );
   }
 
-  // Filter events based on selected view
+  // Filter events based on selected view and date
+  const now = new Date();
   const filteredEvents = selectedView === 'upcoming' 
-    ? events.filter(event => event.active) 
-    : events;
+    ? events.filter(event => {
+        // Check if event is active AND the end date hasn't passed
+        const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+        const isUpcoming = eventEndDate ? eventEndDate >= now : true;
+        return event.active && isUpcoming;
+      })
+    : events.filter(event => {
+        // Show all past events (end date has passed)
+        const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+        return eventEndDate ? eventEndDate < now : false;
+      });
 
   return (
     <div className="events-container">
@@ -215,6 +243,22 @@ const Events = () => {
           <p className="events-subtitle">Discover Art Through Experiences</p>
           <div className="events-description">
             <p>Immerse yourself in our vibrant art events and cultural experiences. Connect with artists, explore creative workshops, and be part of the thriving art community at Kalakritam.</p>
+          </div>
+          
+          {/* View Toggle */}
+          <div className="view-toggle">
+            <button 
+              className={`view-toggle-btn ${selectedView === 'upcoming' ? 'active' : ''}`}
+              onClick={() => setSelectedView('upcoming')}
+            >
+              Upcoming Events
+            </button>
+            <button 
+              className={`view-toggle-btn ${selectedView === 'past' ? 'active' : ''}`}
+              onClick={() => setSelectedView('past')}
+            >
+              Past Events
+            </button>
           </div>
         </header>
 
