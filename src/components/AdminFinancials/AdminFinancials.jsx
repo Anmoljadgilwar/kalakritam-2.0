@@ -693,8 +693,8 @@ const AdminFinancials = () => {
                   grid={{ horizontal: true }}
                   slotProps={{
                     legend: {
-                      direction: 'row',
-                      position: { vertical: 'top', horizontal: 'middle' },
+                      direction: 'horizontal',
+                      position: { vertical: 'top', horizontal: 'center' },
                       padding: 0
                     }
                   }}

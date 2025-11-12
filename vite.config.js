@@ -23,34 +23,7 @@ export default defineConfig({
         format: 'es',
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-        inlineDynamicImports: false,
-        // Ensure proper globals for React
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
-        },
-        manualChunks: (id) => {
-          // Better chunk splitting strategy
-          if (id.includes('node_modules')) {
-            // Bundle React, ReactDOM and all React-dependent libraries together
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || 
-                id.includes('@mui') || id.includes('@emotion') || id.includes('scheduler')) {
-              return 'react-vendor';
-            }
-            if (id.includes('three') || id.includes('@react-three') || id.includes('ogl')) {
-              return 'graphics-vendor';
-            }
-            if (id.includes('gsap')) {
-              return 'animation-vendor';
-            }
-            return 'vendor';
-          }
-          // Split admin components into separate chunk
-          if (id.includes('/Admin')) {
-            return 'admin';
-          }
-        }
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
     // Optimize chunk size
@@ -63,17 +36,9 @@ export default defineConfig({
     sourcemap: process.env.NODE_ENV === 'development',
     // Optimize CSS
     cssMinify: true,
-    // Preload modules
+    // Preload modules (use defaults)
     modulePreload: {
-      polyfill: true,
-      resolveDependencies: (filename, deps, { hostId, hostType }) => {
-        // Ensure react-vendor is loaded before other chunks
-        return deps.filter(dep => {
-          if (filename.includes('react-vendor')) return true;
-          if (dep.includes('react-vendor')) return true;
-          return true;
-        });
-      }
+      polyfill: true
     },
     // Ensure proper module initialization order
     commonjsOptions: {
@@ -87,10 +52,7 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
-      'gsap',
-      '@mui/material',
-      '@emotion/react',
-      '@emotion/styled'
+      'gsap'
     ],
     exclude: [
       'ogl',
@@ -101,10 +63,7 @@ export default defineConfig({
   // Ensure single React instance
   resolve: {
     dedupe: ['react', 'react-dom'],
-    alias: {
-      'react': 'react',
-      'react-dom': 'react-dom'
-    }
+    alias: {}
   },
   // Optimize for development
   server: {
