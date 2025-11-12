@@ -63,14 +63,21 @@
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://api.kalakritam.in">
+    <link rel="preconnect" href="https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev">
     
     <!-- DNS Prefetch -->
     <link rel="dns-prefetch" href="//www.google-analytics.com">
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//api.kalakritam.in">
     
     <!-- Preload Critical Resources -->
-    <link rel="preload" href="/intro-video.mp4" as="video">
+    <link rel="preload" href="/intro-video.mp4" as="video" type="video/mp4">
+    <link rel="preload" href="https://fonts.gstatic.com/s/cinzel/v23/8vIU7ww63mVu7gtL-KM.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Load Fonts with display=swap for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -124,28 +131,22 @@
               scope: '/'
             });
             
-            console.log('✅ Service Worker registered successfully:', registration.scope);
-            
             // Handle service worker updates
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New service worker available
-                    console.log('🔄 New service worker available');
-                    // Optionally notify user about update
+                    // New service worker available - silently update
                   }
                 });
               }
             });
             
           } catch (error) {
-            console.warn('⚠️ Service Worker registration failed:', error);
+            // Service worker registration failed silently
           }
         });
-      } else {
-        console.warn('⚠️ Service Worker not supported in this browser');
       }
     </script>
   </head>

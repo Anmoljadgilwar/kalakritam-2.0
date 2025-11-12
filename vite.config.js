@@ -1,18 +1,45 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
+import viteCompression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react({
-    // Enable Babel for better optimizations
-    babel: {
-      compact: true,
-      plugins: [
-        // Remove console.log in production
-        ...(process.env.NODE_ENV === 'production' ? [['transform-remove-console', { exclude: ['error', 'warn'] }]] : [])
-      ]
-    }
-  })],
+  plugins: [
+    react({
+      // Enable Babel for better optimizations
+      babel: {
+        compact: true,
+        plugins: [
+          // Remove console.log in production
+          ...(process.env.NODE_ENV === 'production' ? [['transform-remove-console', { exclude: ['error', 'warn'] }]] : [])
+        ]
+      }
+    }),
+    // Add Gzip compression
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: 'gzip',
+      ext: '.gz',
+    }),
+    // Add Brotli compression
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: 'brotliCompress',
+      ext: '.br',
+    }),
+    // Bundle analyzer (only in analyze mode)
+    process.env.ANALYZE && visualizer({
+      open: true,
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    })
+  ].filter(Boolean),
   define: {
     global: 'globalThis',
   },
@@ -44,6 +71,12 @@ export default defineConfig({
             if (id.includes('gsap')) {
               return 'animation-vendor';
             }
+            if (id.includes('react-toastify')) {
+              return 'toast-vendor';
+            }
+            if (id.includes('html2canvas') || id.includes('jspdf') || id.includes('qrcode')) {
+              return 'utils-vendor';
+            }
             return 'vendor';
           }
           // Split admin components into separate chunk
@@ -54,15 +87,16 @@ export default defineConfig({
       }
     },
     // Optimize chunk size
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
     // Target modern browsers for better performance
     target: 'es2020',
     // Use esbuild for minification (faster)
     minify: 'esbuild',
-    // Enable source maps for debugging but smaller in production
-    sourcemap: process.env.NODE_ENV === 'development',
+    // Enable source maps only for debugging (hidden from browser)
+    sourcemap: 'hidden',
     // Optimize CSS
     cssMinify: true,
+    cssCodeSplit: true,
     // Preload modules
     modulePreload: {
       polyfill: true,
@@ -79,7 +113,11 @@ export default defineConfig({
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true
-    }
+    },
+    // Report compressed size
+    reportCompressedSize: true,
+    // Improve asset loading
+    assetsInlineLimit: 4096,
   },
   // Optimize dependencies
   optimizeDeps: {

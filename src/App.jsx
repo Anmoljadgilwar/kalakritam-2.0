@@ -556,7 +556,7 @@ const AppContent = () => {
             </div>
           )}
           
-          <div className="app-content">
+          <main className="app-content">
             <ScrollToTop behavior="auto" />
             <LazyLoadingErrorBoundary>
               <Suspense fallback={<LazyLoadingFallback />}>
@@ -626,7 +626,7 @@ const AppContent = () => {
                 </Routes>
               </Suspense>
             </LazyLoadingErrorBoundary>
-          </div>
+          </main>
         </div>
       </Router>
     </>
