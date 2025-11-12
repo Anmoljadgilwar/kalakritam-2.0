@@ -302,7 +302,8 @@ const AdminFinancials = () => {
                     <LineChart
                       xAxis={[{ 
                         data: sortedRecords.map((_, idx) => idx + 1),
-                        scaleType: 'linear'
+                        scaleType: 'linear',
+                        tickLabelStyle: { fill: palette.text, fontSize: 10 }
                       }]}
                       series={[{
                         data: sortedRecords.map(r => {
@@ -317,6 +318,11 @@ const AdminFinancials = () => {
                       }]}
                       height={120}
                       margin={{ top: 10, right: 10, bottom: 20, left: 40 }}
+                      sx={{
+                        '& .MuiChartsAxis-line': { stroke: palette.goldLight },
+                        '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
+                        '& .MuiChartsAxis-tickLabel': { fill: palette.text }
+                      }}
                     />
                   </Box>
                   <Box flexGrow={1}>
