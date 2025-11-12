@@ -67,6 +67,9 @@ Disallow: /verify/
 # Crawl delay (be polite to server)
 Crawl-delay: 1
 
+# Host declaration
+Host: https://kalakritam.in
+
 # Google-specific rules
 User-agent: Googlebot
 Allow: /
