@@ -886,6 +886,27 @@ export const ticketsApi = {
   },
 };
 
+// Financials API functions
+export const financialsApi = {
+  list: ({ eventId, page = 1, limit = 100, year, month } = {}) => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (eventId) params.set('event_id', String(eventId));
+    if (year) params.set('year', String(year));
+    if (month) params.set('month', String(month));
+    return apiCall(`admin/financials?${params.toString()}`);
+  },
+  create: (record) => apiCall('admin/financials', 'POST', record),
+  update: (id, updates) => apiCall(`admin/financials/${id}`, 'PUT', updates),
+  remove: (id) => apiCall(`admin/financials/${id}`, 'DELETE'),
+  monthlySummary: (year) => {
+    const params = new URLSearchParams();
+    if (year) params.set('year', String(year));
+    return apiCall(`admin/financials/summary/monthly?${params.toString()}`);
+  },
+  yearlySummary: () => apiCall('admin/financials/summary/yearly'),
+  analytics: () => apiCall('admin/financials/analytics')
+};
+
 // Authentication API functions
 export const authApi = {
   login: async (credentials) => {

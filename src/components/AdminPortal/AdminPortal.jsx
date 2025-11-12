@@ -56,6 +56,13 @@ const AdminPortal = () => {
 
   const adminModules = [
     {
+      title: 'Financial Analytics',
+      description: 'Track event profits, budgets, and ticket sales with interactive charts',
+      path: '/admin/financials',
+      icon: '📊',
+      color: '#c38f21'
+    },
+    {
       title: 'Hero Banners',
       description: 'Manage home page hero banners with images or videos (16:9 ratio)',
       path: '/admin/hero-banners',
@@ -162,18 +169,21 @@ const AdminPortal = () => {
                 key={index}
                 className="admin-module-card"
                 onClick={() => window.location.href = module.path}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    window.location.href = module.path;
+                  }
+                }}
               >
                 <div className="module-icon" style={{ color: module.color }}>
                   {module.icon}
                 </div>
                 <h3 className="module-title">{module.title}</h3>
                 <p className="module-description">{module.description}</p>
-                <button 
-                  className="module-action-btn"
-                  style={{ borderColor: module.color, color: module.color }}
-                >
-                  Manage →
-                </button>
+                <div className="module-arrow" style={{ color: module.color }}>→</div>
               </div>
             ))}
           </div>

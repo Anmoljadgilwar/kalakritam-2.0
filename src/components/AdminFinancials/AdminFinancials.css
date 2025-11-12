@@ -1,0 +1,318 @@
+/* Admin Financials Mobile Responsiveness */
+
+/* Override Material-UI defaults for better mobile experience */
+.admin-financials-container {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure cards don't overflow on mobile */
+.MuiCard-root {
+  width: 100% !important;
+  overflow-x: hidden;
+}
+
+/* Make sure tables are scrollable on mobile */
+.MuiTableContainer-root {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* Chart containers responsive */
+.recharts-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-gallery-content {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .admin-gallery-title {
+    font-size: 2rem !important;
+  }
+  
+  .admin-gallery-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  /* Make Material-UI Grid items stack properly */
+  .MuiGrid-item {
+    padding: 8px !important;
+  }
+  
+  /* Adjust card padding */
+  .MuiCardContent-root {
+    padding: 1.5rem !important;
+  }
+  
+  /* Make buttons full width on tablet */
+  .MuiButton-root {
+    width: 100%;
+    margin: 0.25rem 0 !important;
+  }
+  
+  /* Stack buttons vertically */
+  .MuiStack-root {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-gallery-content {
+    padding: 1rem 0.75rem !important;
+  }
+  
+  .admin-gallery-header {
+    margin-bottom: 1.5rem !important;
+    padding: 0 0.5rem;
+  }
+  
+  .admin-gallery-title {
+    font-size: 1.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .admin-gallery-subtitle {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Card adjustments */
+  .MuiCard-root {
+    margin-bottom: 1.5rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .MuiCardContent-root {
+    padding: 1.25rem !important;
+  }
+  
+  /* Typography adjustments */
+  .MuiTypography-h6 {
+    font-size: 1.1rem !important;
+  }
+  
+  .MuiTypography-body1 {
+    font-size: 0.9rem !important;
+  }
+  
+  .MuiTypography-body2 {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Form controls */
+  .MuiFormControl-root {
+    margin-bottom: 1rem !important;
+  }
+  
+  .MuiTextField-root,
+  .MuiSelect-root {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+  
+  .MuiInputBase-input {
+    font-size: 16px !important;
+    padding: 12px 14px !important;
+  }
+  
+  .MuiInputLabel-root {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Table adjustments */
+  .MuiTable-root {
+    min-width: 650px !important;
+  }
+  
+  .MuiTableCell-root {
+    padding: 8px 4px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .MuiTableCell-head {
+    font-weight: 600 !important;
+  }
+  
+  /* Chart adjustments */
+  .recharts-wrapper {
+    font-size: 0.75rem !important;
+  }
+  
+  .recharts-legend-wrapper {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Button adjustments */
+  .MuiButton-root {
+    padding: 10px 16px !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .MuiIconButton-root {
+    padding: 8px !important;
+  }
+  
+  /* Grid spacing */
+  .MuiGrid-container {
+    margin: -8px !important;
+  }
+  
+  .MuiGrid-item {
+    padding: 8px !important;
+  }
+  
+  /* Stack spacing */
+  .MuiStack-root {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-gallery-content {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .admin-gallery-header {
+    padding: 0 0.25rem;
+  }
+  
+  .admin-gallery-title {
+    font-size: 1.5rem !important;
+    line-height: 1.2;
+  }
+  
+  .admin-gallery-subtitle {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Card adjustments for small screens */
+  .MuiCard-root {
+    border-radius: 6px !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .MuiCardContent-root {
+    padding: 1rem !important;
+  }
+  
+  /* Typography */
+  .MuiTypography-h6 {
+    font-size: 1rem !important;
+  }
+  
+  .MuiTypography-body1 {
+    font-size: 0.85rem !important;
+  }
+  
+  .MuiTypography-body2 {
+    font-size: 0.8rem !important;
+  }
+  
+  /* Form controls */
+  .MuiInputBase-input {
+    padding: 10px 12px !important;
+  }
+  
+  .MuiInputLabel-root {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Table for very small screens */
+  .MuiTable-root {
+    min-width: 600px !important;
+  }
+  
+  .MuiTableCell-root {
+    padding: 6px 2px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  /* Charts */
+  .recharts-wrapper {
+    font-size: 0.7rem !important;
+  }
+  
+  .recharts-legend-item {
+    font-size: 0.65rem !important;
+  }
+  
+  /* Buttons */
+  .MuiButton-root {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  /* Grid adjustments */
+  .MuiGrid-container {
+    margin: -6px !important;
+  }
+  
+  .MuiGrid-item {
+    padding: 6px !important;
+  }
+  
+  /* Stack adjustments */
+  .MuiStack-root {
+    gap: 0.75rem !important;
+  }
+  
+  /* Select dropdown */
+  .MuiSelect-select {
+    padding-right: 32px !important;
+  }
+  
+  /* Icon buttons */
+  .MuiIconButton-root {
+    padding: 6px !important;
+  }
+}
+
+/* Ensure horizontal scrolling for wide tables */
+@media (max-width: 768px) {
+  .MuiTableContainer-root {
+    box-shadow: inset -1px 0 0 rgba(195, 143, 33, 0.3) !important;
+  }
+  
+  /* Add scroll indicator */
+  .MuiTableContainer-root::after {
+    content: '→';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(195, 143, 33, 0.6);
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    pointer-events: none;
+    animation: scrollHint 2s ease-in-out infinite;
+  }
+  
+  @keyframes scrollHint {
+    0%, 100% {
+      opacity: 0.3;
+      transform: translateY(-50%) translateX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-50%) translateX(5px);
+    }
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .MuiButton-root,
+  .MuiIconButton-root {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  
+  .MuiTableCell-root {
+    min-height: 44px !important;
+  }
+}

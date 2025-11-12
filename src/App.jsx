@@ -177,6 +177,14 @@ const AdminEvents = React.lazy(() => {
   });
 });
 
+const AdminFinancials = React.lazy(() => {
+  const measure = measureLazyLoadTime('AdminFinancials');
+  return import('./components/AdminFinancials').then(module => {
+    measure();
+    return module;
+  });
+});
+
 const AdminArtists = React.lazy(() => {
   const measure = measureLazyLoadTime('AdminArtists');
   return import('./components/AdminArtists').then(module => {
@@ -594,6 +602,7 @@ const AppContent = () => {
                   <Route path="/admin/gallery" element={<AdminGallery />} />
                   <Route path="/admin/workshops" element={<AdminWorkshops />} />
                   <Route path="/admin/events" element={<AdminEvents />} />
+                  <Route path="/admin/financials" element={<AdminFinancials />} />
                   <Route path="/admin/artists" element={<AdminArtists />} />
                   <Route path="/admin/blogs" element={<AdminBlogs />} />
                   <Route path="/admin/contact" element={<AdminContact />} />

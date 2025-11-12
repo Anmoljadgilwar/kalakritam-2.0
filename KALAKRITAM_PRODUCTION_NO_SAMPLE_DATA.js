@@ -16059,6 +16059,231 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
     }
   }));
   app2.use("/admin/*", authenticateToken);
+  // Financial Analytics: Event Financials CRUD and Analytics
+  // List financials with joined event details
+  app2.get("/admin/financials", catchAsync(async (c) => {
+    const db = createDatabase(c.env);
+    const { event_id = null, page = 1, limit = 100, year = null, month = null } = c.req.query();
+    const filters = [];
+    const params = [];
+    let idx = 1;
+    if (event_id) {
+      filters.push(`ef.event_id = $${idx++}`);
+      params.push(event_id);
+    }
+    if (year) {
+      filters.push(`EXTRACT(YEAR FROM COALESCE(e.start_date, ef.created_at)) = $${idx++}`);
+      params.push(parseInt(year));
+    }
+    if (month) {
+      filters.push(`EXTRACT(MONTH FROM COALESCE(e.start_date, ef.created_at)) = $${idx++}`);
+      params.push(parseInt(month));
+    }
+    const whereClause = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+    const query = `
+      SELECT 
+        ef.id,
+        ef.event_id,
+        e.title AS event_name,
+        e.start_date AS event_date,
+        COALESCE(ef.ticket_sold, 0) AS ticket_sold,
+        COALESCE(ef.income, 0) AS income,
+        COALESCE(ef.event_expense, 0) AS event_expense,
+        COALESCE(ef.material_cost, 0) AS material_cost,
+        COALESCE(ef.marketing_cost, 0) AS marketing_cost,
+        (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0)) AS total_investment,
+        (COALESCE(ef.income,0) - (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0))) AS total_profit,
+        ef.created_at,
+        ef.updated_at
+      FROM event_financials ef
+      LEFT JOIN events e ON e.id::text = ef.event_id::text
+      ${whereClause}
+      ORDER BY COALESCE(e.start_date, ef.created_at) DESC
+      LIMIT $${idx++} OFFSET $${idx++}
+    `;
+    const countQuery = `
+      SELECT COUNT(*) AS total 
+      FROM event_financials ef 
+      LEFT JOIN events e ON e.id::text = ef.event_id::text
+      ${whereClause}
+    `;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const [dataRes, countRes] = await Promise.all([
+      db.query(query, [...params, parseInt(limit), offset]),
+      db.query(countQuery, params)
+    ]);
+    if (!dataRes.success || !countRes.success) {
+      const err = dataRes.success ? countRes.error : dataRes.error;
+      return c.json({ success: false, message: "Failed to fetch financials", error: err }, 500);
+    }
+    const total = parseInt(countRes.data[0].total || 0);
+    const totalPages = Math.ceil(total / parseInt(limit || 1));
+    return c.json({
+      success: true,
+      message: "Financials fetched successfully",
+      data: dataRes.data,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1
+      }
+    });
+  }));
+  // Create financial record
+  app2.post("/admin/financials", validateBody(z2.object({
+    event_id: z2.union([z2.string(), z2.number()]),
+    ticket_sold: z2.number().int().nonnegative().optional(),
+    income: z2.number().nonnegative(),
+    event_expense: z2.number().nonnegative().optional(),
+    material_cost: z2.number().nonnegative().optional(),
+    marketing_cost: z2.number().nonnegative().optional()
+  })), catchAsync(async (c) => {
+    const body = c.get("validatedBody");
+    const db = createDatabase(c.env);
+    const payload = {
+      event_id: body.event_id,
+      ticket_sold: body.ticket_sold ?? 0,
+      income: body.income ?? 0,
+      event_expense: body.event_expense ?? 0,
+      material_cost: body.material_cost ?? 0,
+      marketing_cost: body.marketing_cost ?? 0,
+      created_at: (new Date()).toISOString(),
+      updated_at: (new Date()).toISOString()
+    };
+    const result = await db.insert("event_financials", payload);
+    if (!result.success) {
+      return c.json({ success: false, message: "Failed to create financial record", error: result.error }, 500);
+    }
+    return c.json({ success: true, message: "Financial record created", data: result.data }, 201);
+  }));
+  // Update financial record
+  app2.put("/admin/financials/:id", validateBody(z2.object({
+    event_id: z2.union([z2.string(), z2.number()]).optional(),
+    ticket_sold: z2.number().int().nonnegative().optional(),
+    income: z2.number().nonnegative().optional(),
+    event_expense: z2.number().nonnegative().optional(),
+    material_cost: z2.number().nonnegative().optional(),
+    marketing_cost: z2.number().nonnegative().optional()
+  })), catchAsync(async (c) => {
+    const id = c.req.param("id");
+    const updates = c.get("validatedBody");
+    const db = createDatabase(c.env);
+    const result = await db.update("event_financials", id, { ...updates });
+    if (!result.success) {
+      return c.json({ success: false, message: "Failed to update financial record", error: result.error }, 500);
+    }
+    return c.json({ success: true, message: "Financial record updated", data: result.data });
+  }));
+  // Delete financial record
+  app2.delete("/admin/financials/:id", catchAsync(async (c) => {
+    const id = c.req.param("id");
+    const db = createDatabase(c.env);
+    const res = await db.query("DELETE FROM event_financials WHERE id = $1 RETURNING id", [id]);
+    if (!res.success) {
+      return c.json({ success: false, message: "Failed to delete financial record", error: res.error }, 500);
+    }
+    if (res.data.length === 0) {
+      return c.json({ success: false, message: "Financial record not found" }, 404);
+    }
+    return c.json({ success: true, message: "Financial record deleted" });
+  }));
+  // Monthly summary for a given year
+  app2.get("/admin/financials/summary/monthly", catchAsync(async (c) => {
+    const db = createDatabase(c.env);
+    const { year } = c.req.query();
+    const y = parseInt(year || new Date().getFullYear());
+    const query = `
+      SELECT 
+        EXTRACT(MONTH FROM COALESCE(e.start_date, ef.created_at))::int AS month,
+        SUM(COALESCE(ef.income,0) - (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0)))::numeric AS total_profit
+      FROM event_financials ef
+      LEFT JOIN events e ON e.id = ef.event_id
+      WHERE EXTRACT(YEAR FROM COALESCE(e.start_date, ef.created_at)) = $1
+      GROUP BY month
+      ORDER BY month`;
+    const res = await db.query(query, [y]);
+    if (!res.success) return c.json({ success: false, message: "Failed to fetch monthly summary", error: res.error }, 500);
+    return c.json({ success: true, data: res.data, year: y });
+  }));
+  // Yearly summary (all years)
+  app2.get("/admin/financials/summary/yearly", catchAsync(async (c) => {
+    const db = createDatabase(c.env);
+    const query = `
+      SELECT 
+        EXTRACT(YEAR FROM COALESCE(e.start_date, ef.created_at))::int AS year,
+        SUM(COALESCE(ef.income,0) - (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0)))::numeric AS total_profit
+      FROM event_financials ef
+      LEFT JOIN events e ON e.id = ef.event_id
+      GROUP BY year
+      ORDER BY year`;
+    const res = await db.query(query);
+    if (!res.success) return c.json({ success: false, message: "Failed to fetch yearly summary", error: res.error }, 500);
+    return c.json({ success: true, data: res.data });
+  }));
+  // Analytics dataset for charts
+  app2.get("/admin/financials/analytics", catchAsync(async (c) => {
+    const db = createDatabase(c.env);
+    const [eventsRes, monthlyRes, ticketRes] = await Promise.all([
+      db.query(`
+        SELECT 
+          ef.id,
+          ef.event_id,
+          e.title AS event_name,
+          e.start_date AS event_date,
+          COALESCE(ef.income,0) AS income,
+          (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0)) AS total_investment,
+          (COALESCE(ef.income,0) - (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0))) AS total_profit
+        FROM event_financials ef
+        LEFT JOIN events e ON e.id = ef.event_id
+        ORDER BY COALESCE(e.start_date, ef.created_at) ASC
+      `),
+      db.query(`
+        SELECT 
+          DATE_TRUNC('month', COALESCE(e.start_date, ef.created_at)) AS month,
+          SUM(COALESCE(ef.income,0) - (COALESCE(ef.event_expense,0) + COALESCE(ef.material_cost,0) + COALESCE(ef.marketing_cost,0)))::numeric AS total_profit
+        FROM event_financials ef
+        LEFT JOIN events e ON e.id = ef.event_id
+        GROUP BY month
+        ORDER BY month
+      `),
+      db.query(`
+        SELECT 
+          ef.event_id,
+          e.title AS event_name,
+          COALESCE(ef.ticket_sold,0) AS ticket_sold
+        FROM event_financials ef
+        LEFT JOIN events e ON e.id = ef.event_id
+        ORDER BY ticket_sold DESC
+      `)
+    ]);
+    if (!eventsRes.success || !monthlyRes.success || !ticketRes.success) {
+      return c.json({ success: false, message: "Failed to fetch analytics", error: (eventsRes.error || monthlyRes.error || ticketRes.error) }, 500);
+    }
+    const eventProfits = eventsRes.data.map(r => ({
+      eventId: r.event_id,
+      eventName: r.event_name,
+      eventDate: r.event_date,
+      profit: Number(r.total_profit),
+      income: Number(r.income),
+      investment: Number(r.total_investment)
+    }));
+    const monthlyTrend = monthlyRes.data.map(r => ({
+      month: r.month,
+      totalProfit: Number(r.total_profit)
+    }));
+    const ticketDistribution = ticketRes.data.map(r => ({
+      eventId: r.event_id,
+      eventName: r.event_name,
+      tickets: Number(r.ticket_sold)
+    }));
+    return c.json({
+      success: true,
+      data: { eventProfits, monthlyTrend, ticketDistribution }
+    });
+  }));
   app2.get("/admin/dashboard", catchAsync(async (c) => {
     const db = createDatabase(c.env);
     try {

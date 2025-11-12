@@ -26,8 +26,40 @@
 }
 
 /* Responsive adjustments for workshops table */
+@media (max-width: 1024px) {
+  .artworks-table {
+    min-width: 950px; /* Wider for workshop data */
+  }
+}
+
 @media (max-width: 768px) {
   .artworks-table {
     min-width: 900px; /* Wider for workshop data */
+  }
+  
+  .workshop-level-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.625rem;
+  }
+  
+  .instructor-cell,
+  .duration-cell {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .artworks-table {
+    min-width: 800px;
+  }
+  
+  .workshop-level-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+  }
+  
+  .instructor-cell,
+  .duration-cell {
+    font-size: 0.8rem;
   }
 }
