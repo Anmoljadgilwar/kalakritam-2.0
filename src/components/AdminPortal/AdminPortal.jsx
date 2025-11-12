@@ -44,7 +44,6 @@ const AdminPortal = () => {
         heroBanners: heroBannersRes.status === 'fulfilled' ? (heroBannersRes.value?.data?.length || 0) : 0,
         moments: momentsRes.status === 'fulfilled' ? (momentsRes.value?.data?.length || 0) : 0
       };
-      path: '/admin/artpartyimages',
       setStats(newStats);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
