@@ -94,15 +94,21 @@ export default defineConfig({
     modulePreload: {
       polyfill: true,
       resolveDependencies: (filename, deps, { hostId, hostType }) => {
-        // Prioritize critical chunks
-        const priorityChunks = ['react-core', 'react-router'];
-        const priority = deps.filter(dep => 
-          priorityChunks.some(chunk => dep.includes(chunk))
-        );
-        const others = deps.filter(dep => 
-          !priorityChunks.some(chunk => dep.includes(chunk))
-        );
-        return [...priority, ...others];
+        // Ensure correct loading order to prevent initialization errors
+        // Load vendor and utils first, then react-core, then others
+        const criticalChunks = ['vendor', 'utils', 'notifications', 'react-core', 'react-router'];
+        
+        const sortedDeps = deps.sort((a, b) => {
+          const aIndex = criticalChunks.findIndex(chunk => a.includes(chunk));
+          const bIndex = criticalChunks.findIndex(chunk => b.includes(chunk));
+          
+          if (aIndex === -1 && bIndex === -1) return 0;
+          if (aIndex === -1) return 1;
+          if (bIndex === -1) return -1;
+          return aIndex - bIndex;
+        });
+        
+        return sortedDeps;
       }
     },
     // Ensure proper module initialization order
