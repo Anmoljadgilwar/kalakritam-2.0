@@ -1,0 +1,39 @@
+.kalakritam-logo {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Ensure crisp rendering on high-DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .kalakritam-logo {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Hover effect (optional) */
+.kalakritam-logo:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+/* Clickable logo styles */
+.kalakritam-logo[onclick] {
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .kalakritam-logo {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kalakritam-logo {
+    max-width: 100px;
+  }
+}
