@@ -13813,6 +13813,40 @@ var catchAsync = /* @__PURE__ */ __name2((fn) => {
     }
   };
 }, "catchAsync");
+
+// Helper function to create notifications for all users
+var createNotificationForAllUsers = /* @__PURE__ */ __name2(async (db, type, title, message, link = null) => {
+  try {
+    const usersResult = await db.query('SELECT id FROM users WHERE is_active = true');
+    const users = usersResult.data || [];
+    
+    const now = new Date().toISOString();
+    for (const user of users) {
+      await db.query(`
+        INSERT INTO user_notifications (user_id, type, title, message, link, created_at, is_read)
+        VALUES ($1, $2, $3, $4, $5, $6, false)
+      `, [user.id, type, title, message, link, now]);
+    }
+    
+    console.log(`Created ${type} notification for ${users.length} users`);
+  } catch (error3) {
+    console.error('Error creating notifications:', error3);
+  }
+}, "createNotificationForAllUsers");
+
+// Helper function to delete notifications by type and title
+var deleteNotificationsByTitle = /* @__PURE__ */ __name2(async (db, type, title) => {
+  try {
+    await db.query(`
+      DELETE FROM user_notifications 
+      WHERE type = $1 AND message LIKE $2
+    `, [type, `%${title}%`]);
+    console.log(`Deleted ${type} notifications containing title: ${title}`);
+  } catch (error3) {
+    console.error('Error deleting notifications:', error3);
+  }
+}, "deleteNotificationsByTitle");
+
 var setupAuthRoutes = /* @__PURE__ */ __name2((app2) => {
   app2.use("/auth/*", authRateLimiter());
   app2.post("/auth/login", validateLogin, catchAsync(async (c) => {
@@ -14455,7 +14489,16 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
   app2.put("/api/auth/profile", authenticateUser, catchAsync(async (c) => {
     try {
       const tokenUser = c.get("user");
-      const { name, phone, bio, profile_image_url } = await c.req.json();
+      const { name, phone, bio, profile_image_url, old_profile_image_url } = await c.req.json();
+      
+      console.log('Profile update request:', {
+        userId: tokenUser.userId,
+        name,
+        phone,
+        bio,
+        profile_image_url,
+        old_profile_image_url
+      });
       
       const db = createDatabase(c.env);
       if (!db) {
@@ -14465,18 +14508,40 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
         }, 500);
       }
       
+      // Delete old profile image from R2 if a new one is being uploaded
+      if (old_profile_image_url && profile_image_url && old_profile_image_url !== profile_image_url) {
+        try {
+          const oldImageKey = old_profile_image_url.split('/').pop();
+          const bucket = c.env.R2_BUCKET;
+          if (bucket && oldImageKey) {
+            await bucket.delete(`user-profiles/${oldImageKey}`);
+            console.log('Old profile image deleted:', oldImageKey);
+          }
+        } catch (deleteError) {
+          console.error('Failed to delete old profile image:', deleteError);
+          // Continue with update even if delete fails
+        }
+      }
+      
       const now = new Date().toISOString();
       const updateResult = await db.query(`
         UPDATE users SET name = $1, phone = $2, bio = $3, profile_image_url = $4, updated_at = $5 
         WHERE id = $6 RETURNING *
       `, [name || null, phone || null, bio || null, profile_image_url || null, now, tokenUser.userId]);
       
+      console.log('Update result:', {
+        success: updateResult?.success,
+        rowCount: updateResult?.data?.length,
+        error: updateResult?.error
+      });
+      
       const user = updateResult?.data?.[0] || null;
       
       if (!user) {
+        console.error('No user returned after update');
         return c.json({
           success: false,
-          error: "Failed to update profile"
+          error: "Failed to update profile - user not found or no changes made"
         }, 500);
       }
       
@@ -14502,7 +14567,136 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
       console.error('Update profile error:', error3);
       return c.json({
         success: false,
-        error: 'Failed to update profile'
+        error: error3.message || 'Failed to update profile'
+      }, 500);
+    }
+  }));
+  
+  // Get User Notifications
+  app2.get("/api/auth/notifications", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const db = createDatabase(c.env);
+      
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      const result = await db.query(`
+        SELECT * FROM user_notifications 
+        WHERE user_id = $1 
+        ORDER BY created_at DESC 
+        LIMIT 50
+      `, [tokenUser.userId]);
+      
+      return c.json({
+        success: true,
+        data: result.data || []
+      });
+    } catch (error3) {
+      console.error('Get notifications error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to fetch notifications'
+      }, 500);
+    }
+  }));
+  
+  // Mark Notification as Read
+  app2.put("/api/auth/notifications/:id/read", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const notificationId = c.req.param("id");
+      const db = createDatabase(c.env);
+      
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      await db.query(`
+        UPDATE user_notifications 
+        SET is_read = true, read_at = $1 
+        WHERE id = $2 AND user_id = $3
+      `, [new Date().toISOString(), notificationId, tokenUser.userId]);
+      
+      return c.json({
+        success: true,
+        message: "Notification marked as read"
+      });
+    } catch (error3) {
+      console.error('Mark notification read error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to mark notification as read'
+      }, 500);
+    }
+  }));
+  
+  // Mark All Notifications as Read
+  app2.put("/api/auth/notifications/read-all", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const db = createDatabase(c.env);
+      
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      await db.query(`
+        UPDATE user_notifications 
+        SET is_read = true, read_at = $1 
+        WHERE user_id = $2 AND is_read = false
+      `, [new Date().toISOString(), tokenUser.userId]);
+      
+      return c.json({
+        success: true,
+        message: "All notifications marked as read"
+      });
+    } catch (error3) {
+      console.error('Mark all notifications read error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to mark notifications as read'
+      }, 500);
+    }
+  }));
+
+  // Delete All Notifications for User
+  app2.delete("/api/auth/notifications/delete-all", authenticateUser, catchAsync(async (c) => {
+    try {
+      const tokenUser = c.get("user");
+      const db = createDatabase(c.env);
+      
+      if (!db) {
+        return c.json({
+          success: false,
+          error: "Database not configured"
+        }, 500);
+      }
+      
+      await db.query(`
+        DELETE FROM user_notifications 
+        WHERE user_id = $1
+      `, [tokenUser.userId]);
+      
+      return c.json({
+        success: true,
+        message: "All notifications deleted"
+      });
+    } catch (error3) {
+      console.error('Delete all notifications error:', error3);
+      return c.json({
+        success: false,
+        error: 'Failed to delete notifications'
       }, 500);
     }
   }));
@@ -16816,7 +17010,26 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         now
       ]);
       if (result.success && result.data.length > 0) {
-        console.log('✅ Artwork stored in DB:', { id: result.data[0].id, year: result.data[0].year, yearType: typeof result.data[0].year });
+        console.log('[DATABASE] Artwork stored:', { id: result.data[0].id, year: result.data[0].year, yearType: typeof result.data[0].year });
+        
+        // Create notification for all users
+        try {
+          const priceInfo = artworkData.price ? `₹${artworkData.price.toLocaleString()}` : 'Price on request';
+          const categoryInfo = artworkData.category ? ` | ${artworkData.category}` : '';
+          const mediumInfo = artworkData.medium ? ` in ${artworkData.medium}` : '';
+          
+          await createNotificationForAllUsers(
+            db,
+            'gallery',
+            `New ${artworkData.category || 'Artwork'} in Gallery`,
+            `"${artworkData.title}" by ${artworkData.artist}${mediumInfo}${categoryInfo} - ${priceInfo}. Explore this stunning piece now!`,
+            '/gallery'
+          );
+          console.log('[NOTIFICATION] Sent to all users for new artwork');
+        } catch (notifError) {
+          console.error('[NOTIFICATION ERROR] Failed to send notification:', notifError.message);
+        }
+        
         return c.json({
           success: true,
           message: "Artwork created successfully",
@@ -16873,7 +17086,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         now
       ]);
       if (result.success && result.data.length > 0) {
-        console.log('✅ Artwork updated in DB:', { id: result.data[0].id, year: result.data[0].year, yearType: typeof result.data[0].year });
+        console.log('[DATABASE] Artwork updated:', { id: result.data[0].id, year: result.data[0].year, yearType: typeof result.data[0].year });
         return c.json({
           success: true,
           message: "Artwork updated successfully",
@@ -16894,9 +17107,24 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     try {
+      // Get artwork details before deleting
+      const getQuery = `SELECT title FROM artworks WHERE id = $1`;
+      const artworkResult = await db.query(getQuery, [id]);
+      
       const query = `DELETE FROM artworks WHERE id = $1 RETURNING *`;
       const result = await db.query(query, [id]);
       if (result.success && result.data.length > 0) {
+        // Delete only notifications for this specific artwork
+        if (artworkResult.success && artworkResult.data.length > 0) {
+          const artworkTitle = artworkResult.data[0].title;
+          try {
+            await deleteNotificationsByTitle(db, 'gallery', artworkTitle);
+            console.log(`[NOTIFICATION] Deleted notifications for artwork: ${artworkTitle}`);
+          } catch (notifError) {
+            console.error('[NOTIFICATION ERROR] Failed to delete notifications:', notifError.message);
+          }
+        }
+        
         return c.json({
           success: true,
           message: "Artwork deleted successfully"
@@ -17198,6 +17426,25 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         now
       ]);
       if (result.success && result.data.length > 0) {
+        // Create notification for all users
+        try {
+          const eventDate = eventData.start_date ? new Date(eventData.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Coming Soon';
+          const ticketInfo = eventData.ticket_price ? `Tickets from ₹${eventData.ticket_price}` : 'Free Entry';
+          const venueInfo = eventData.venue ? ` at ${eventData.venue}` : '';
+          const categoryInfo = eventData.category ? ` | ${eventData.category}` : '';
+          
+          await createNotificationForAllUsers(
+            db,
+            'event',
+            `Upcoming Event: ${eventData.title}`,
+            `Join us on ${eventDate}${venueInfo}${categoryInfo}. ${ticketInfo}. Book your spot now!`,
+            '/events'
+          );
+          console.log('[NOTIFICATION] Sent to all users for new event');
+        } catch (notifError) {
+          console.error('[NOTIFICATION ERROR] Failed to send notification:', notifError.message);
+        }
+        
         return c.json({
           success: true,
           message: "Event created successfully",
@@ -17277,9 +17524,24 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     try {
+      // Get event details before deleting
+      const getQuery = `SELECT title FROM events WHERE id = $1`;
+      const eventResult = await db.query(getQuery, [id]);
+      
       const query = `DELETE FROM events WHERE id = $1 RETURNING *`;
       const result = await db.query(query, [id]);
       if (result.success && result.data.length > 0) {
+        // Delete only notifications for this specific event
+        if (eventResult.success && eventResult.data.length > 0) {
+          const eventTitle = eventResult.data[0].title;
+          try {
+            await deleteNotificationsByTitle(db, 'event', eventTitle);
+            console.log(`[NOTIFICATION] Deleted notifications for event: ${eventTitle}`);
+          } catch (notifError) {
+            console.error('[NOTIFICATION ERROR] Failed to delete notifications:', notifError.message);
+          }
+        }
+        
         return c.json({
           success: true,
           message: "Event deleted successfully"
@@ -17411,7 +17673,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       if (result.success && result.data.length > 0) {
         const workshop = result.data[0];
         
-        console.log('✅ Workshop created in database:', {
+        console.log('[DATABASE] Workshop created:', {
           id: workshop.id,
           max_participants: workshop.max_participants,
           max_participants_type: typeof workshop.max_participants,
@@ -17435,6 +17697,27 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
           createdAt: workshop.created_at,
           updatedAt: workshop.updated_at
         };
+        
+        // Create notification for all users
+        try {
+          const startDate = workshopData.start_date ? new Date(workshopData.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Soon';
+          const priceInfo = workshopData.price ? `₹${workshopData.price}` : 'Free';
+          const seatsInfo = workshopData.max_participants ? ` | Limited to ${workshopData.max_participants} seats` : '';
+          const instructorInfo = workshopData.instructor ? ` with ${workshopData.instructor}` : '';
+          const durationInfo = workshopData.duration ? ` (${workshopData.duration})` : '';
+          
+          await createNotificationForAllUsers(
+            db,
+            'workshop',
+            `New Workshop Available: ${workshopData.title}`,
+            `Starting ${startDate}${instructorInfo}${durationInfo}. Fee: ${priceInfo}${seatsInfo}. Register before seats fill up!`,
+            '/workshops'
+          );
+          console.log('[NOTIFICATION] Sent to all users for new workshop');
+        } catch (notifError) {
+          console.error('[NOTIFICATION ERROR] Failed to send notification:', notifError.message);
+        }
+        
         return c.json({
           success: true,
           message: "Workshop created successfully",
@@ -17502,7 +17785,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       if (result.success && result.data.length > 0) {
         const workshop = result.data[0];
         
-        console.log('✅ Workshop updated in database:', {
+        console.log('[DATABASE] Workshop updated:', {
           id: workshop.id,
           max_participants: workshop.max_participants,
           max_participants_type: typeof workshop.max_participants,
@@ -17546,9 +17829,24 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     try {
+      // Get workshop details before deleting
+      const getQuery = `SELECT title FROM workshops WHERE id = $1`;
+      const workshopResult = await db.query(getQuery, [id]);
+      
       const query = `DELETE FROM workshops WHERE id = $1 RETURNING *`;
       const result = await db.query(query, [id]);
       if (result.success && result.data.length > 0) {
+        // Delete only notifications for this specific workshop
+        if (workshopResult.success && workshopResult.data.length > 0) {
+          const workshopTitle = workshopResult.data[0].title;
+          try {
+            await deleteNotificationsByTitle(db, 'workshop', workshopTitle);
+            console.log(`[NOTIFICATION] Deleted notifications for workshop: ${workshopTitle}`);
+          } catch (notifError) {
+            console.error('[NOTIFICATION ERROR] Failed to delete notifications:', notifError.message);
+          }
+        }
+        
         return c.json({
           success: true,
           message: "Workshop deleted successfully"
@@ -17889,6 +18187,25 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
         now
       ]);
       if (result.success && result.data.length > 0) {
+        // Create notification for all users
+        try {
+          const authorInfo = blogData.author || 'Kalakritam Team';
+          const categoryInfo = blogData.category ? ` | ${blogData.category}` : '';
+          const readTimeInfo = blogData.read_time ? ` | ${blogData.read_time} min read` : '';
+          const excerptInfo = blogData.excerpt ? ` - ${blogData.excerpt.substring(0, 80)}${blogData.excerpt.length > 80 ? '...' : ''}` : '';
+          
+          await createNotificationForAllUsers(
+            db,
+            'blog',
+            `New Article Published: ${blogData.title}`,
+            `By ${authorInfo}${categoryInfo}${readTimeInfo}${excerptInfo}. Dive into this insightful article now!`,
+            '/blogs'
+          );
+          console.log('[NOTIFICATION] Sent to all users for new blog');
+        } catch (notifError) {
+          console.error('[NOTIFICATION ERROR] Failed to send notification:', notifError.message);
+        }
+        
         return c.json({
           success: true,
           message: "Blog created successfully",
@@ -17963,9 +18280,24 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     try {
+      // Get blog details before deleting
+      const getQuery = `SELECT title FROM blogs WHERE id = $1`;
+      const blogResult = await db.query(getQuery, [id]);
+      
       const query = `DELETE FROM blogs WHERE id = $1 RETURNING *`;
       const result = await db.query(query, [id]);
       if (result.success && result.data.length > 0) {
+        // Delete only notifications for this specific blog
+        if (blogResult.success && blogResult.data.length > 0) {
+          const blogTitle = blogResult.data[0].title;
+          try {
+            await deleteNotificationsByTitle(db, 'blog', blogTitle);
+            console.log(`[NOTIFICATION] Deleted notifications for blog: ${blogTitle}`);
+          } catch (notifError) {
+            console.error('[NOTIFICATION ERROR] Failed to delete notifications:', notifError.message);
+          }
+        }
+        
         return c.json({
           success: true,
           message: "Blog deleted successfully"
@@ -18323,7 +18655,7 @@ init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 init_auth_workers();
 var setupUploadRoutes = /* @__PURE__ */ __name2((app2) => {
-  app2.post("/upload/image", authenticateToken, catchAsync(async (c) => {
+  app2.post("/upload/image", authenticateAdminOrUser, catchAsync(async (c) => {
     try {
       const formData = await c.req.formData();
       const file = formData.get("file");

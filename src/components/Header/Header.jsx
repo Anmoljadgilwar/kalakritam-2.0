@@ -4,6 +4,7 @@ import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
 import { useUserAuth } from '../../contexts/UserAuthContext';
 import { getUserPath, getNavigationPath } from '../../utils/userHelpers';
 import { gsap } from 'gsap';
+import NotificationBell from '../NotificationBell';
 import './Header.css';
 import Artists from '../Artists';
 
@@ -450,14 +451,18 @@ const Header = ({ currentPage = 'home' }) => {
               
               {/* User Login/Profile Button */}
               <div className="header-user-section" ref={userMenuRef}>
+                {isAuthenticated && user && (
+                  <NotificationBell />
+                )}
+                
                 {isAuthenticated && user ? (
                   <button 
                     className="user-profile-btn"
                     onClick={() => setShowUserMenu(!showUserMenu)}
                   >
                     <div className="user-avatar">
-                      {user.photoUrl ? (
-                        <img src={user.photoUrl} alt={user.name} />
+                      {(user.profileImageUrl || user.photoUrl) ? (
+                        <img src={user.profileImageUrl || user.photoUrl} alt={user.name} />
                       ) : (
                         <span className="user-initials">
                           {user.name?.charAt(0).toUpperCase()}
@@ -643,8 +648,8 @@ const Header = ({ currentPage = 'home' }) => {
               {isAuthenticated && user && (
                 <div className="sidebar-user-info">
                   <div className="sidebar-user-avatar">
-                    {user.photoUrl ? (
-                      <img src={user.photoUrl} alt={user.name} />
+                    {(user.profileImageUrl || user.photoUrl) ? (
+                      <img src={user.profileImageUrl || user.photoUrl} alt={user.name} />
                     ) : (
                       <span>{user.name?.charAt(0).toUpperCase()}</span>
                     )}

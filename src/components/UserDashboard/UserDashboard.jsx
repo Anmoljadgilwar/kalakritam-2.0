@@ -56,6 +56,7 @@ const UserDashboard = () => {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem('token'); // Ensure token is removed
     toast.success('Logged out successfully');
     navigate('/home');
   };
@@ -90,15 +91,20 @@ const UserDashboard = () => {
 
   const handleSaveProfile = async () => {
     setIsSaving(true);
+    
+    // Check token - try both token and userToken keys
+    const token = localStorage.getItem('token') || localStorage.getItem('userToken');
+    console.log('Token check:', token ? 'Token exists' : 'No token found');
+    
+    if (!token) {
+      toast.error('You are not logged in. Please log in again.');
+      setIsSaving(false);
+      logout();
+      navigate('/user/login');
+      return;
+    }
+    
     try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        toast.error('You are not logged in. Please log in again.');
-        logout();
-        navigate('/user/login');
-        return;
-      }
 
       let imageUrl = profileData.profileImageUrl;
 
@@ -107,9 +113,15 @@ const UserDashboard = () => {
         try {
           toast.info('Uploading profile image...');
           
+          // Create a username-based filename
+          const username = user.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          const fileExtension = imageFile.name.split('.').pop();
+          const customFilename = `${username}-profile`;
+          
           const formData = new FormData();
           formData.append('file', imageFile);
           formData.append('folder', 'user-profiles');
+          formData.append('name', customFilename);
 
           const uploadResponse = await fetch(`${config.apiBaseUrl}/upload/image`, {
             method: 'POST',
@@ -160,7 +172,8 @@ const UserDashboard = () => {
           name: profileData.name,
           phone: profileData.phone,
           bio: profileData.bio,
-          profile_image_url: imageUrl
+          profile_image_url: imageUrl,
+          old_profile_image_url: user.profileImageUrl // Send old image URL for deletion
         })
       });
 
