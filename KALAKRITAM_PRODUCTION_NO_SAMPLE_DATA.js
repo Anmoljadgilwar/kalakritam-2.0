@@ -14731,7 +14731,7 @@ var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
         email: user.email,
         provider: user.provider,
         googleId: user.google_id,
-        photoUrl: user.photo_url,
+        photoUrl: user.profile_image_url || user.photo_url,
         phone: user.phone,
         bio: user.bio,
         isActive: user.is_active,
