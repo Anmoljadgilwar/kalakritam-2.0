@@ -259,9 +259,16 @@
     animation-fill-mode: none !important;
   }
   
-  /* Optimize z-index stacking */
-  .gallery-particles-background {
-    z-index: 0 !important;
+  /* COMPLETELY DISABLE all particles on mobile for performance */
+  .gallery-particles-background,
+  .app-particles-background,
+  [class*="particles-background"],
+  [class*="Particles"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -999 !important;
   }
   
   .gallery-blur-overlay {

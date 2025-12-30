@@ -92,8 +92,14 @@ html, body {
     min-height: 100vh !important;
   }
   
-  /* Ensure fixed backgrounds don't block touch events */
-  .app-particles-background,
+  /* COMPLETELY HIDE particles on mobile for performance */
+  .app-particles-background {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
   .app-background-home {
     pointer-events: none !important;
   }

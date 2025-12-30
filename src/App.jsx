@@ -12,6 +12,7 @@ import { seoManager } from './utils/seoManager.js'
 import useServerConnection from './hooks/useServerConnection.js'
 import { toast } from './utils/notifications.js'
 import { updateSpeculationRules } from './utils/pageOptimizationScript.js'
+import { isMobile } from './utils/mobileOptimizations.js'
 import MuiToastContainer from './components/MuiToastContainer'
 import './App.css'
 import ScrollToTop from './components/ScrollToTop.jsx'
@@ -525,6 +526,9 @@ const AppContent = () => {
     };
   }, [showParticles, showHome]);
 
+  // Check if on mobile device - don't render particles on mobile for performance
+  const isOnMobile = isMobile();
+
   return (
     <>
       {isLoading && <Loading />}
@@ -532,7 +536,8 @@ const AppContent = () => {
       <Router>
         <PageOptimizer />
         <div className="app">
-          {showParticles && (
+          {/* Particles disabled on mobile for optimal performance */}
+          {showParticles && !isOnMobile && (
             <div className="app-particles-background">
               <Particles
                 particleColors={['#c38f21', '#ffffff', '#c38f21']}

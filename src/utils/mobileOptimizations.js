@@ -56,16 +56,17 @@ export const getMobileParticleConfig = () => {
   }
   
   if (isMobile()) {
+    // Completely disable particles on mobile for optimal performance
     return {
-      particleCount: 100, // Reduced further from 300
-      particleSpread: 6,  // Reduced from 8
-      speed: 0.1,         // Reduced from 0.15
-      particleBaseSize: 100, // Reduced from 150
-      moveParticlesOnHover: false, // Disabled on mobile
-      particleHoverFactor: 1, // Reduced from 2
-      alphaParticles: false, // Disable alpha for better performance
-      disableRotation: true, // Disable rotation on mobile for better performance
-      disabled: false
+      particleCount: 0,
+      particleSpread: 0,
+      speed: 0,
+      particleBaseSize: 0,
+      moveParticlesOnHover: false,
+      particleHoverFactor: 1,
+      alphaParticles: false,
+      disableRotation: true,
+      disabled: true // Particles completely disabled on mobile for professional experience
     };
   }
   return {
