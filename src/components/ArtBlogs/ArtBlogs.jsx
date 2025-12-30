@@ -26,6 +26,10 @@ const ArtBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchCalled = useRef(false);
+  
+  // Newsletter subscription state
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
   useEffect(() => {
     if (!fetchCalled.current) {
@@ -137,6 +141,49 @@ const ArtBlogs = () => {
   const handleModalClick = (e) => {
     if (e.target.classList.contains('artwork-modal-overlay')) {
       closeModal();
+    }
+  };
+
+  // Newsletter subscription handler
+  const handleNewsletterSubscribe = async (e) => {
+    e.preventDefault();
+    
+    if (!newsletterEmail) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newsletterEmail)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    setIsSubscribing(true);
+    
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/newsletter/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success(data.message || 'Successfully subscribed to newsletter!');
+        setNewsletterEmail('');
+      } else {
+        toast.error(data.message || 'Failed to subscribe. Please try again.');
+      }
+    } catch (err) {
+      console.error('Newsletter subscription error:', err);
+      toast.error('Failed to connect to server. Please try again later.');
+    } finally {
+      setIsSubscribing(false);
     }
   };
 
@@ -259,10 +306,23 @@ const ArtBlogs = () => {
           <div className="newsletter-content">
             <h2>Stay Updated</h2>
             <p>Subscribe to our newsletter and never miss the latest insights from the art world.</p>
-            <div className="newsletter-form">
-              <input type="email" placeholder="Enter your email address" className="email-input" />
-              <button className="subscribe-btn">Subscribe</button>
-            </div>
+            <form className="newsletter-form" onSubmit={handleNewsletterSubscribe}>
+              <input 
+                type="email" 
+                placeholder="Enter your email address" 
+                className="email-input"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                disabled={isSubscribing}
+              />
+              <button 
+                type="submit" 
+                className="subscribe-btn"
+                disabled={isSubscribing}
+              >
+                {isSubscribing ? 'Subscribing...' : 'Subscribe'}
+              </button>
+            </form>
           </div>
         </section>
 

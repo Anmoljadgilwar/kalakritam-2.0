@@ -27,28 +27,11 @@ export const throttle = (func, limit) => {
   };
 };
 
-// Optimized image loading with WebP support
+// Optimized image loading - disabled, return images as-is
 export const getOptimizedImageUrl = (url, width = 400, quality = 80) => {
   if (!url) return '';
-  
-  // Check if browser supports WebP
-  const supportsWebP = (() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1;
-    canvas.height = 1;
-    return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-  })();
-  
-  // If it's already a data URL or blob, return as is
-  if (url.startsWith('data:') || url.startsWith('blob:')) {
-    return url;
-  }
-  
-  // Add optimization parameters if the URL supports them
-  const separator = url.includes('?') ? '&' : '?';
-  const format = supportsWebP ? 'webp' : 'jpeg';
-  
-  return `${url}${separator}w=${width}&q=${quality}&f=${format}`;
+  // Return the original URL without any modifications
+  return url;
 };
 
 // Preload critical resources

@@ -87,40 +87,11 @@ export const getMobileParticleConfig = () => {
   };
 };
 
-// Image optimization for mobile
+// Image optimization for mobile - disabled, return images as-is
 export const getOptimizedImageUrl = (url, isMobile = false) => {
   if (!url) return '';
-  if (!isClient) return url;
-  
-  // For mobile devices, request smaller images
-  const width = isMobile ? 400 : 800;
-  const quality = isMobile ? 70 : 80;
-  
-  // If it's already a data URL or blob, return as is
-  if (url.startsWith('data:') || url.startsWith('blob:')) {
-    return url;
-  }
-  
-  // Check if browser supports WebP (memoized to avoid repeated canvas work)
-  const supportsWebP = (() => {
-    if (memoizedWebPSupport !== null) return memoizedWebPSupport;
-    try {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1;
-      canvas.height = 1;
-      memoizedWebPSupport = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-      return memoizedWebPSupport;
-    } catch (e) {
-      memoizedWebPSupport = false;
-      return false;
-    }
-  })();
-  
-  // Add optimization parameters if the URL supports them
-  const separator = url.includes('?') ? '&' : '?';
-  const format = supportsWebP ? 'webp' : 'jpeg';
-  
-  return `${url}${separator}w=${width}&q=${quality}&f=${format}`;
+  // Return the original URL without any modifications
+  return url;
 };
 
 // Reduce CSS effects on mobile for better performance
