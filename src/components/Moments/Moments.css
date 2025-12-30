@@ -126,10 +126,12 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  animation-duration: 40s; /* Slower for smoother loop */
+  animation-duration: 40s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* Staggered animation for each column */
@@ -157,19 +159,38 @@
 /* Images are tripled, so we animate to -33.333% to create seamless loop */
 @keyframes scrollUp {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
   100% {
-    transform: translateY(-33.333%);
+    transform: translateY(-33.333%) translateZ(0);
   }
 }
 
 @keyframes scrollDown {
   0% {
-    transform: translateY(-33.333%);
+    transform: translateY(-33.333%) translateZ(0);
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* Mobile-specific keyframe animations with GPU acceleration */
+@keyframes scrollUpMobile {
+  0% {
+    transform: translateY(0) translateZ(0);
+  }
+  100% {
+    transform: translateY(-33.333%) translateZ(0);
+  }
+}
+
+@keyframes scrollDownMobile {
+  0% {
+    transform: translateY(-33.333%) translateZ(0);
+  }
+  100% {
+    transform: translateY(0) translateZ(0);
   }
 }
 
@@ -495,13 +516,47 @@
 
   .masonry-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    height: 600px; /* Adjusted height for tablet */
+    gap: 10px;
+    height: 550px; /* Adjusted height for tablet */
+    overflow: hidden;
   }
 
   .masonry-column {
-    gap: 12px;
-    animation-duration: 35s; /* Adjust speed for smaller screen */
+    gap: 10px;
+    animation-duration: 25s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* Fix animation for 2-column layout on mobile */
+  .masonry-column:nth-child(1) {
+    animation-name: scrollUpMobile;
+    animation-delay: 0s;
+  }
+
+  .masonry-column:nth-child(2) {
+    animation-name: scrollDownMobile;
+    animation-delay: 0s;
+  }
+  
+  /* Reset 3rd and 4th column animations (they don't exist in 2-column layout) */
+  .masonry-column:nth-child(3),
+  .masonry-column:nth-child(4) {
+    animation-name: none;
+  }
+  
+  .masonry-item {
+    min-height: 150px;
+  }
+  
+  .masonry-image {
+    min-height: 150px;
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   .event-moment-title {
@@ -553,11 +608,29 @@
   .masonry-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    height: 500px; /* Adjusted height for mobile */
+    height: 450px; /* Adjusted height for mobile */
+    overflow: hidden;
   }
 
   .masonry-column {
-    animation-duration: 30s; /* Faster on mobile for better UX */
+    animation-duration: 20s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  .masonry-item {
+    min-height: 120px;
+  }
+  
+  .masonry-image {
+    min-height: 120px;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
   }
 
   .event-moment-title {

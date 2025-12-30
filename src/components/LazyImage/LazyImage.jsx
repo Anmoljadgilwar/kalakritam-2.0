@@ -9,26 +9,42 @@ const IS_MOBILE = typeof window !== 'undefined' && (
 );
 
 // Mobile image component with immediate loading
-const MobileImage = ({ src, alt, className = '', aspectRatio, priority = false, ...props }) => {
+const MobileImage = ({ src, alt, className = '', aspectRatio, priority = false, onLoad, onError, ...props }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const style = aspectRatio ? { aspectRatio } : {};
+  
+  const handleLoad = () => {
+    setIsLoaded(true);
+    onLoad && onLoad();
+  };
+  
+  const handleError = () => {
+    setHasError(true);
+    onError && onError();
+  };
   
   return (
     <div 
-      className={`lazy-image-container ${className} ${isLoaded ? 'is-loaded' : ''}`} 
+      className={`lazy-image-container mobile-image-container ${className} ${isLoaded ? 'is-loaded' : ''}`} 
       style={style} 
       {...props}
     >
-      <img
-        src={src || ''}
-        alt={alt}
-        className={`lazy-image ${isLoaded ? 'loaded' : 'loading'}`}
-        onLoad={() => setIsLoaded(true)}
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-      />
+      {!hasError ? (
+        <img
+          src={src || ''}
+          alt={alt}
+          className={`lazy-image mobile-lazy-image ${isLoaded ? 'loaded' : 'loading'}`}
+          onLoad={handleLoad}
+          onError={handleError}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div className="lazy-image-error mobile-image-error">
+          <span>Image unavailable</span>
+        </div>
+      )}
     </div>
   );
 };

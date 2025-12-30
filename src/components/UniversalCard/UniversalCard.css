@@ -396,23 +396,27 @@
   }
   
   .universal-card-detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
     padding: 8px 0;
+    flex-wrap: nowrap;
   }
   
   .universal-card-detail-label {
-    flex: none;
+    flex: 0 0 auto;
     font-size: 0.8rem;
     color: #c38f21;
+    white-space: nowrap;
   }
   
   .universal-card-detail-value {
-    flex: none;
-    padding-left: 0;
+    flex: 1;
+    padding-left: 8px;
     font-size: 0.85rem;
-    width: 100%;
+    text-align: right;
   }
   
   .universal-card-btn {
