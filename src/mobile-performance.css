@@ -1,0 +1,188 @@
+/* Mobile Performance Optimizations */
+/* ============================================
+   This file contains performance-focused CSS 
+   optimizations specifically for mobile devices
+   ============================================ */
+
+/* ============================================
+   GPU ACCELERATION & COMPOSITING
+   ============================================ */
+@media (max-width: 768px) {
+  /* Force GPU acceleration on key elements */
+  .home-container,
+  .gallery-container,
+  .events-container,
+  .workshops-container,
+  .contact-container,
+  .mobile-sidebar,
+  .hero-banner {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Optimize animations with will-change */
+  .mobile-sidebar,
+  .mobile-sidebar-overlay,
+  .hero-banner-media {
+    will-change: transform, opacity;
+  }
+  
+  /* Contain layout thrashing */
+  .feature-card,
+  .universal-card,
+  .artwork-card {
+    contain: layout style paint;
+  }
+}
+
+/* ============================================
+   SCROLL PERFORMANCE
+   ============================================ */
+@media (max-width: 768px) {
+  /* Optimize scroll containers */
+  .app,
+  .home-container,
+  .gallery-container,
+  .events-container,
+  .workshops-container,
+  .contact-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Disable scroll anchoring on dynamic content */
+  .features-grid,
+  .gallery-grid,
+  .events-grid,
+  .workshops-grid {
+    overflow-anchor: none;
+  }
+}
+
+/* ============================================
+   IMAGE OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+  /* Optimize image rendering */
+  img {
+    content-visibility: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+  
+  /* Lazy load offscreen content */
+  .artwork-card:nth-child(n+5),
+  .feature-card:nth-child(n+4),
+  .universal-card:nth-child(n+5) {
+    content-visibility: auto;
+    contain-intrinsic-size: 350px;
+  }
+}
+
+/* ============================================
+   ANIMATION OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+  /* Reduce animation complexity */
+  * {
+    animation-timing-function: ease-out !important;
+  }
+  
+  /* Disable non-essential animations on scroll */
+  .scrolling * {
+    animation-play-state: paused !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+/* ============================================
+   TOUCH INTERACTION OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+  /* Improve touch responsiveness */
+  a, button, .clickable, .nav-link, .sidebar-nav-link, .filter-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Remove 300ms tap delay on all interactive elements */
+  * {
+    touch-action: manipulation;
+  }
+}
+
+/* ============================================
+   MEMORY OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+  /* Hide offscreen decorative elements */
+  .home-particles-background,
+  .gallery-particles-background,
+  .events-particles-background,
+  .workshops-particles-background,
+  .contact-particles-background {
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/* ============================================
+   BATTERY SAVER MODE
+   ============================================ */
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  /* Disable all non-essential visual effects */
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Remove backdrop filters */
+  * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Simplify gradients */
+  .shared-header,
+  .shared-footer,
+  .mobile-sidebar {
+    background: #001818 !important;
+  }
+}
+
+/* ============================================
+   LOW DATA MODE SUPPORT
+   ============================================ */
+@media (prefers-reduced-data: reduce) {
+  /* Disable decorative images */
+  .card-background-image,
+  .about-background-image {
+    display: none !important;
+  }
+  
+  /* Reduce image quality */
+  img {
+    image-rendering: optimizeSpeed;
+  }
+}
+
+/* ============================================
+   PRINT OPTIMIZATION
+   ============================================ */
+@media print {
+  .mobile-menu-container,
+  .mobile-sidebar,
+  .mobile-sidebar-overlay,
+  .hero-banner-arrow,
+  .hero-banner-dots,
+  .particles-background,
+  .blur-overlay {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
