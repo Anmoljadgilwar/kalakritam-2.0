@@ -20,7 +20,6 @@ import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
 import LazyImage from '../LazyImage';
-import { GalleryGridSkeleton, Skeleton } from '../Skeleton';
 import './Gallery.css';
 
 const Gallery = () => {
@@ -214,12 +213,16 @@ const Gallery = () => {
             <h3>Filter by Category</h3>
             <div className="category-filters">
               {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} width="80px" height="36px" borderRadius="20px" />
+                <div key={i} className="loading-skeleton" style={{ width: '80px', height: '36px', borderRadius: '20px' }} />
               ))}
             </div>
           </section>
           
-          <GalleryGridSkeleton count={6} />
+          <div className="gallery-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="loading-skeleton" style={{ width: '100%', height: '300px', borderRadius: '12px' }} />
+            ))}
+          </div>
         </div>
         <Footer />
       </div>

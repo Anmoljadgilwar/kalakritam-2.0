@@ -263,8 +263,3 @@ export const getNetworkOptimizations = () => {
     disableAutoplay: false
   };
 };
-
-// Overall mobile optimization checker
-export const shouldOptimizeForMobile = () => {
-  return isMobile() || isTouchDevice();
-};

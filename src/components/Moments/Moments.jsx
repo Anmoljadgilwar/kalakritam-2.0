@@ -16,7 +16,6 @@ import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
 import LazyImage from '../LazyImage';
-import { Skeleton } from '../Skeleton';
 import './Moments.css';
 
 const Moments = () => {
@@ -171,12 +170,10 @@ const Moments = () => {
             {[1, 2, 3, 4].map((col) => (
               <div key={col} className="moments-skeleton-column">
                 {[1, 2, 3].map((item) => (
-                  <Skeleton 
+                  <div 
                     key={item} 
-                    width="100%" 
-                    height={`${150 + Math.random() * 100}px`} 
-                    borderRadius="12px" 
-                    className="moments-skeleton-item"
+                    className="loading-skeleton moments-skeleton-item"
+                    style={{ width: '100%', height: '200px', borderRadius: '12px' }}
                   />
                 ))}
               </div>

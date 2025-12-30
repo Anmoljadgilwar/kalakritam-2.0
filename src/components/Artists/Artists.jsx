@@ -8,7 +8,6 @@ import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import OptimizedParticles from '../OptimizedParticles';
-import { ArtistsGridSkeleton, Skeleton } from '../Skeleton';
 import { config } from '../../config/environment';
 import './Artists.css';
 import '../Gallery/Gallery.css'; // Import Gallery CSS for modal styles
@@ -122,12 +121,16 @@ const Artists = () => {
             <h3>Filter by Category</h3>
             <div className="category-filters">
               {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} width="100px" height="36px" borderRadius="18px" />
+                <div key={i} className="loading-skeleton" style={{ width: '100px', height: '36px', borderRadius: '18px' }} />
               ))}
             </div>
           </section>
           
-          <ArtistsGridSkeleton count={6} />
+          <div className="artists-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="loading-skeleton" style={{ width: '100%', height: '300px', borderRadius: '12px' }} />
+            ))}
+          </div>
         </div>
         <Footer />
       </div>

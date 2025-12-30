@@ -10,7 +10,6 @@ import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import OptimizedParticles from '../OptimizedParticles';
-import { EventsGridSkeleton, Skeleton } from '../Skeleton';
 import { config } from '../../config/environment';
 import './Events.css';
 
@@ -178,12 +177,16 @@ const Events = () => {
           
           <section className="events-filters">
             <div className="view-toggle">
-              <Skeleton width="120px" height="40px" borderRadius="20px" />
-              <Skeleton width="120px" height="40px" borderRadius="20px" />
+              <div className="loading-skeleton" style={{ width: '120px', height: '40px', borderRadius: '20px' }} />
+              <div className="loading-skeleton" style={{ width: '120px', height: '40px', borderRadius: '20px' }} />
             </div>
           </section>
           
-          <EventsGridSkeleton count={6} />
+          <div className="events-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="loading-skeleton" style={{ width: '100%', height: '300px', borderRadius: '12px' }} />
+            ))}
+          </div>
         </div>
         <Footer />
       </div>

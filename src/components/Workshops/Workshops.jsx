@@ -18,7 +18,6 @@ import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
-import { WorkshopsGridSkeleton, Skeleton } from '../Skeleton';
 import { config } from '../../config/environment';
 import './Workshops.css';
 import '../Gallery/Gallery.css';
@@ -250,17 +249,21 @@ const Workshops = () => {
           
           <section className="workshops-filters">
             <div className="view-toggle">
-              <Skeleton width="120px" height="40px" borderRadius="20px" />
-              <Skeleton width="120px" height="40px" borderRadius="20px" />
+              <div className="loading-skeleton" style={{ width: '120px', height: '40px', borderRadius: '20px' }} />
+              <div className="loading-skeleton" style={{ width: '120px', height: '40px', borderRadius: '20px' }} />
             </div>
             <div className="category-filters">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} width="90px" height="36px" borderRadius="18px" />
+                <div key={i} className="loading-skeleton" style={{ width: '90px', height: '36px', borderRadius: '18px' }} />
               ))}
             </div>
           </section>
           
-          <WorkshopsGridSkeleton count={6} />
+          <div className="workshops-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="loading-skeleton" style={{ width: '100%', height: '300px', borderRadius: '12px' }} />
+            ))}
+          </div>
         </div>
         <Footer />
       </div>
