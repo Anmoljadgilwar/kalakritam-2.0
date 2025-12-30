@@ -126,70 +126,131 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  -webkit-animation-duration: 40s;
   animation-duration: 40s;
+  -webkit-animation-timing-function: linear;
   animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
+  -webkit-animation-play-state: running;
+  animation-play-state: running;
   will-change: transform;
-  backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Staggered animation for each column */
 .masonry-column:nth-child(1) {
-  animation-name: scrollUp;
+  -webkit-animation: scrollUp 40s linear infinite;
+  animation: scrollUp 40s linear infinite;
   animation-delay: 0s;
 }
 
 .masonry-column:nth-child(2) {
-  animation-name: scrollDown;
+  -webkit-animation: scrollDown 40s linear infinite;
+  animation: scrollDown 40s linear infinite;
   animation-delay: 2s;
 }
 
 .masonry-column:nth-child(3) {
-  animation-name: scrollUp;
+  -webkit-animation: scrollUp 40s linear infinite;
+  animation: scrollUp 40s linear infinite;
   animation-delay: 4s;
 }
 
 .masonry-column:nth-child(4) {
-  animation-name: scrollDown;
+  -webkit-animation: scrollDown 40s linear infinite;
+  animation: scrollDown 40s linear infinite;
   animation-delay: 6s;
 }
 
 /* Keyframe animations for continuous upward and downward scroll */
 /* Images are tripled, so we animate to -33.333% to create seamless loop */
-@keyframes scrollUp {
+@-webkit-keyframes scrollUp {
   0% {
+    -webkit-transform: translateY(0) translateZ(0);
     transform: translateY(0) translateZ(0);
   }
   100% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
     transform: translateY(-33.333%) translateZ(0);
+  }
+}
+
+@keyframes scrollUp {
+  0% {
+    -webkit-transform: translateY(0) translateZ(0);
+    transform: translateY(0) translateZ(0);
+  }
+  100% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
+    transform: translateY(-33.333%) translateZ(0);
+  }
+}
+
+@-webkit-keyframes scrollDown {
+  0% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
+    transform: translateY(-33.333%) translateZ(0);
+  }
+  100% {
+    -webkit-transform: translateY(0) translateZ(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
 @keyframes scrollDown {
   0% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
     transform: translateY(-33.333%) translateZ(0);
   }
   100% {
+    -webkit-transform: translateY(0) translateZ(0);
     transform: translateY(0) translateZ(0);
   }
 }
 
 /* Mobile-specific keyframe animations with GPU acceleration */
-@keyframes scrollUpMobile {
+@-webkit-keyframes scrollUpMobile {
   0% {
+    -webkit-transform: translateY(0) translateZ(0);
     transform: translateY(0) translateZ(0);
   }
   100% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
     transform: translateY(-33.333%) translateZ(0);
+  }
+}
+
+@keyframes scrollUpMobile {
+  0% {
+    -webkit-transform: translateY(0) translateZ(0);
+    transform: translateY(0) translateZ(0);
+  }
+  100% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
+    transform: translateY(-33.333%) translateZ(0);
+  }
+}
+
+@-webkit-keyframes scrollDownMobile {
+  0% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
+    transform: translateY(-33.333%) translateZ(0);
+  }
+  100% {
+    -webkit-transform: translateY(0) translateZ(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
 @keyframes scrollDownMobile {
   0% {
+    -webkit-transform: translateY(-33.333%) translateZ(0);
     transform: translateY(-33.333%) translateZ(0);
   }
   100% {
+    -webkit-transform: translateY(0) translateZ(0);
     transform: translateY(0) translateZ(0);
   }
 }
@@ -197,6 +258,17 @@
 /* Pause animation on hover */
 .masonry-grid:hover .masonry-column {
   animation-play-state: paused;
+}
+
+/* Override global mobile scroll pause so Moments animations keep running on mobile */
+@media (max-width: 768px) {
+  .scrolling .moments-container .masonry-column,
+  .moments-container.scrolling .masonry-column,
+  .moments-container .masonry-column {
+    -webkit-animation-play-state: running !important;
+    animation-play-state: running !important;
+    transition-duration: initial !important;
+  }
 }
 
 .masonry-item {
@@ -517,35 +589,36 @@
   .masonry-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    height: 550px; /* Adjusted height for tablet */
+    height: 550px;
     overflow: hidden;
   }
 
   .masonry-column {
     gap: 10px;
+    -webkit-animation-duration: 25s;
     animation-duration: 25s;
+    -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
     animation-iteration-count: infinite;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
     will-change: transform;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-animation-play-state: running !important;
+    animation-play-state: running !important;
   }
   
   /* Fix animation for 2-column layout on mobile */
   .masonry-column:nth-child(1) {
-    animation-name: scrollUpMobile;
-    animation-delay: 0s;
+    -webkit-animation: scrollUpMobile 25s linear infinite;
+    animation: scrollUpMobile 25s linear infinite;
   }
 
   .masonry-column:nth-child(2) {
-    animation-name: scrollDownMobile;
-    animation-delay: 0s;
-  }
-  
-  /* Reset 3rd and 4th column animations (they don't exist in 2-column layout) */
-  .masonry-column:nth-child(3),
-  .masonry-column:nth-child(4) {
-    animation-name: none;
+    -webkit-animation: scrollDownMobile 25s linear infinite;
+    animation: scrollDownMobile 25s linear infinite;
   }
   
   .masonry-item {
@@ -608,17 +681,34 @@
   .masonry-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    height: 450px; /* Adjusted height for mobile */
+    height: 450px;
     overflow: hidden;
   }
 
   .masonry-column {
+    -webkit-animation-duration: 20s;
     animation-duration: 20s;
+    -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
     animation-iteration-count: infinite;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
     will-change: transform;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-animation-play-state: running !important;
+    animation-play-state: running !important;
+  }
+  
+  .masonry-column:nth-child(1) {
+    -webkit-animation: scrollUpMobile 20s linear infinite;
+    animation: scrollUpMobile 20s linear infinite;
+  }
+
+  .masonry-column:nth-child(2) {
+    -webkit-animation: scrollDownMobile 20s linear infinite;
+    animation: scrollDownMobile 20s linear infinite;
   }
   
   .masonry-item {
