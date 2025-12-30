@@ -64,6 +64,7 @@ html, body {
   height: 100%;
   z-index: 5;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .app-content {
@@ -77,6 +78,26 @@ html, body {
 
 /* Ensure mobile menu is visible */
 @media (max-width: 768px) {
+  /* CRITICAL: Ensure page scrolling works on mobile */
+  .app {
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+  
+  .app-content {
+    overflow-y: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Ensure fixed backgrounds don't block touch events */
+  .app-particles-background,
+  .app-background-home {
+    pointer-events: none !important;
+  }
+  
   /* Force mobile menu button to show */
   .mobile-menu-container {
     display: block !important;

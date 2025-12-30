@@ -190,6 +190,36 @@
 }
 
 /* ============================================
+   CRITICAL MOBILE SCROLL FIX
+   ============================================ */
+@media (max-width: 768px) {
+  /* Ensure ALL fixed overlays don't block touch events */
+  .home-blur-overlay,
+  .gallery-blur-overlay,
+  .events-blur-overlay,
+  .workshops-blur-overlay,
+  .workshop-detail-blur-overlay,
+  .event-detail-blur-overlay,
+  .artwork-detail-blur-overlay,
+  .contact-blur-overlay,
+  .moments-blur-overlay,
+  .artists-blur-overlay,
+  .artblogs-blur-overlay,
+  .terms-blur-overlay,
+  .policy-blur-overlay,
+  [class*="-blur-overlay"],
+  [class*="-particles-background"],
+  .home-particles-background,
+  .gallery-particles-background,
+  .events-particles-background,
+  .workshops-particles-background,
+  .contact-particles-background,
+  .moments-particles-background {
+    pointer-events: none !important;
+  }
+}
+
+/* ============================================
    PRINT OPTIMIZATION
    ============================================ */
 @media print {

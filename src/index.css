@@ -180,6 +180,22 @@ button:focus-visible {
 }
 
 @media (max-width: 768px) {
+  /* CRITICAL: Mobile scroll fix */
+  html, body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+  
+  #root {
+    overflow-y: visible !important;
+    height: auto !important;
+    min-height: 100% !important;
+  }
+  
   .grid-responsive {
     grid-template-columns: 1fr;
   }
