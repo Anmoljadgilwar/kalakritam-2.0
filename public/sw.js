@@ -40,11 +40,13 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Skip all API requests - let them go directly to network
+  // Skip all API requests and external resources - let them go directly to network
   if (url.pathname.includes('/api/') || 
       url.hostname.includes('api.') ||
       url.hostname.includes('analytics') ||
-      url.hostname.includes('google')) {
+      url.hostname.includes('google') ||
+      url.hostname.includes('cloudflareinsights') ||
+      url.hostname !== self.location.hostname) {
     return; // Let the request go to network
   }
   

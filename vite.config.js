@@ -109,6 +109,16 @@ export default defineConfig({
             return 'vendor-helmet';
           }
           
+          // Prop-types (often causes circular dependency issues)
+          if (id.includes('node_modules/prop-types/')) {
+            return 'vendor-react';
+          }
+          
+          // React-is (should be with React core)
+          if (id.includes('node_modules/react-is/')) {
+            return 'vendor-react';
+          }
+          
           // Group all other node_modules into a common vendor chunk
           if (id.includes('node_modules/')) {
             return 'vendor-common';
@@ -131,7 +141,8 @@ export default defineConfig({
     // Ensure proper module initialization order
     commonjsOptions: {
       include: [/node_modules/],
-      transformMixedEsModules: true
+      transformMixedEsModules: true,
+      strictRequires: true
     }
   },
   // Optimize dependencies
@@ -140,6 +151,7 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
+      'react/jsx-runtime',
       'gsap'
     ],
     exclude: [
