@@ -1,43 +1,47 @@
 # Cloudflare Pages Headers Configuration
-# Optimized for performance and caching
 
-# JavaScript chunks - Immutable (hashed filenames)
+# JavaScript files - CRITICAL for module loading
+# Must match first to prevent fallback to HTML
 /assets/*.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: public, max-age=31536000, immutable
   X-Content-Type-Options: nosniff
-  Vary: Accept-Encoding
 
 /sw.js
   Content-Type: application/javascript; charset=utf-8
-  Cache-Control: no-cache, must-revalidate
+  Cache-Control: public, max-age=0, must-revalidate
   Service-Worker-Allowed: /
   X-Content-Type-Options: nosniff
 
-# CSS files - Immutable (hashed filenames)
+/performance-worker.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=86400
+  X-Content-Type-Options: nosniff
+
+# ES modules
+/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+# CSS files
 /assets/*.css
   Content-Type: text/css; charset=utf-8
   Cache-Control: public, max-age=31536000, immutable
-  X-Content-Type-Options: nosniff
-  Vary: Accept-Encoding
 
-# Font files - Long cache, immutable
+# Font files
 /assets/*.ttf
   Content-Type: font/ttf
   Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
 
 /assets/*.woff
   Content-Type: font/woff
   Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
 
 /assets/*.woff2
   Content-Type: font/woff2
   Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
 
-# Images - Long cache
+# Images
 /assets/*.png
   Content-Type: image/png
   Cache-Control: public, max-age=31536000, immutable
@@ -46,21 +50,9 @@
   Content-Type: image/jpeg
   Cache-Control: public, max-age=31536000, immutable
 
-/assets/*.webp
-  Content-Type: image/webp
-  Cache-Control: public, max-age=31536000, immutable
-
-/assets/*.avif
-  Content-Type: image/avif
-  Cache-Control: public, max-age=31536000, immutable
-
 /assets/*.svg
   Content-Type: image/svg+xml
   Cache-Control: public, max-age=31536000, immutable
-
-# Public images
-/images/*
-  Cache-Control: public, max-age=86400
 
 # Video files
 /*.mp4
@@ -68,26 +60,26 @@
   Cache-Control: public, max-age=31536000
   Accept-Ranges: bytes
 
-# HTML - Short cache for updates
-/index.html
-  Content-Type: text/html; charset=utf-8
-  Cache-Control: no-cache, must-revalidate
-  X-Content-Type-Options: nosniff
+/intro-video.mp4
+  Content-Type: video/mp4
+  Cache-Control: public, max-age=86400
+  Accept-Ranges: bytes
 
+# HTML files
 /*.html
   Content-Type: text/html; charset=utf-8
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: public, max-age=3600
 
-# Root and all paths - security headers + performance
+# Root and all paths - security headers
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://fonts.googleapis.com https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev; connect-src 'self' https://api.kalakritam.in https://www.google-analytics.com https://fonts.googleapis.com https://fonts.gstatic.com https://cloudflareinsights.com https://static.cloudflareinsights.com https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev https://accounts.google.com https://oauth2.googleapis.com; frame-src https://accounts.google.com; worker-src 'self' blob:
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://fonts.googleapis.com https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' data: blob: https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev; connect-src 'self' https://api.kalakritam.in https://www.google-analytics.com https://fonts.googleapis.com https://fonts.gstatic.com https://cloudflareinsights.com https://static.cloudflareinsights.com https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev https://accounts.google.com https://oauth2.googleapis.com; frame-src https://accounts.google.com
 
-# Manifest - Medium cache
+# Manifest
 /manifest.json
   Content-Type: application/manifest+json; charset=utf-8
   Cache-Control: public, max-age=86400

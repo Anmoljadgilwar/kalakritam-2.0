@@ -1,22 +1,21 @@
-// Optimized Service Worker v4 - Professional chunk caching
-// Intelligent caching based on chunk type and usage patterns
+// Optimized Service Worker - Smart chunk caching
+// Caches chunks on-demand, no upfront loading
 
-const CACHE_NAME = 'kalakritam-v4';
-const RUNTIME_CACHE = 'kalakritam-runtime-v4';
+const CACHE_NAME = 'kalakritam-v3';
+const RUNTIME_CACHE = 'kalakritam-runtime-v3';
 
-// Critical assets that should be cached immediately
-const PRECACHE_ASSETS = [
+// Only cache essential static assets initially
+const STATIC_ASSETS = [
   '/',
-  '/index.html',
-  '/manifest.json'
+  '/index.html'
 ];
 
-// Install - precache critical assets
+// Install - minimal caching, skip waiting to activate immediately
 self.addEventListener('install', (event) => {
-  console.log('SW v4: Installing...');
+  console.log('SW: Installing with smart caching...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
+      return cache.addAll(STATIC_ASSETS);
     })
   );
   self.skipWaiting();
@@ -24,58 +23,39 @@ self.addEventListener('install', (event) => {
 
 // Activate - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('SW v4: Activating...');
+  console.log('SW: Activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => !name.includes('v4'))
+          .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
           .map((name) => caches.delete(name))
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch - Intelligent caching strategy based on resource type
+// Fetch - Smart caching strategy
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Skip non-GET requests
-  if (request.method !== 'GET') return;
+  // Skip all API requests and external resources - let them go directly to network
+  if (url.pathname.includes('/api/') || 
+      url.hostname.includes('api.') ||
+      url.hostname.includes('analytics') ||
+      url.hostname.includes('google') ||
+      url.hostname.includes('cloudflareinsights') ||
+      url.hostname !== self.location.hostname) {
+    return; // Let the request go to network
+  }
   
-  // Skip external resources entirely - let browser handle them
-  if (url.hostname !== self.location.hostname) {
+  // For JS/CSS chunks: Always go to network to avoid stale bundle mismatches
+  if (request.destination === 'script' || request.destination === 'style') {
     return;
   }
   
-  // Skip API requests
-  if (url.pathname.startsWith('/api/')) {
-    return;
-  }
-  
-  // For hashed assets (contain hash in filename) - Cache first, immutable
-  if (url.pathname.includes('/assets/') && url.pathname.match(/-[A-Za-z0-9]{8}\./)) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.ok) {
-            const responseToCache = networkResponse.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        });
-      })
-    );
-    return;
-  }
-  
-  // For images - Cache first with network fallback
+  // For images: Cache-first strategy
   if (request.destination === 'image') {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
@@ -83,31 +63,7 @@ self.addEventListener('fetch', (event) => {
           return cachedResponse;
         }
         return fetch(request).then((response) => {
-          if (response && response.ok) {
-            const responseToCache = response.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return response;
-        }).catch(() => {
-          // Return placeholder for failed images
-          return new Response('', { status: 404 });
-        });
-      })
-    );
-    return;
-  }
-  
-  // For fonts - Cache first (immutable)
-  if (request.destination === 'font' || url.pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(request).then((response) => {
-          if (response && response.ok) {
+          if (response && response.status === 200) {
             const responseToCache = response.clone();
             caches.open(RUNTIME_CACHE).then((cache) => {
               cache.put(request, responseToCache);
@@ -120,7 +76,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // For navigation requests - Network first with offline fallback
+  // For navigation requests, network-first with fallback
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).catch(() => {
@@ -130,7 +86,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Default: Network first
+  // For everything else: Network first, cache fallback
   event.respondWith(
     fetch(request).catch(() => {
       return caches.match(request);
