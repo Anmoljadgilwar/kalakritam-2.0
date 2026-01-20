@@ -1,8 +1,8 @@
 // Optimized Service Worker - Smart chunk caching
 // Caches chunks on-demand, no upfront loading
 
-const CACHE_NAME = 'kalakritam-v2';
-const RUNTIME_CACHE = 'kalakritam-runtime-v2';
+const CACHE_NAME = 'kalakritam-v3';
+const RUNTIME_CACHE = 'kalakritam-runtime-v3';
 
 // Only cache essential static assets initially
 const STATIC_ASSETS = [
@@ -50,24 +50,8 @@ self.addEventListener('fetch', (event) => {
     return; // Let the request go to network
   }
   
-  // For JS/CSS chunks: Stale-while-revalidate (fast loading + updates)
-  if (url.pathname.includes('/assets/') && 
-      (url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
-    event.respondWith(
-      caches.open(RUNTIME_CACHE).then((cache) => {
-        return cache.match(request).then((cachedResponse) => {
-          const fetchPromise = fetch(request).then((networkResponse) => {
-            // Only cache successful responses
-            if (networkResponse && networkResponse.status === 200) {
-              cache.put(request, networkResponse.clone());
-            }
-            return networkResponse;
-          });
-          // Return cached version immediately, update in background
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
+  // For JS/CSS chunks: Always go to network to avoid stale bundle mismatches
+  if (request.destination === 'script' || request.destination === 'style') {
     return;
   }
   
