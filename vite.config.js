@@ -121,8 +121,26 @@ export default defineConfig({
     sourcemap: process.env.NODE_ENV === 'development',
     // Optimize CSS
     cssMinify: true,
-    // Disable module preload to prevent loading all chunks upfront
-    modulePreload: false,
+    // Enable selective module preload for critical dependencies
+    modulePreload: {
+      polyfill: true,
+      resolveDependencies: (filename, deps, { hostId, hostType }) => {
+        // Always preload React before other chunks
+        if (filename.includes('vendor-react')) {
+          return deps;
+        }
+        // Preload router with react
+        if (filename.includes('vendor-router')) {
+          return deps.filter(dep => dep.includes('vendor-react'));
+        }
+        // Preload MUI with react
+        if (filename.includes('vendor-mui')) {
+          return deps.filter(dep => dep.includes('vendor-react'));
+        }
+        // Don't preload dependencies for other chunks
+        return [];
+      }
+    },
     // Ensure proper module initialization order
     commonjsOptions: {
       include: [/node_modules/],
