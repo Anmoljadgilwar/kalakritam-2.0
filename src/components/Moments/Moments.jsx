@@ -24,6 +24,8 @@ const Moments = () => {
   const [error, setError] = useState(null);
   const fetchCalled = useRef(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Track window width
+  const animationRef = useRef(null);
+  const columnsRef = useRef({}); // Changed to object to store columns by eventId-colIndex
   
   // Mobile optimization states
   const [isMobile, setIsMobile] = useState(shouldOptimizeForMobile());
@@ -31,6 +33,48 @@ const Moments = () => {
   const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
   const [networkOptimizations, setNetworkOptimizations] = useState({});
   const [batteryOptimizations, setBatteryOptimizations] = useState({});
+
+  // JavaScript-based animation for mobile (fallback when CSS animations don't work)
+  useEffect(() => {
+    if (!isMobile || loading || moments.length === 0) return;
+    
+    let startTime = null;
+    const duration = 25000; // 25 seconds for one cycle
+    
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+      
+      // Iterate through all columns stored in the ref object
+      Object.entries(columnsRef.current).forEach(([key, column]) => {
+        if (!column) return;
+        
+        // Extract column index from key (format: eventId-colIndex)
+        const colIndex = parseInt(key.split('-').pop());
+        const direction = colIndex % 2 === 0 ? -1 : 1; // Alternate up/down
+        const translateY = direction === -1 
+          ? -33.333 * progress 
+          : -33.333 + (33.333 * progress);
+        
+        column.style.transform = `translateY(${translateY}%) translateZ(0)`;
+      });
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    // Start animation after a short delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      animationRef.current = requestAnimationFrame(animate);
+    }, 100);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isMobile, loading, moments]);
 
   // Initialize mobile optimizations
   useEffect(() => {
@@ -253,7 +297,16 @@ const Moments = () => {
                   {moment.photos && moment.photos.length > 0 ? (
                     <div className="masonry-grid">
                       {distributeEventPhotosToColumns(moment.photos, moment.event_name).map((column, colIndex) => (
-                        <div key={colIndex} className="masonry-column">
+                        <div 
+                          key={colIndex} 
+                          className={`masonry-column ${isMobile ? 'mobile-animated' : ''}`}
+                          ref={el => {
+                            if (isMobile && el) {
+                              // Use unique key: eventId-colIndex to store all columns
+                              columnsRef.current[`${moment.id}-${colIndex}`] = el;
+                            }
+                          }}
+                        >
                           {column.map((photo, photoIndex) => (
                             <div 
                               key={`${moment.id}-${colIndex}-${photoIndex}`} 

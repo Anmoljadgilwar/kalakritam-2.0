@@ -120,6 +120,9 @@
   overflow: hidden;
   height: 800px; /* Reduced fixed height - approximately 2.5-3 rows */
   position: relative;
+  /* Force GPU layer for better animation performance */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .masonry-column {
@@ -256,10 +259,9 @@
 
 /* Override global mobile scroll pause so Moments animations keep running on mobile */
 @media (max-width: 768px) {
-  .moments-container .masonry-column {
-    animation-play-state: running !important;
-    transform: translateZ(0) !important;
-    -webkit-transform: translateZ(0) !important;
+  .moments-container .masonry-column.mobile-animated {
+    /* JavaScript handles animation on mobile */
+    animation: none !important;
   }
 }
 
@@ -585,27 +587,16 @@
     overflow: hidden;
   }
 
-  .masonry-column {
-    gap: 10px;
-    animation-duration: 25s !important;
-    animation-timing-function: linear !important;
-    animation-iteration-count: infinite !important;
-    animation-fill-mode: forwards;
-    animation-play-state: running !important;
+  /* On mobile, disable CSS animation - JavaScript handles it */
+  .masonry-column.mobile-animated {
+    animation: none !important;
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
   }
   
-  /* Fix animation for 2-column layout on mobile */
-  .masonry-column:nth-child(1) {
-    animation-name: scrollUpMobile !important;
-  }
-
-  .masonry-column:nth-child(2) {
-    animation-name: scrollDownMobile !important;
+  .masonry-column {
+    gap: 10px;
   }
   
   .masonry-item {
@@ -672,25 +663,12 @@
     overflow: hidden;
   }
 
-  .masonry-column {
-    animation-duration: 20s !important;
-    animation-timing-function: linear !important;
-    animation-iteration-count: infinite !important;
-    animation-fill-mode: forwards;
-    animation-play-state: running !important;
+  /* On mobile, disable CSS animation - JavaScript handles it */
+  .masonry-column.mobile-animated {
+    animation: none !important;
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-  }
-  
-  .masonry-column:nth-child(1) {
-    animation-name: scrollUpMobile !important;
-  }
-
-  .masonry-column:nth-child(2) {
-    animation-name: scrollDownMobile !important;
   }
   
   .masonry-item {

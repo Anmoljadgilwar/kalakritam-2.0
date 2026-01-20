@@ -44,7 +44,6 @@
   .gallery-container,
   .events-container,
   .workshops-container,
-  .moments-container,
   .artblogs-container,
   .contact-container,
   .artists-container,
@@ -56,6 +55,11 @@
   .gallery-grid {
     content-visibility: auto;
     contain-intrinsic-size: 900px auto;
+  }
+  
+  /* CRITICAL: Do NOT apply content-visibility to moments-container as it breaks animations */
+  .moments-container {
+    content-visibility: visible !important;
   }
 }
 
