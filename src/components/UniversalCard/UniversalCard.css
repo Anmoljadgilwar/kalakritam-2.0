@@ -3,7 +3,10 @@
   border-radius: 20px;
   overflow: visible;
   border: 1px solid rgba(195, 143, 33, 0.25);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.4s ease-out, 
+              border-color 0.3s ease,
+              background 0.3s ease;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   width: 100%;
@@ -22,19 +25,40 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #c38f21, #d4af85, #c38f21);
+  background: linear-gradient(90deg, transparent, #c38f21, #d4af85, #c38f21, transparent);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
   z-index: 1;
+  border-radius: 20px 20px 0 0;
+}
+
+.universal-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  background: linear-gradient(135deg, rgba(195, 143, 33, 0.4) 0%, rgba(212, 175, 133, 0.2) 50%, rgba(195, 143, 33, 0.4) 100%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.4s ease;
+  filter: blur(8px);
 }
 
 .universal-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 48px rgba(195, 143, 33, 0.35);
-  border-color: rgba(195, 143, 33, 0.5);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(195, 143, 33, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(195, 143, 33, 0.6);
+  background: linear-gradient(135deg, rgba(195, 143, 33, 0.18) 0%, rgba(212, 175, 133, 0.12) 100%);
 }
 
 .universal-card:hover::before {
+  opacity: 1;
+}
+
+.universal-card:hover::after {
   opacity: 1;
 }
 
@@ -55,11 +79,14 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              filter 0.4s ease;
+  filter: brightness(1);
 }
 
 .universal-card:hover .universal-card-image {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(1.1);
 }
 
 .universal-card-image-placeholder {
@@ -97,12 +124,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-  padding: 40px 20px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+  padding: 50px 20px 20px;
   color: white;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .universal-card:hover .universal-card-overlay {
@@ -256,7 +283,7 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.85rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   position: relative;
@@ -276,8 +303,8 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
 }
 
 .universal-card-btn:hover::before {
@@ -285,8 +312,11 @@
 }
 
 .universal-card-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(195, 143, 33, 0.4);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 8px 25px rgba(195, 143, 33, 0.5),
+    0 0 20px rgba(195, 143, 33, 0.3);
+  background: linear-gradient(135deg, #d4a124 0%, #e5c896 100%);
 }
 
 /* Responsive Design */
