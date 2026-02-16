@@ -12,17 +12,23 @@ const TermsOfService = () => {
   const [blurConfig] = useState(getMobileBlurConfig());
 
   useEffect(() => {
-    document.title = 'Terms of Service - Kalakritam | Hyderabad';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const content = 'Read the Terms of Service for Kalakritam. These legal terms govern your use of our website and services.';
-    if (metaDescription) {
-      metaDescription.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = content;
-      document.head.appendChild(meta);
+    document.title = 'Terms of Service - Kalakritam';
+
+    // Add noindex meta tag - Terms page should not be indexed by search engines
+    let robotsMeta = document.querySelector('meta[name="robots"]');
+    if (!robotsMeta) {
+      robotsMeta = document.createElement('meta');
+      robotsMeta.name = 'robots';
+      document.head.appendChild(robotsMeta);
     }
+    robotsMeta.setAttribute('content', 'noindex, nofollow');
+
+    return () => {
+      // Restore default robots meta on unmount
+      if (robotsMeta) {
+        robotsMeta.setAttribute('content', 'index, follow');
+      }
+    };
   }, []);
 
   return (

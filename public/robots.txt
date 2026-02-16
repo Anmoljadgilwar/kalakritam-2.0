@@ -20,7 +20,7 @@ Allow: /artparty
 Allow: /moments
 Allow: /contact
 Allow: /privacy
-Allow: /terms
+Disallow: /terms
 
 # Allow dynamic detail pages (individual artworks, workshops, events)
 Allow: /gallery/*

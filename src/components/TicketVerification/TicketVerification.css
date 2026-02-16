@@ -4,7 +4,7 @@
   color: white;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .ticket-verification-content {

@@ -24,7 +24,7 @@ body {
   background-color: #000000;
   color: white;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: visible;
   position: relative;
 }
@@ -35,7 +35,7 @@ body {
   padding: 0;
   background-color: #000000;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: visible;
 }
 
@@ -93,15 +93,18 @@ html, body {
 /* Ensure mobile menu is visible */
 @media (max-width: 768px) {
   /* CRITICAL: Ensure page scrolling works on mobile */
+  /* overflow-x: clip prevents horizontal overflow WITHOUT creating a scroll container */
+  /* (overflow-x: hidden + overflow-y: visible → browser converts to overflow-y: auto, trapping touch scroll) */
   .app {
     overflow-y: visible !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     height: auto !important;
     min-height: 100vh !important;
   }
   
   .app-content {
     overflow-y: visible !important;
+    overflow-x: clip !important;
     height: auto !important;
     min-height: 100vh !important;
   }

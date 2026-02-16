@@ -6,7 +6,7 @@
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   color: white;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Particles Background */

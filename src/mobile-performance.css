@@ -68,6 +68,7 @@
    ============================================ */
 @media (max-width: 768px) {
   /* CRITICAL: Ensure vertical scrolling works on mobile */
+  /* Only html/body should use overflow-x: hidden (creates scroll container, which is OK for the root) */
   html, body {
     overflow-y: auto !important;
     overflow-x: hidden !important;
@@ -76,13 +77,16 @@
     -webkit-overflow-scrolling: touch !important;
   }
   
+  /* Use overflow-x: clip on #root to prevent horizontal overflow WITHOUT creating a scroll container */
+  /* (overflow-x: hidden + overflow-y: visible → browser converts visible to auto, trapping touch scroll) */
   #root {
     overflow-y: visible !important;
+    overflow-x: clip !important;
     height: auto !important;
     min-height: 100% !important;
   }
   
-  /* Optimize scroll containers */
+  /* Optimize scroll containers - use clip instead of hidden for overflow-x */
   .app,
   .home-container,
   .gallery-container,
@@ -94,7 +98,8 @@
   .moments-container {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-    overflow-y: visible;
+    overflow-y: visible !important;
+    overflow-x: clip !important;
     height: auto;
     min-height: 100vh;
   }
@@ -157,7 +162,7 @@
   
   /* Ensure scrolling works on main containers */
   html, body, #root, .app {
-    touch-action: pan-x pan-y;
+    touch-action: auto;
     -webkit-overflow-scrolling: touch;
   }
 }

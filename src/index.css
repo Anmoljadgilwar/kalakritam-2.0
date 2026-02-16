@@ -190,9 +190,11 @@ button:focus-visible {
     touch-action: auto !important;
   }
   
+  /* Use overflow-x: clip on #root to avoid creating a scroll container */
+  /* (overflow-x: hidden + overflow-y: visible → browser converts to auto, trapping touch scroll) */
   #root {
     overflow-y: visible !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     height: auto !important;
     min-height: 100% !important;
   }

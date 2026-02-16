@@ -102,14 +102,6 @@
     <priority>0.3</priority>
   </url>
 
-  <!-- Terms of Service -->
-  <url>
-    <loc>https://kalakritam.in/terms</loc>
-    <lastmod>2025-11-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
-  </url>
-
   <!-- User Authentication Pages (Low priority, noindex via meta tags) -->
   <url>
     <loc>https://kalakritam.in/user/login</loc>

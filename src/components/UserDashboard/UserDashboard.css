@@ -4,7 +4,7 @@
   background: linear-gradient(180deg, #000000 0%, #001818 50%, #002020 100%);
   color: white;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .user-dashboard-content {
