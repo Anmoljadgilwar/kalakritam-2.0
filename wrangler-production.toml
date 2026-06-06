@@ -2,33 +2,38 @@ name = "kalakritam-api-production"
 main = "KALAKRITAM_PRODUCTION_NO_SAMPLE_DATA.js"
 compatibility_date = "2024-01-01"
 
-# Production routes - configure these for your domain when domain is ready
-# [[routes]]
-# pattern = "api.kalakritam.in/*"
-# zone_name = "kalakritam.in"
+# Route the worker to api.kalakritam.in
+[[routes]]
+pattern = "api.kalakritam.in/*"
+zone_name = "kalakritam.in"
 
-# Environment variables (set via wrangler secret put)
-# Required:
-# - DATABASE_PROXY_URL: https://kalakritam-db-proxy.gowthamnachu545.workers.dev
-# - DB_PROXY_TOKEN: kalakritam-db-proxy-token-2025
-# - JWT_SECRET: your-secure-jwt-secret-key-2025
-# 
-# Optional:
-# - NODE_ENV: production
+# Environment variables
+# Required (set via `wrangler secret put`):
+# - DATABASE_URL: Neon PostgreSQL connection string
+# - JWT_SECRET: strong random secret for token signing
+#
+# Optional (set via `wrangler secret put`):
+# (none required — NODE_ENV is set in [vars] below)
+
+# Non-secret environment variables
+[vars]
+NODE_ENV = "production"
 
 [build]
 command = ""
 
 [env.production]
 name = "kalakritam-api-production"
+NODE_ENV = "production"
 
 [env.staging]
 name = "kalakritam-api-staging"
+NODE_ENV = "staging"
 
 # R2 bucket for image storage
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "kalakritam"
 
-# No D1 database needed - using external Neon via proxy
-# No KV storage needed - no sample data fallback
+# No D1 database needed — using Neon directly via @neondatabase/serverless WebSocket
+# No KV storage needed — no sample data fallback

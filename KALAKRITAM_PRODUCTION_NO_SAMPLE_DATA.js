@@ -7815,7 +7815,7 @@ function base64UrlDecode(str) {
   return bytes;
 }
 __name(base64UrlDecode, "base64UrlDecode");
-async function generateToken(payload, secret = "default-secret") {
+async function generateToken(payload, secret) {
   const header = {
     alg: "HS256",
     typ: "JWT"
@@ -7830,7 +7830,7 @@ async function generateToken(payload, secret = "default-secret") {
   return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 }
 __name(generateToken, "generateToken");
-async function verifyToken(token, secret = "default-secret") {
+async function verifyToken(token, secret) {
   try {
     const [headerB64, payloadB64, signatureB64] = token.split(".");
     if (!headerB64 || !payloadB64 || !signatureB64) {
@@ -7953,7 +7953,13 @@ var init_auth_workers = __esm({
             message: "Access token is required"
           }, 401);
         }
-        const secret = c.env?.JWT_SECRET || "default-secret";
+        const secret = c.env?.JWT_SECRET;
+        if (!secret) {
+          return c.json({
+            success: false,
+            message: "JWT secret is not configured"
+          }, 500);
+        }
         const payload = await verifyToken(token, secret);
         if (!payload) {
           return c.json({
@@ -7990,7 +7996,13 @@ var init_auth_workers = __esm({
             message: "Access token is required"
           }, 401);
         }
-        const secret = c.env?.JWT_SECRET || "default-secret";
+        const secret = c.env?.JWT_SECRET;
+        if (!secret) {
+          return c.json({
+            success: false,
+            message: "JWT secret is not configured"
+          }, 500);
+        }
         const payload = await verifyToken(token, secret);
         if (!payload) {
           return c.json({
@@ -8027,7 +8039,13 @@ var init_auth_workers = __esm({
             message: "Access token is required"
           }, 401);
         }
-        const secret = c.env?.JWT_SECRET || "default-secret";
+        const secret = c.env?.JWT_SECRET;
+        if (!secret) {
+          return c.json({
+            success: false,
+            message: "JWT secret is not configured"
+          }, 500);
+        }
         const payload = await verifyToken(token, secret);
         if (!payload) {
           return c.json({
@@ -8062,7 +8080,13 @@ var init_auth_workers = __esm({
         const authHeader = c.req.header("authorization");
         const token = authHeader && authHeader.split(" ")[1];
         if (token) {
-          const secret = c.env?.JWT_SECRET || "default-secret";
+          const secret = c.env?.JWT_SECRET;
+          if (!secret) {
+            c.set("user", null);
+            c.set("isAuthenticated", false);
+            await next();
+            return;
+          }
           const payload = verifyToken(token, secret);
           if (payload) {
             const db = createDatabase(c.env);
@@ -14903,6 +14927,7 @@ var generateOTP = /* @__PURE__ */ __name2(() => {
 
 // User Authentication Routes (Public Users)
 var setupUserAuthRoutes = /* @__PURE__ */ __name2((app2) => {
+  app2.use("/api/auth/*", authRateLimiter());
   // User Signup
   app2.post("/api/auth/signup", catchAsync(async (c) => {
     try {
@@ -17196,7 +17221,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       }
     });
   }));
-  app2.get("/admin/tickets", catchAsync(async (c) => {
+  app2.get("/admin/tickets", authenticateToken, catchAsync(async (c) => {
     const db = createDatabase(c.env);
     const { page = 1, limit = 10, search, status, event_id } = c.req.query();
     try {
@@ -17252,7 +17277,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       }, 500);
     }
   }));
-  app2.post("/admin/tickets", catchAsync(async (c) => {
+  app2.post("/admin/tickets", authenticateToken, catchAsync(async (c) => {
     const db = createDatabase(c.env);
     const ticketData = await c.req.json();
     try {
@@ -17304,7 +17329,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       }, 500);
     }
   }));
-  app2.put("/admin/tickets/:id", catchAsync(async (c) => {
+  app2.put("/admin/tickets/:id", authenticateToken, catchAsync(async (c) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     const ticketData = await c.req.json();
@@ -17353,7 +17378,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       }, 500);
     }
   }));
-  app2.patch("/admin/tickets/:id", catchAsync(async (c) => {
+  app2.patch("/admin/tickets/:id", authenticateToken, catchAsync(async (c) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     const updates = await c.req.json();
@@ -17425,7 +17450,7 @@ var setupAdminRoutes = /* @__PURE__ */ __name2((app2) => {
       }, 500);
     }
   }));
-  app2.delete("/admin/tickets/:id", catchAsync(async (c) => {
+  app2.delete("/admin/tickets/:id", authenticateToken, catchAsync(async (c) => {
     const db = createDatabase(c.env);
     const id = c.req.param("id");
     try {
@@ -20153,6 +20178,12 @@ init_auth_workers();
 init_database_workers();
 init_auth_workers();
 var setupDebugRoutes = /* @__PURE__ */ __name2((app2) => {
+  app2.use("/debug/*", async (c, next) => {
+    if (c.env?.NODE_ENV === "production") {
+      return c.json({ success: false, message: "Not found" }, 404);
+    }
+    await next();
+  });
   app2.post("/debug/fix-admin-password", catchAsync(async (c) => {
     try {
       const db = createDatabase(c.env);
@@ -20577,6 +20608,7 @@ app.use("*", async (c, next) => {
   const allowedOrigins = [
     "https://kalakritam.in",
     "https://www.kalakritam.in",
+    "https://staging.kalakritam.in",
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:3000"
