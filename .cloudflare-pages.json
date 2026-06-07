@@ -1,7 +1,7 @@
 {
   "build": {
-    "command": "npm run build",
-    "publish": "dist",
+    "command": "npm run build:frontend",
+    "publish": "frontend/dist",
     "environment": {
       "NODE_VERSION": "18"
     }

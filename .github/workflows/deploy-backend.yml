@@ -4,9 +4,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'KALAKRITAM_PRODUCTION_NO_SAMPLE_DATA.js'
+      - 'backend/**'
       - 'wrangler-production.toml'
       - '.github/workflows/deploy-backend.yml'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
     inputs:
       environment:
