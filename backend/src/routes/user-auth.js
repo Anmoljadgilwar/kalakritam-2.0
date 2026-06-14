@@ -10,7 +10,7 @@ export function setupUserAuthRoutes(app) {
   // User Signup
   app.post("/api/auth/signup", catchAsync(async (c) => {
     try {
-      const { name, email, password, phone } = await c.req.json();
+      const { name, email, password, phone, verificationToken } = await c.req.json();
       
       if (!name || !email || !password) {
         return c.json({
@@ -23,6 +23,22 @@ export function setupUserAuthRoutes(app) {
         return c.json({
           success: false,
           error: "Password must be at least 8 characters"
+        }, 400);
+      }
+      
+      // Verify the OTP verification token
+      if (!verificationToken) {
+        return c.json({
+          success: false,
+          error: "Email verification required. Please verify your email via OTP first."
+        }, 400);
+      }
+      
+      const verifiedPayload = await verifyToken(verificationToken, c.env?.JWT_SECRET);
+      if (!verifiedPayload || verifiedPayload.purpose !== 'signup_verified' || verifiedPayload.email !== email) {
+        return c.json({
+          success: false,
+          error: "Invalid or expired verification. Please verify your email again."
         }, 400);
       }
       
@@ -410,10 +426,22 @@ export function setupUserAuthRoutes(app) {
         }
       }
       
+      // If purpose is signup, generate a verification token
+      let verificationToken = null;
+      if (actualPurpose === 'signup') {
+        verificationToken = await generateToken({
+          email: normalizedEmail,
+          purpose: 'signup_verified',
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + 300 // 5 minutes
+        }, c.env?.JWT_SECRET);
+      }
+      
       return c.json({
         success: true,
         message: 'OTP verified successfully',
-        verified: true
+        verified: true,
+        verificationToken
       });
     } catch (error3) {
       console.error('Verify OTP error:', error3);
@@ -1097,6 +1125,35 @@ export function setupUserAuthRoutes(app) {
       return c.json({
         success: false,
         error: 'Failed to delete user'
+      }, 500);
+    }
+  }));
+  
+  // User Token Refresh
+  app.post("/api/auth/refresh", authenticateUser, catchAsync(async (c) => {
+    const user = c.get("user");
+    try {
+      const token = await generateToken({
+        userId: user.userId,
+        email: user.email,
+        name: user.name,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
+      }, c.env?.JWT_SECRET);
+      return c.json({
+        success: true,
+        message: "Token refreshed successfully",
+        token,
+        data: {
+          id: user.userId,
+          name: user.name,
+          email: user.email
+        }
+      });
+    } catch (error3) {
+      return c.json({
+        success: false,
+        error: "Failed to refresh token"
       }, 500);
     }
   }));

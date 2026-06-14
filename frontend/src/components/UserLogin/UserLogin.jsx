@@ -470,8 +470,11 @@ const UserLogin = () => {
           const createLoadingId = toast.authLoading('Creating your account...');
           
           try {
-            // Now create the account using stored signup data
-            const signupResult = await signup(pendingSignupData);
+            // Now create the account using stored signup data with verification token
+            const signupResult = await signup({
+              ...pendingSignupData,
+              verificationToken: result.verificationToken
+            });
             toast.dismiss(createLoadingId);
             
             if (signupResult.success && signupResult.user) {

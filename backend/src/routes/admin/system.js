@@ -1,9 +1,10 @@
 import { createDatabase } from "../../db/index.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { authenticateToken, requireAdmin, comparePassword, generateToken, hashPassword } from "../../middleware/auth.js";
+import { authRateLimiter } from "../../middleware/rateLimiter.js";
 
 export function setupAdminSystemRoutes(app) {
-  app.post("/admin/login", catchAsync(async (c) => {
+  app.post("/admin/login", authRateLimiter(), catchAsync(async (c) => {
     const { email, password } = await c.req.json();
     const db = createDatabase(c.env);
     try {
@@ -18,7 +19,7 @@ export function setupAdminSystemRoutes(app) {
         }, 401);
       }
       const user = userResult.data[0];
-      const storedPassword = user.password;
+      const storedPassword = user.password_hash || user.password;
       if (!storedPassword) {
         return c.json({
           success: false,
@@ -26,8 +27,7 @@ export function setupAdminSystemRoutes(app) {
         }, 401);
       }
       const isValidPassword = await comparePassword(password, storedPassword);
-      if (!isValidPassword && password === storedPassword) {
-      } else if (!isValidPassword) {
+      if (!isValidPassword) {
         return c.json({
           success: false,
           message: "Invalid credentials"

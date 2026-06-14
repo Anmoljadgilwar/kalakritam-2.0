@@ -1493,4 +1493,38 @@ export const userAuthApi = {
       throw error;
     }
   },
+  
+  // Refresh user token
+  refreshToken: async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      throw new Error('No token found');
+    }
+    
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/api/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Token refresh failed');
+      }
+      
+      if (result.success && result.token) {
+        localStorage.setItem('userToken', result.token);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      throw error;
+    }
+  },
 };

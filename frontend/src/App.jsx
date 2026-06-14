@@ -2,6 +2,7 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import RequireAuth from './components/RequireAuth'
+import RequireAdminAuth from './components/RequireAdminAuth'
 import GuestOnly from './components/GuestOnly'
 import { LoadingProvider, useLoading } from './contexts/LoadingContext.jsx'
 import { UserAuthProvider } from './contexts/UserAuthContext.jsx'
@@ -515,19 +516,19 @@ const AppContent = () => {
                   
                   {/* Admin Routes */}
                   <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route path="/admin/portal" element={<AdminPortal />} />
-                  <Route path="/admin/gallery" element={<AdminGallery />} />
-                  <Route path="/admin/workshops" element={<AdminWorkshops />} />
-                  <Route path="/admin/events" element={<AdminEvents />} />
-                  <Route path="/admin/financials" element={<AdminFinancials />} />
-                  <Route path="/admin/artists" element={<AdminArtists />} />
-                  <Route path="/admin/blogs" element={<AdminBlogs />} />
-                  <Route path="/admin/contact" element={<AdminContact />} />
-                  <Route path="/admin/tickets" element={<AdminTickets />} />
-                  <Route path="/admin/artpartyimages" element={<AdminArtPartyImages />} />
-                  <Route path="/admin/moments" element={<AdminMoments />} />
-                  <Route path="/admin/hero-banners" element={<AdminHeroBanners />} />
-                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/portal" element={<RequireAdminAuth><AdminPortal /></RequireAdminAuth>} />
+                  <Route path="/admin/gallery" element={<RequireAdminAuth><AdminGallery /></RequireAdminAuth>} />
+                  <Route path="/admin/workshops" element={<RequireAdminAuth><AdminWorkshops /></RequireAdminAuth>} />
+                  <Route path="/admin/events" element={<RequireAdminAuth><AdminEvents /></RequireAdminAuth>} />
+                  <Route path="/admin/financials" element={<RequireAdminAuth><AdminFinancials /></RequireAdminAuth>} />
+                  <Route path="/admin/artists" element={<RequireAdminAuth><AdminArtists /></RequireAdminAuth>} />
+                  <Route path="/admin/blogs" element={<RequireAdminAuth><AdminBlogs /></RequireAdminAuth>} />
+                  <Route path="/admin/contact" element={<RequireAdminAuth><AdminContact /></RequireAdminAuth>} />
+                  <Route path="/admin/tickets" element={<RequireAdminAuth><AdminTickets /></RequireAdminAuth>} />
+                  <Route path="/admin/artpartyimages" element={<RequireAdminAuth><AdminArtPartyImages /></RequireAdminAuth>} />
+                  <Route path="/admin/moments" element={<RequireAdminAuth><AdminMoments /></RequireAdminAuth>} />
+                  <Route path="/admin/hero-banners" element={<RequireAdminAuth><AdminHeroBanners /></RequireAdminAuth>} />
+                  <Route path="/admin/users" element={<RequireAdminAuth><AdminUsers /></RequireAdminAuth>} />
                   
                   {/* Public Ticket Verification Routes */}
                   <Route path="/verify-ticket/:ticketId" element={<TicketVerification />} />

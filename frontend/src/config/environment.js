@@ -18,8 +18,6 @@ export const config = {
     branch: import.meta.env.VITE_XATA_BRANCH || 'main'
   },
   
-  // JWT Secret
-  jwtSecret: import.meta.env.VITE_JWT_SECRET,
   
   // Image URL transformation
   transformImageUrl: (url) => {

@@ -19,10 +19,21 @@ const AdminHeader = ({ currentPage = 'portal' }) => {
 
   const fetchAdminProfile = async () => {
     try {
+      const storedUser = localStorage.getItem('adminUser');
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          if (parsed && parsed.name) {
+            setAdminUser(parsed);
+            return;
+          }
+        } catch { }
+      }
+
       const token = localStorage.getItem('adminToken');
       if (!token) return;
 
-      const response = await fetch(`${config.apiBaseUrl}/api/admin/me`, {
+      const response = await fetch(`${config.apiBaseUrl}/admin/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
