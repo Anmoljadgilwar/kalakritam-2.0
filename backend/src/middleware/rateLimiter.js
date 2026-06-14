@@ -100,3 +100,37 @@ export const authRateLimiter = () => rateLimiter({
   max: 5,
   message: "Too many authentication attempts, please try again later"
 });
+
+export const emailRateLimiter = (options = {}) => {
+  const { max = 5, windowMs = 15 * 60 * 1000 } = options;
+  return async (c, next) => {
+    try {
+      const body = await c.req.json();
+      const email = (body.email || 'unknown').toLowerCase().trim();
+      const key = `email:${email}`;
+      const now = Date.now();
+      const windowStart = now - windowMs;
+      let data = store.get(key);
+      if (!data || data.expiry < now) {
+        data = { requests: [], expiry: now + windowMs };
+      }
+      data.requests = data.requests.filter(t => t > windowStart);
+      if (data.requests.length >= max) {
+        return c.json({
+          success: false,
+          message: "Too many requests for this email, please try again later",
+          rateLimitInfo: {
+            limit: max,
+            remaining: 0,
+            retryAfter: Math.ceil((data.requests[0] + windowMs - now) / 1000)
+          }
+        }, 429);
+      }
+      data.requests.push(now);
+      store.set(key, data, Math.ceil(windowMs / 1000));
+    } catch {
+      // If body parsing fails, still allow the request
+    }
+    await next();
+  };
+};

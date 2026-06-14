@@ -2,8 +2,10 @@ import { createDatabase } from "../db/index.js";
 import { EmailService } from "../services/email.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { optionalAuth, authenticateToken } from "../middleware/auth.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
 
 export function setupTicketsRoutes(app) {
+  const purchaseRateLimit = rateLimiter({ windowMs: 15 * 60 * 1000, max: 30 });
   app.get("/tickets", optionalAuth, catchAsync(async (c) => {
     try {
       const eventId = c.req.query("eventId");
@@ -66,7 +68,7 @@ export function setupTicketsRoutes(app) {
       }, 500);
     }
   }));
-  app.post("/tickets/purchase", catchAsync(async (c) => {
+  app.post("/tickets/purchase", purchaseRateLimit, catchAsync(async (c) => {
     try {
       const body = await c.req.json();
       const { eventId, workshopId, quantity, customerInfo } = body;

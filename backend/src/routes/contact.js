@@ -1,9 +1,11 @@
 import { createDatabase } from "../db/index.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
 
 export function setupContactRoutes(app) {
-  app.post("/contact", catchAsync(async (c) => {
+  const publicRateLimit = rateLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
+  app.post("/contact", publicRateLimit, catchAsync(async (c) => {
     try {
       const body = await c.req.json();
       const { name, email, message, phone, subject } = body;

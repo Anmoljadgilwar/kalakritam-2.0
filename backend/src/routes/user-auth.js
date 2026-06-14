@@ -1,9 +1,9 @@
 import { createDatabase } from "../db/index.js";
 import { EmailService } from "../services/email.js";
-import { generateOTP } from "../utils/otp.js";
+import { generateOTP, hashOTP } from "../utils/otp.js";
 import { generateToken, verifyToken, authenticateToken, authenticateUser, authenticateAdminOrUser, hashPassword, comparePassword } from "../middleware/auth.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { authRateLimiter } from "../middleware/rateLimiter.js";
+import { authRateLimiter, emailRateLimiter } from "../middleware/rateLimiter.js";
 
 export function setupUserAuthRoutes(app) {
   app.use("/api/auth/*", authRateLimiter());
@@ -211,7 +211,7 @@ export function setupUserAuthRoutes(app) {
   // ============================================
   
   // Request OTP for verification/login
-  app.post("/api/auth/request-otp", catchAsync(async (c) => {
+  app.post("/api/auth/request-otp", emailRateLimiter({ max: 3 }), catchAsync(async (c) => {
     try {
       const { email: rawEmail, purpose = 'verification' } = await c.req.json();
       
@@ -251,15 +251,13 @@ export function setupUserAuthRoutes(app) {
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
       const now = new Date().toISOString();
       
-      console.log('OTP Generated:', { email, otp, purpose, expiresAt });
-      
       // Store OTP in database (create table if not exists)
       try {
         await db.query(`
           CREATE TABLE IF NOT EXISTS otp_codes (
             id SERIAL PRIMARY KEY,
             email VARCHAR(255) NOT NULL,
-            otp VARCHAR(6) NOT NULL,
+            otp VARCHAR(64) NOT NULL,
             purpose VARCHAR(50) DEFAULT 'verification',
             expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
             used BOOLEAN DEFAULT FALSE,
@@ -267,20 +265,30 @@ export function setupUserAuthRoutes(app) {
           )
         `);
       } catch (tableErr) {
-        // Table might already exist
         console.log('OTP table check:', tableErr.message);
       }
       
-      // Delete old OTPs for this email and purpose
+      // Try to widen column if needed (safe migration)
+      try {
+        await db.query(`ALTER TABLE otp_codes ALTER COLUMN otp TYPE VARCHAR(64)`);
+      } catch {}
+      
+      // Clean up all expired OTPs
+      await db.query('DELETE FROM otp_codes WHERE expires_at < $1', [now]);
+      
+      // Delete old (unused) OTPs for this email and purpose
       await db.query(
         'DELETE FROM otp_codes WHERE email = $1 AND purpose = $2',
         [email, purpose]
       );
       
-      // Insert new OTP - ensure OTP is stored as string
+      // Hash OTP before storing
+      const otpHash = await hashOTP(otp);
+      
+      // Insert new OTP hash
       await db.query(
         'INSERT INTO otp_codes (email, otp, purpose, expires_at, created_at) VALUES ($1, $2, $3, $4, $5)',
-        [email, otp.toString(), purpose, expiresAt, now]
+        [email, otpHash, purpose, expiresAt, now]
       );
       
       // Send OTP email
@@ -308,7 +316,7 @@ export function setupUserAuthRoutes(app) {
   }));
   
   // Verify OTP
-  app.post("/api/auth/verify-otp", catchAsync(async (c) => {
+  app.post("/api/auth/verify-otp", emailRateLimiter({ max: 5 }), catchAsync(async (c) => {
     try {
       const { email, otp, purpose = 'verification' } = await c.req.json();
       
@@ -322,44 +330,51 @@ export function setupUserAuthRoutes(app) {
       const db = createDatabase(c.env);
       const now = new Date().toISOString();
       
-      // Find valid OTP - be more flexible with purpose matching
-      // First try exact purpose match, then try any purpose for this email
+      // Hash the user-provided OTP for comparison
+      const inputHash = await hashOTP(otp.toString().trim());
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Find valid OTP for this email matching the hash
       let otpResult = await db.query(
         `SELECT * FROM otp_codes 
          WHERE email = $1 AND otp = $2 AND purpose = $3 
          AND used = FALSE AND expires_at > $4
          ORDER BY created_at DESC LIMIT 1`,
-        [email.toLowerCase().trim(), otp.toString().trim(), purpose, now]
+        [normalizedEmail, inputHash, purpose, now]
       );
       
-      // If exact match not found, try to find OTP with any purpose (for flexibility)
+      // If exact purpose match not found, try any purpose
       if (!otpResult.success || otpResult.data.length === 0) {
         otpResult = await db.query(
           `SELECT * FROM otp_codes 
            WHERE email = $1 AND otp = $2
            AND used = FALSE AND expires_at > $3
            ORDER BY created_at DESC LIMIT 1`,
-          [email.toLowerCase().trim(), otp.toString().trim(), now]
+          [normalizedEmail, inputHash, now]
         );
       }
       
-      console.log('OTP Verification Debug:', { 
-        email: email.toLowerCase().trim(), 
-        otp: otp.toString().trim(), 
-        purpose, 
-        now,
-        found: otpResult.data?.length || 0,
-        foundPurpose: otpResult.data?.[0]?.purpose
-      });
+      // Fallback: try plaintext match for OTPs stored before hashing was added
+      if (!otpResult.success || otpResult.data.length === 0) {
+        otpResult = await db.query(
+          `SELECT * FROM otp_codes 
+           WHERE email = $1 AND otp = $2 AND purpose = $3 
+           AND used = FALSE AND expires_at > $4
+           ORDER BY created_at DESC LIMIT 1`,
+          [normalizedEmail, otp.toString().trim(), purpose, now]
+        );
+      }
+      if (!otpResult.success || otpResult.data.length === 0) {
+        otpResult = await db.query(
+          `SELECT * FROM otp_codes 
+           WHERE email = $1 AND otp = $2
+           AND used = FALSE AND expires_at > $3
+           ORDER BY created_at DESC LIMIT 1`,
+          [normalizedEmail, otp.toString().trim(), now]
+        );
+      }
       
       if (!otpResult.success || otpResult.data.length === 0) {
-        // Check if OTP exists but expired or wrong
-        const debugResult = await db.query(
-          `SELECT otp, purpose, expires_at, used FROM otp_codes WHERE email = $1 ORDER BY created_at DESC LIMIT 1`,
-          [email.toLowerCase().trim()]
-        );
-        console.log('OTP Debug - Last OTP for email:', debugResult.data?.[0]);
-        
         return c.json({
           success: false,
           error: 'Invalid or expired OTP'
@@ -374,8 +389,6 @@ export function setupUserAuthRoutes(app) {
         'UPDATE otp_codes SET used = TRUE WHERE id = $1',
         [otpResult.data[0].id]
       );
-      
-      const normalizedEmail = email.toLowerCase().trim();
       
       // If purpose is login, generate token and return user data
       if (actualPurpose === 'login') {
@@ -453,7 +466,7 @@ export function setupUserAuthRoutes(app) {
   }));
   
   // Request password reset
-  app.post("/api/auth/forgot-password", catchAsync(async (c) => {
+  app.post("/api/auth/forgot-password", emailRateLimiter({ max: 3 }), catchAsync(async (c) => {
     try {
       const { email } = await c.req.json();
       
@@ -574,7 +587,7 @@ export function setupUserAuthRoutes(app) {
   }));
   
   // Reset password with OTP
-  app.post("/api/auth/reset-password-otp", catchAsync(async (c) => {
+  app.post("/api/auth/reset-password-otp", emailRateLimiter({ max: 5 }), catchAsync(async (c) => {
     try {
       const { email, otp, newPassword } = await c.req.json();
       
@@ -594,11 +607,44 @@ export function setupUserAuthRoutes(app) {
       
       const db = createDatabase(c.env);
       
-      // Verify OTP was used for password-reset purpose (check if it was recently verified)
-      // We trust the OTP since it was already verified in the previous step
+      // Verify OTP is valid for this email
+      const now = new Date().toISOString();
+      const normalizedEmail = email.toLowerCase().trim();
+      const inputHash = await hashOTP(otp.toString().trim());
+      
+      // Try hashed match first, then plaintext fallback for old entries
+      let otpResult = await db.query(
+        `SELECT * FROM otp_codes 
+         WHERE email = $1 AND otp = $2 AND purpose = 'password-reset'
+         AND used = FALSE AND expires_at > $3
+         ORDER BY created_at DESC LIMIT 1`,
+        [normalizedEmail, inputHash, now]
+      );
+      if (!otpResult.success || otpResult.data.length === 0) {
+        otpResult = await db.query(
+          `SELECT * FROM otp_codes 
+           WHERE email = $1 AND otp = $2 AND purpose = 'password-reset'
+           AND used = FALSE AND expires_at > $3
+           ORDER BY created_at DESC LIMIT 1`,
+          [normalizedEmail, otp.toString().trim(), now]
+        );
+      }
+      
+      if (!otpResult.success || otpResult.data.length === 0) {
+        return c.json({
+          success: false,
+          error: 'Invalid or expired OTP'
+        }, 400);
+      }
+      
+      // Mark OTP as used
+      await db.query(
+        'UPDATE otp_codes SET used = TRUE WHERE id = $1',
+        [otpResult.data[0].id]
+      );
       
       // Find user by email
-      const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      const userResult = await db.query('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
       
       if (!userResult.success || userResult.data.length === 0) {
         return c.json({
@@ -611,12 +657,12 @@ export function setupUserAuthRoutes(app) {
       
       // Hash new password
       const hashedPassword = await hashPassword(newPassword);
-      const now = new Date().toISOString();
+      const updateTime = new Date().toISOString();
       
       // Update password
       const updateResult = await db.query(
         'UPDATE users SET password = $1, updated_at = $2 WHERE id = $3 RETURNING *',
-        [hashedPassword, now, user.id]
+        [hashedPassword, updateTime, user.id]
       );
       
       if (!updateResult.success || updateResult.data.length === 0) {
@@ -625,12 +671,6 @@ export function setupUserAuthRoutes(app) {
           error: 'Failed to reset password'
         }, 500);
       }
-      
-      // Clean up used OTPs for this email
-      await db.query(
-        'UPDATE otp_codes SET used = TRUE WHERE email = $1 AND purpose = $2',
-        [email, 'password-reset']
-      );
       
       return c.json({
         success: true,
@@ -671,6 +711,23 @@ export function setupUserAuthRoutes(app) {
       const name = googleUser.name;
       const photoUrl = googleUser.picture;
       const googleId = googleUser.sub;
+      
+      // Verify the token was issued for this app
+      const clientId = c.env?.GOOGLE_CLIENT_ID;
+      if (clientId && googleUser.aud !== clientId) {
+        return c.json({
+          success: false,
+          error: "Invalid Google token: audience mismatch"
+        }, 401);
+      }
+      
+      // Verify the email is confirmed by Google
+      if (!googleUser.email_verified) {
+        return c.json({
+          success: false,
+          error: "Google email not verified"
+        }, 401);
+      }
       
       const db = createDatabase(c.env);
       if (!db) {

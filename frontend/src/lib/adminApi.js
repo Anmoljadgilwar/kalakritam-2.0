@@ -3,11 +3,8 @@ import { config } from '../config/environment.js';
 import { toast } from '../utils/notifications.js';
 
 // Common API call function with admin authentication
-export const apiCall = async (endpoint, method = 'GET', data = null) => {
+export const apiCall = async (endpoint, method = 'GET', data = null, options = {}) => {
   try {
-    const token = localStorage.getItem('adminToken');
-    
-    // Use endpoint as-is since it already includes admin/ prefix where needed
     const url = `${config.apiBaseUrl}/${endpoint}`;
     
     const headers = {
@@ -15,8 +12,12 @@ export const apiCall = async (endpoint, method = 'GET', data = null) => {
       'Accept': 'application/json',
     };
     
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    // Only attach admin token for admin endpoints
+    if (options.auth !== false) {
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
     }
     
     const requestOptions = {
@@ -821,7 +822,7 @@ export const ticketsApi = {
     } catch (error) {
       console.warn('Admin tickets endpoint not available, trying public tickets:', error);
       try {
-        return await apiCall('tickets');
+        return await apiCall('tickets', 'GET', null, { auth: false });
       } catch (fallbackError) {
         console.warn('Tickets endpoint not available, returning empty array:', fallbackError);
         return {
@@ -874,8 +875,8 @@ export const ticketsApi = {
       throw error;
     }
   },
-  verify: (ticketCode) => apiCall('tickets/verify', 'POST', { code: ticketCode }),
-  verifyById: (ticketId) => apiCall(`tickets/verify/${ticketId}`, 'GET'),
+  verify: (ticketCode) => apiCall('tickets/verify', 'POST', { code: ticketCode }, { auth: false }),
+  verifyById: (ticketId) => apiCall(`tickets/verify/${ticketId}`, 'GET', null, { auth: false }),
   
   // Helper function to generate PDF blob (to be implemented)
   generatePDFBlob: async (ticket) => {
@@ -974,15 +975,17 @@ export const authApi = {
       const result = await response.json();
       
       if (!response.ok) {
+        // Only remove token on auth errors (401/403), not network errors
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
         throw new Error(result.error || 'Token verification failed');
       }
       
       return result;
     } catch (error) {
       console.error('Token verification error:', error);
-      // Remove invalid token
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminUser');
+      // Network errors (fetch failure, DNS failure, etc.) preserve the token
+      // so the user isn't logged out during transient outages
       throw error;
     }
   },
@@ -1005,7 +1008,7 @@ export const heroBannersApi = {
   },
 
   getActive: () => {
-    return apiCall('hero-banners');
+    return apiCall('hero-banners', 'GET', null, { auth: false });
   },
 
   create: (bannerData) => {

@@ -1,6 +1,6 @@
 import { createDatabase } from "../db/index.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { hashPassword, comparePassword, authenticateToken } from "../middleware/auth.js";
+import { hashPassword, comparePassword, authenticateToken, requireAdmin } from "../middleware/auth.js";
 
 export function setupDebugRoutes(app) {
   app.use("/debug/*", async (c, next) => {
@@ -9,6 +9,7 @@ export function setupDebugRoutes(app) {
     }
     await next();
   });
+  app.use("/debug/*", authenticateToken, requireAdmin);
   app.post("/debug/fix-admin-password", catchAsync(async (c) => {
     try {
       const db = createDatabase(c.env);
@@ -344,7 +345,7 @@ export function setupDebugRoutes(app) {
       }, 500);
     }
   }));
-  app.get("/debug/info", authenticateToken, catchAsync(async (c) => {
+  app.get("/debug/info", catchAsync(async (c) => {
     try {
       return c.json({
         success: true,
@@ -367,7 +368,7 @@ export function setupDebugRoutes(app) {
       }, 500);
     }
   }));
-  app.get("/debug/test-db", authenticateToken, catchAsync(async (c) => {
+  app.get("/debug/test-db", catchAsync(async (c) => {
     try {
       return c.json({
         success: true,
@@ -385,7 +386,7 @@ export function setupDebugRoutes(app) {
       }, 500);
     }
   }));
-  app.get("/debug/test-r2", authenticateToken, catchAsync(async (c) => {
+  app.get("/debug/test-r2", catchAsync(async (c) => {
     try {
       return c.json({
         success: true,
@@ -403,7 +404,7 @@ export function setupDebugRoutes(app) {
       }, 500);
     }
   }));
-  app.get("/debug/health", authenticateToken, catchAsync(async (c) => {
+  app.get("/debug/health", catchAsync(async (c) => {
     try {
       return c.json({
         success: true,

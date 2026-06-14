@@ -69,79 +69,8 @@ export const UserAuthProvider = ({ children }) => {
       console.log('UserAuthContext - storedToken:', storedToken ? 'exists' : 'missing');
       console.log('UserAuthContext - storedUser:', storedUser ? 'exists' : 'missing');
 
-      if (storedToken && storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
-        setToken(storedToken);
-        
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          if (!parsedUser || typeof parsedUser !== 'object') {
-            throw new Error('Invalid user data');
-          }
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-          setIsLoading(false);
-          
-          console.log('UserAuthContext - User authenticated from localStorage:', parsedUser);
-
-          // Skip token verification if we just logged in (within last 30 seconds)
-          const loginTime = localStorage.getItem('loginTime');
-          const now = Date.now();
-          if (loginTime && (now - parseInt(loginTime)) < 30000) {
-            console.log('Skipping token verification - just logged in');
-            return;
-          }
-
-          // Verify token is still valid (with delay to prevent race conditions)
-          console.log('UserAuthContext - Verifying token...');
-          
-          // Add a small delay before verification to ensure localStorage is synced
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-          try {
-            const result = await userAuthApi.verifyToken();
-            console.log('UserAuthContext - Token verification result:', result);
-            
-            if (!result.success) {
-              console.warn('Token verification returned unsuccessful:', result);
-              // If user was deleted or token is invalid, clear everything
-              console.log('UserAuthContext - Logging out due to invalid token');
-              logout();
-            } else {
-              console.log('UserAuthContext - Token verified successfully');
-              // Update user data if API returns it
-              if (result.data) {
-                setUser(result.data);
-                localStorage.setItem('userData', JSON.stringify(result.data));
-              }
-            }
-          } catch (error) {
-            console.error('Token verification failed:', error);
-            
-            // Check if it's a network error vs auth error
-            if (error.message?.includes('fetch') || error.message?.includes('network') || error.name === 'TypeError') {
-              console.log('UserAuthContext - Network error, keeping user logged in');
-              // Don't logout on network errors - user might be offline
-            } else if (error.message?.includes('No token found')) {
-              console.log('UserAuthContext - No token found, logging out');
-              logout();
-            } else {
-              // For other auth errors (401, 403), logout
-              console.log('UserAuthContext - Auth error, logging out');
-              logout();
-            }
-          }
-        } catch (parseError) {
-          console.error('Failed to parse stored user data:', parseError);
-          // Clear invalid data
-          localStorage.removeItem('userData');
-          localStorage.removeItem('userToken');
-          localStorage.removeItem('loginTime');
-          localStorage.removeItem('lastActivity');
-          setIsLoading(false);
-        }
-      } else {
+      if (!storedToken || !storedUser || storedUser === 'undefined' || storedUser === 'null') {
         console.log('UserAuthContext - No stored credentials found or invalid data');
-        // Clean up any invalid data
         if (storedUser === 'undefined' || storedUser === 'null') {
           localStorage.removeItem('userData');
         }
@@ -151,10 +80,78 @@ export const UserAuthProvider = ({ children }) => {
         localStorage.removeItem('loginTime');
         localStorage.removeItem('lastActivity');
         setIsLoading(false);
+        return;
+      }
+
+      setToken(storedToken);
+      
+      let parsedUser;
+      try {
+        parsedUser = JSON.parse(storedUser);
+        if (!parsedUser || typeof parsedUser !== 'object') {
+          throw new Error('Invalid user data');
+        }
+      } catch (parseError) {
+        console.error('Failed to parse stored user data:', parseError);
+        localStorage.removeItem('userData');
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('loginTime');
+        localStorage.removeItem('lastActivity');
+        setIsLoading(false);
+        return;
+      }
+
+      // Skip token verification for fresh logins (within last 30 seconds)
+      const loginTime = localStorage.getItem('loginTime');
+      const justLoggedIn = loginTime && (Date.now() - parseInt(loginTime)) < 30000;
+      
+      if (justLoggedIn) {
+        console.log('Skipping token verification - just logged in');
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return;
+      }
+
+      // Verify token with server
+      console.log('UserAuthContext - Verifying token...');
+      
+      try {
+        const result = await userAuthApi.verifyToken();
+        console.log('UserAuthContext - Token verification result:', result);
+        
+        if (!result.success) {
+          console.warn('Token verification returned unsuccessful:', result);
+          logout();
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log('UserAuthContext - Token verified successfully');
+        const userData = result.data || parsedUser;
+        setUser(userData);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        if (result.data) {
+          localStorage.setItem('userData', JSON.stringify(result.data));
+        }
+      } catch (error) {
+        console.error('Token verification failed:', error);
+        
+        const isNetworkError = error.message?.includes('fetch') || error.message?.includes('network') || error.name === 'TypeError';
+        
+        if (isNetworkError) {
+          console.log('UserAuthContext - Network error, showing cached data');
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+          setIsLoading(false);
+        } else {
+          logout();
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error('Auth check error:', error);
-      // Clear everything on error
       localStorage.removeItem('userData');
       localStorage.removeItem('userToken');
       localStorage.removeItem('loginTime');

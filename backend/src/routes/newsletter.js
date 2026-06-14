@@ -2,10 +2,12 @@ import { createDatabase } from "../db/index.js";
 import { EmailService } from "../services/email.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
 
 export function setupNewsletterRoutes(app) {
+  const publicRateLimit = rateLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
   // Subscribe to newsletter
-  app.post("/newsletter/subscribe", catchAsync(async (c) => {
+  app.post("/newsletter/subscribe", publicRateLimit, catchAsync(async (c) => {
     try {
       const body = await c.req.json();
       const { email } = body;
@@ -115,7 +117,7 @@ export function setupNewsletterRoutes(app) {
   }));
   
   // Unsubscribe from newsletter
-  app.post("/newsletter/unsubscribe", catchAsync(async (c) => {
+  app.post("/newsletter/unsubscribe", publicRateLimit, catchAsync(async (c) => {
     try {
       const body = await c.req.json();
       const { email } = body;

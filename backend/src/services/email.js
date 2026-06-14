@@ -385,7 +385,7 @@ export const EmailService = {
       </body>
       </html>
     `;
-    return this.send(email, `${config.title} - Your Code: ${otp} | Kalakritam`, html, env);
+    return this.send(email, `${config.title} | Kalakritam`, html, env);
   },
 
   // Password reset email template

@@ -3,8 +3,8 @@ export const config = {
   // Determine if we're in production
   isProduction: import.meta.env.PROD,
   
-  // API Base URL - hardcoded to production API
-  apiBaseUrl: 'https://api.kalakritam.in',
+  // API Base URL - use env var or fall back to production
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'https://api.kalakritam.in',
   
   // App URL
   appUrl: import.meta.env.PROD
@@ -110,8 +110,7 @@ export const apiRequest = async (url, options = {}) => {
     if (response.status === 401) {
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminUser');
-      // Redirect to home since admin routes are removed
-      window.location.href = '/home';
+      window.location.href = '/admin/login';
       return null;
     }
     
