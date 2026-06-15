@@ -5,7 +5,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
-import { getMobileBlurConfig, shouldOptimizeForMobile } from '../../utils/mobileOptimizations';
+import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
 import './ArtParty.css';
 import ArtPartyBanner from './ArtPartyBanner';
 import ApiClient from '../../utils/apiClient';
@@ -14,7 +14,7 @@ import { config } from '../../config/environment';
 const ArtParty = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
   useUsernameValidation('artparty'); // Validate username in URL
-  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
+  const { particleConfig, blurConfig } = useMobileOptimizations('artparty');
   const [bannerImages, setBannerImages] = useState([]);
 
   useEffect(() => {
@@ -78,14 +78,14 @@ const ArtParty = () => {
       <div className="artparty-particles-background">
         <Particles
           particleColors={['#c38f21', '#ffffff', '#c38f21']}
-          particleCount={1000}
-          particleSpread={10}
-          speed={0.2}
-          particleBaseSize={200}
-          moveParticlesOnHover={true}
-          particleHoverFactor={2}
-          alphaParticles={true}
-          disableRotation={false}
+          particleCount={particleConfig.particleCount}
+          particleSpread={particleConfig.particleSpread}
+          speed={particleConfig.speed}
+          particleBaseSize={particleConfig.particleBaseSize}
+          moveParticlesOnHover={particleConfig.moveParticlesOnHover}
+          particleHoverFactor={particleConfig.particleHoverFactor}
+          alphaParticles={particleConfig.alphaParticles}
+          disableRotation={particleConfig.disableRotation}
         />
       </div>
 

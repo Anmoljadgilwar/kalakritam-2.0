@@ -1,7 +1,7 @@
 /* Admin Login Component Styles */
 .admin-login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #001818 0%, #002020 50%, #002f2f 100%);
+  background: #000d0c; /* dark base — CosmicOrbit nebula layers paint on top */
   position: relative;
   overflow: hidden;
   display: flex;
@@ -19,7 +19,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.3;
+  opacity: 0.75;
 }
 
 .admin-login-container::before {
@@ -45,17 +45,40 @@
 }
 
 .admin-login-card {
-  background: rgba(0, 24, 24, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(195, 143, 33, 0.2);
+  background: rgba(0, 12, 12, 0.65);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1.5px solid rgba(195, 143, 33, 0.35);
   border-radius: 20px;
   padding: 3rem 2.5rem 2.5rem;
   box-shadow: 
     0 25px 50px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(195, 143, 33, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
+  /* Support 3D Tilt */
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.4s ease-out, 
+              border-color 0.3s ease,
+              background 0.3s ease;
+  /* Premium Entrance Animation */
+  opacity: 0;
+  transform: translateY(30px) scale(0.96);
+  animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 10;
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .admin-login-card::before {
@@ -64,8 +87,45 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.5), transparent);
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.8), transparent);
+  z-index: 5;
+}
+
+/* Glass-reflection shimmer sweep */
+.admin-login-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(195, 143, 33, 0) 10%,
+    rgba(195, 143, 33, 0.15) 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(195, 143, 33, 0.15) 60%,
+    rgba(195, 143, 33, 0) 90%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  transition: left 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.admin-login-card:hover::after {
+  left: 150%;
+}
+
+.admin-login-card:hover {
+  border-color: rgba(195, 143, 33, 0.65);
+  box-shadow: 
+    0 35px 70px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(195, 143, 33, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .admin-login-header {
@@ -75,29 +135,38 @@
 
 .admin-title {
   font-family: 'Samarkan', 'Cinzel', serif;
-  font-size: 2.5rem;
-  color: #c38f21;
+  font-size: 2.8rem;
   margin: 0 0 0.5rem 0;
   font-weight: 700;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 10px rgba(195, 143, 33, 0.3);
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #c38f21 0%, #ffe066 50%, #d4af85 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  filter: drop-shadow(0 2px 10px rgba(195, 143, 33, 0.4));
 }
 
 .admin-subtitle {
   font-family: 'The Seasons', 'Cinzel', serif;
   font-size: 1.4rem;
-  color: #d4af85;
+  color: #ffe066;
   margin: 0 0 0.5rem 0;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .admin-description {
   font-family: 'The Seasons', 'Cinzel', serif;
-  font-size: 1rem;
+  font-size: 0.78rem;
   color: #d4af85;
   margin: 0;
-  opacity: 0.8;
+  opacity: 0.9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  text-shadow: 0 0 10px rgba(195, 143, 33, 0.255);
 }
 
 .admin-login-form {
@@ -168,13 +237,13 @@
 
 .form-input {
   width: 100%;
-  padding: 1rem 1rem 1rem 3.25rem;
+  padding: 1.1rem 1rem 1.1rem 3.25rem;
   font-size: 1rem;
   color: #ffffff;
-  background: rgba(0, 47, 47, 0.6);
-  border: 1px solid rgba(195, 143, 33, 0.3);
+  background: rgba(0, 15, 15, 0.55);
+  border: 1.5px solid rgba(195, 143, 33, 0.4);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   backdrop-filter: blur(10px);
   text-transform: none;
@@ -187,14 +256,20 @@
   box-sizing: border-box;
 }
 
+.form-input:hover {
+  border-color: rgba(195, 143, 33, 0.75);
+  box-shadow: 0 0 12px rgba(195, 143, 33, 0.2);
+  background: rgba(0, 20, 20, 0.65);
+}
+
 .form-input:focus {
   outline: none;
-  border-color: #c38f21;
-  background: rgba(0, 47, 47, 0.8);
+  border-color: #ffe066;
+  background: rgba(0, 47, 47, 0.95);
   box-shadow: 
-    0 0 0 3px rgba(195, 143, 33, 0.1),
-    0 4px 12px rgba(195, 143, 33, 0.15);
-  transform: translateY(-1px);
+    0 0 0 4px rgba(195, 143, 33, 0.4),
+    0 8px 22px rgba(195, 143, 33, 0.3);
+  transform: translateY(-2px);
 }
 
 .form-input::placeholder {
@@ -280,15 +355,15 @@ input#email::placeholder {
   width: 100%;
   padding: 1.25rem 2rem;
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #000000;
-  background: linear-gradient(135deg, #b8821e 0%, #c38f21 50%, #d4a124 100%);
+  font-weight: 700;
+  color: #002f2f;
+  background: linear-gradient(135deg, #c38f21 0%, #ffe066 50%, #d4af85 100%);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   font-family: 'The Seasons', 'Cinzel', serif;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -296,6 +371,7 @@ input#email::placeholder {
   justify-content: center;
   gap: 0.75rem;
   margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(195, 143, 33, 0.25);
 }
 
 .login-submit-btn::before {
@@ -305,16 +381,16 @@ input#email::placeholder {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transition: left 0.6s ease;
 }
 
 .login-submit-btn:hover {
-  background: linear-gradient(135deg, #c38f21 0%, #d4a124 50%, #e6b526 100%);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #d4af85 0%, #ffe066 50%, #c38f21 100%);
+  transform: scale(1.02) translateY(-3px);
   box-shadow: 
-    0 8px 25px rgba(195, 143, 33, 0.4),
-    0 0 0 1px rgba(195, 143, 33, 0.2);
+    0 12px 30px rgba(195, 143, 33, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .login-submit-btn:hover::before {
@@ -383,23 +459,25 @@ input#email::placeholder {
   background: none;
   border: 1px solid rgba(195, 143, 33, 0.3);
   color: #d4af85;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
   border-radius: 25px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   font-family: 'The Seasons', 'Cinzel', serif;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .back-to-home-btn:hover {
-  color: #c38f21;
+  color: #ffe066;
   border-color: #c38f21;
-  background: rgba(195, 143, 33, 0.1);
-  transform: translateY(-1px);
+  background: rgba(195, 143, 33, 0.15);
+  box-shadow: 0 0 15px rgba(195, 143, 33, 0.25);
+  transform: scale(1.02) translateY(-2px);
 }
 
 .back-to-home-btn:disabled {
@@ -529,3 +607,139 @@ input#email::placeholder {
     transform: none;
   }
 }
+
+/* ============================================
+   TOP LEFT & CARD LOGO CUSTOM STYLES
+   ============================================ */
+
+/* Top Left Spinning Brand Logo */
+.top-left-logo-container {
+  position: fixed;
+  top: clamp(10px, 2vw, 15px);
+  left: clamp(10px, 2vw, 15px);
+  width: clamp(50px, 10vw, 70px);
+  height: clamp(50px, 10vw, 70px);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(195, 143, 33, 0.25),
+    0 0 0 1.5px rgba(195, 143, 33, 0.4);
+  z-index: 150;
+  animation: fadeInLogo 0.5s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(0, 24, 24, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.top-left-logo-container:hover {
+  transform: scale(1.08);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(195, 143, 33, 0.45),
+    0 0 0 2px rgba(195, 143, 33, 0.6);
+}
+
+.top-left-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  /* Static — same as logo on all other pages */
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Login Card Logo Wrapper */
+.login-logo-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 47, 47, 0.85) 0%, rgba(0, 10, 10, 0.95) 100%);
+  border: 1.5px solid rgba(195, 143, 33, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(195, 143, 33, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  position: relative;
+}
+
+/* Ambient glow under card logo */
+.login-logo-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(195, 143, 33, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  animation: pulseLogoGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseLogoGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+.login-card-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  animation: slowSpin 35s linear infinite;
+}
+
+/* Bottom Curved Wave and Sparkle Star Styles */
+.bottom-wave-accent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  overflow: visible;
+}
+
+.bottom-wave-accent svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bottom-sparkle-star {
+  position: absolute;
+  right: clamp(20px, 8vw, 120px);
+  bottom: 25px;
+  width: clamp(25px, 4vw, 45px);
+  height: clamp(25px, 4vw, 45px);
+  filter: drop-shadow(0 0 12px rgba(255, 224, 102, 0.85)) drop-shadow(0 0 24px rgba(255, 224, 102, 0.5));
+  animation: slowPulse 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes slowPulse {
+  0%, 100% {
+    transform: scale(0.9) rotate(0deg);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.1) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+/* Astrolabe SVG Styles */
+.login-card-astrolabe,
+.top-left-astrolabe-svg {
+  filter: drop-shadow(0 0 10px rgba(195, 143, 33, 0.5)) drop-shadow(0 0 20px rgba(195, 143, 33, 0.25));
+}

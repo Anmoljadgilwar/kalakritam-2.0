@@ -64,14 +64,18 @@ const fragment = /* glsl */ `
     vec2 uv = gl_PointCoord.xy;
     float d = length(uv - vec2(0.5));
     
+    if(d > 0.5) {
+      discard;
+    }
+    
     if(uAlphaParticles < 0.5) {
-      if(d > 0.5) {
-        discard;
-      }
       gl_FragColor = vec4(vColor + 0.2 * sin(uv.yxx + uTime + vRandom.y * 6.28), 1.0);
     } else {
-      float circle = smoothstep(0.5, 0.4, d) * 0.8;
-      gl_FragColor = vec4(vColor + 0.2 * sin(uv.yxx + uTime + vRandom.y * 6.28), circle);
+      // Balanced: visible glowing core that doesn't dominate — perfect midpoint
+      float core = smoothstep(0.5, 0.28, d);        // solid core starts at 0.28 radius
+      float glow = smoothstep(0.5, 0.0, d) * 0.55;  // brighter outer halo
+      float circle = clamp(core * 0.95 + glow, 0.0, 1.0);  // max full brightness
+      gl_FragColor = vec4(vColor + 0.15 * sin(uv.yxx + uTime + vRandom.y * 6.28), circle);
     }
   }
 `;

@@ -50,9 +50,11 @@ const MuiToastContainer = () => {
           open={true}
           autoHideDuration={toast.duration > 0 ? toast.duration : null}
           onClose={handleClose(toast.id)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           style={{ 
-            bottom: `${16 + index * 72}px`,
+            top: `${24 + index * 80}px`,
+            bottom: 'auto',
+            right: '24px',
             zIndex: 9999
           }}
         >
@@ -62,37 +64,45 @@ const MuiToastContainer = () => {
             onClose={handleClose(toast.id)}
             sx={{
               width: '360px',
-              maxWidth: 'calc(100vw - 32px)',
-              background: 'rgba(0, 0, 0, 0.85)',
+              maxWidth: 'calc(100vw - 48px)',
+              background: 'linear-gradient(135deg, rgba(0, 30, 30, 0.95) 0%, rgba(0, 10, 10, 0.95) 100%) !important',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid',
-              borderColor: toast.severity === 'success' ? 'success.main' :
-                           toast.severity === 'error' ? 'error.main' :
-                           toast.severity === 'warning' ? 'warning.main' :
-                           'info.main',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+              border: '1px solid !important',
+              borderColor: toast.severity === 'error' ? 'rgba(239, 68, 68, 0.8) !important' :
+                           toast.severity === 'warning' ? 'rgba(245, 158, 11, 0.8) !important' :
+                           'rgba(195, 143, 33, 0.85) !important', // Gold border for success, info & loading!
+              boxShadow: toast.severity === 'error' ? '0 8px 32px rgba(239, 68, 68, 0.2), 0 0 15px rgba(239, 68, 68, 0.1)' :
+                         toast.severity === 'warning' ? '0 8px 32px rgba(245, 158, 11, 0.2), 0 0 15px rgba(245, 158, 11, 0.1)' :
+                         '0 8px 32px rgba(195, 143, 33, 0.3), 0 0 20px rgba(195, 143, 33, 0.15)', // Premium Gold glow!
               color: '#ffffff',
               fontSize: '14px',
-              padding: '12px 16px',
+              padding: '14px 18px',
               alignItems: 'center',
-              borderRadius: '4px',
+              borderRadius: '12px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: toast.severity === 'error' ? '0 12px 40px rgba(239, 68, 68, 0.3)' :
+                           toast.severity === 'warning' ? '0 12px 40px rgba(245, 158, 11, 0.3)' :
+                           '0 12px 40px rgba(195, 143, 33, 0.45)',
+              },
               '& .MuiAlert-icon': {
-                color: toast.severity === 'success' ? '#4caf50' :
-                       toast.severity === 'error' ? '#f44336' :
-                       toast.severity === 'warning' ? '#ff9800' :
-                       '#2196f3',
-                fontSize: '22px',
+                color: toast.severity === 'error' ? '#ef4444 !important' :
+                       toast.severity === 'warning' ? '#f59e0b !important' :
+                       '#ffe066 !important', // Premium Gold icons!
+                fontSize: '24px',
                 marginRight: '12px',
               },
               '& .MuiAlert-message': {
                 color: '#ffffff',
-                padding: '6px 0',
+                padding: '4px 0',
                 flex: 1,
                 display: 'flex',
                 alignItems: 'center',
                 fontSize: '14px',
-                fontWeight: 400,
+                fontWeight: 500,
+                letterSpacing: '0.02em',
               },
               '& .MuiAlert-action': {
                 color: 'rgba(255, 255, 255, 0.7)',
@@ -101,16 +111,18 @@ const MuiToastContainer = () => {
                 marginLeft: '8px',
               },
               '& .MuiIconButton-root': {
-                color: 'rgba(255, 255, 255, 0.7)',
-                padding: '4px',
+                color: 'rgba(195, 143, 33, 0.85)', // Gold close button!
+                padding: '6px',
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  color: '#ffffff',
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#ffe066',
+                  transform: 'rotate(90deg) scale(1.15)',
+                  background: 'rgba(195, 143, 33, 0.15)',
                 }
               },
             }}
             icon={toast.loading ? (
-              <CircularProgress size={20} sx={{ color: '#2196f3' }} />
+              <CircularProgress size={20} sx={{ color: '#ffe066' }} /> // Gold loading spinner!
             ) : toast.icon ? (
               <Box sx={{ fontSize: '22px', display: 'flex', alignItems: 'center' }}>
                 {toast.icon}

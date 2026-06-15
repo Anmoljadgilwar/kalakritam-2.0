@@ -99,9 +99,9 @@ export default function Orb({
       return vec4(colorIn.rgb / (a + 1e-5), a);
     }
 
-    const vec3 baseColor1 = vec3(0.611765, 0.262745, 0.996078);
-    const vec3 baseColor2 = vec3(0.298039, 0.760784, 0.913725);
-    const vec3 baseColor3 = vec3(0.062745, 0.078431, 0.600000);
+    const vec3 baseColor1 = vec3(0.7647, 0.5608, 0.1294); // --gold-primary (#c38f21)
+    const vec3 baseColor2 = vec3(1.0, 0.8784, 0.4);      // --gold-bright (#ffe066)
+    const vec3 baseColor3 = vec3(0.0, 0.1843, 0.1843);   // --teal-dark (#002f2f)
     const float innerRadius = 0.6;
     const float noiseScale = 0.65;
 
@@ -113,16 +113,17 @@ export default function Orb({
     }
 
     vec4 draw(vec2 uv) {
-      vec3 color1 = adjustHue(baseColor1, hue);
-      vec3 color2 = adjustHue(baseColor2, hue);
-      vec3 color3 = adjustHue(baseColor3, hue);
+      // Use exact gold and teal brand colors directly (ignoring external hue shifts)
+      vec3 color1 = baseColor1;
+      vec3 color2 = baseColor2;
+      vec3 color3 = baseColor3;
       
       float ang = atan(uv.y, uv.x);
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
       
       float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.5)) * 0.5 + 0.5;
-      float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
+      float r0 = 0.65; // STRICTLY PERFECT CIRCLE
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
@@ -134,8 +135,9 @@ export default function Orb({
       float v1 = light2(1.5, 5.0, d);
       v1 *= light1(1.0, 50.0, d0);
       
-      float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
-      float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
+      // Strict circle boundaries to avoid distortion
+      float v2 = smoothstep(1.0, 0.65, len); 
+      float v3 = smoothstep(0.64, 0.66, len);
       
       vec3 col = mix(color1, color2, cl);
       col = mix(color3, col, v0);
@@ -155,8 +157,7 @@ export default function Orb({
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
       
-      uv.x += hover * hoverIntensity * 0.1 * sin(uv.y * 10.0 + iTime);
-      uv.y += hover * hoverIntensity * 0.1 * sin(uv.x * 10.0 + iTime);
+      // No wavy coordinate distortion to keep the orbit perfectly circular
       
       return draw(uv);
     }
@@ -259,8 +260,12 @@ export default function Orb({
       const effectiveHover = forceHoverState ? 1 : targetHover;
       program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.1;
 
+      // Always rotate slowly as base; additional speed on hover
+      const baseRotationSpeed = 0.15;
+      const hoverRotationSpeed = 0.5;
+      currentRot += dt * baseRotationSpeed;
       if (rotateOnHover && effectiveHover > 0.5) {
-        currentRot += dt * rotationSpeed;
+        currentRot += dt * hoverRotationSpeed;
       }
       program.uniforms.rot.value = currentRot;
 

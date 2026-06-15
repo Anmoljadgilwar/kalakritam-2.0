@@ -111,9 +111,9 @@
 }
 
 .view-toggle-btn.active {
-  background: linear-gradient(135deg, #c38f21, #f4d03f);
-  color: #000;
-  border-color: #f4d03f;
+  background: linear-gradient(135deg, #c38f21, #d4af85);
+  color: #001818;
+  border-color: #d4af85;
   box-shadow: 0 4px 15px rgba(195, 143, 33, 0.5);
 }
 

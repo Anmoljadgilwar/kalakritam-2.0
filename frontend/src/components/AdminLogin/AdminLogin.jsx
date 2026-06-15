@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authApi } from '../../lib/adminApi';
 import { toast } from '../../utils/notifications.js';
-import VideoLogo from '../VideoLogo';
-import Orb from '../Orb';
+import CosmicOrbit from '../CosmicOrbit';
 import './AdminLogin.css';
 
 const AdminLogin = () => {
@@ -168,23 +167,23 @@ const AdminLogin = () => {
 
   return (
     <div className="admin-login-container">
-      {/* Orb Background */}
-      <Orb 
-        hue={45} 
-        hoverIntensity={0.2} 
-        rotateOnHover={true} 
-        forceHoverState={false} 
-      />
+      {/* 3D Cosmic Planetary Background */}
+      <CosmicOrbit />
       
-      {/* Video Logo */}
-      <VideoLogo />
+      {/* Top Left Spinning Logo (Vector Astrolabe) */}
+      <div className="top-left-logo-container" onClick={() => window.location.href = '/home'}>
+        <img src="/images/logo.png" alt="Kalakritam Logo" className="top-left-logo" />
+      </div>
       
       <div className="admin-login-content">
         <div className="admin-login-card">
           <div className="admin-login-header">
-            <h1 className="admin-title">Kalakritam</h1>
-            <h2 className="admin-subtitle">Admin Portal</h2>
-            <p className="admin-description">Access the administrative dashboard</p>
+            <div className="login-logo-wrapper">
+              <img src="/images/logo.png" alt="Kalakritam Logo" className="login-card-logo" />
+            </div>
+            <h1 className="admin-title">kalakritam</h1>
+            <h2 className="admin-subtitle">ADMIN PORTAL</h2>
+            <p className="admin-description">ACCESS THE ADMINISTRATIVE DASHBOARD</p>
           </div>
 
           <form className="admin-login-form" onSubmit={handleSubmit} autoComplete="off">
@@ -323,6 +322,26 @@ const AdminLogin = () => {
               Back to Website
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Curved Bottom Wave Accent & Sparkling Star (Matching reference image) */}
+      <div className="bottom-wave-accent">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0,80 C360,120 720,120 1080,80 C1260,60 1350,60 1440,80 L1440,120 L0,120 Z" fill="#001817" />
+          <path d="M0,80 C360,120 720,120 1080,80 C1260,60 1350,60 1440,80" stroke="url(#gold-wave-gradient)" strokeWidth="3.5" />
+          <defs>
+            <linearGradient id="gold-wave-gradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#c38f21" />
+              <stop offset="50%" stopColor="#ffe066" />
+              <stop offset="100%" stopColor="#d4af85" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="bottom-sparkle-star">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12,0 L14.8,9.2 L24,12 L14.8,14.8 L12,24 L9.2,14.8 L0,12 L9.2,9.2 Z" fill="#ffe066" />
+          </svg>
         </div>
       </div>
     </div>

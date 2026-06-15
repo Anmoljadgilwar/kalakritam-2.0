@@ -5,11 +5,11 @@ import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { useUserAuth } from '../../contexts/UserAuthContext';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
-import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import OptimizedParticles from '../OptimizedParticles';
+import { SkeletonLoader } from '../Loading';
 import { config } from '../../config/environment';
 import './Events.css';
 
@@ -33,8 +33,7 @@ const Events = () => {
   const itemsPerPage = 6;
   
   // Mobile optimizations
-  const { particleConfig, networkOptimizations } = useMobileOptimizations('events');
-  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
+  const { particleConfig, blurConfig, networkOptimizations } = useMobileOptimizations('events');
 
   useEffect(() => {
     if (!fetchCalled.current) {
@@ -164,25 +163,7 @@ const Events = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="events-container">
-        <VideoLogo />
-        <Header currentPage="events" />
-        <div className="events-page-content">
-          <header className="events-page-header">
-            <h1 className="events-title">Events</h1>
-            <p className="events-subtitle">Discover Art Experiences</p>
-          </header>
-          
-          <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', color: '#c38f21' }}>
-            <p style={{ fontSize: '1.2rem' }}>Loading events...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+
 
   if (error) {
     return (
@@ -267,228 +248,225 @@ const Events = () => {
         </header>
 
         <main className="events-content">
-          <div className="events-count">
-            <p>Showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}</p>
-          </div>
-          
-          <div className="events-grid">
-            {filteredEvents.map(event => (
-              <div 
-                key={event.id} 
-                className={`event-card-poster flip-card ${expandedEventId === event.id ? 'expanded' : ''} ${event.videoUrl ? 'has-video' : ''}`}
-              >
-                <div className="flip-card-inner">
-                  {/* Front Side - Poster Image */}
-                  <div className="flip-card-front">
-                    <div className="event-poster-image">
-                      <img 
-                        src={event.imageUrl || '/events/art poster.png'} 
-                        alt={event.title}
-                        className="poster-img"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          const placeholder = e.target.parentNode.querySelector('.poster-placeholder');
-                          if (placeholder) {
-                            placeholder.style.display = 'flex';
-                          }
-                        }}
-                      />
-                      <div className="poster-placeholder" style={{ display: 'none' }}>
-                        <div className="kalakritam-logo-text">Kalakritam</div>
-                        <div className="image-not-available">Image not available</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Back Side - Video with Details */}
-                  {event.videoUrl ? (
-                    <div className="flip-card-back" onClick={(e) => handleCardClick(event, e)}>
-                      <div className="event-video-container">
-                        <video 
-                          className="event-video"
-                          src={event.videoUrl}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          preload="metadata"
-                          onError={(e) => {
-                            console.error('Video failed to load:', event.videoUrl);
-                            e.target.style.display = 'none';
-                            const fallback = e.target.parentNode.querySelector('.video-fallback');
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                        <div className="video-fallback" style={{ display: 'none' }}>
-                          <div className="kalakritam-logo-text">Kalakritam</div>
-                          <div className="image-not-available">Video unavailable</div>
+          {loading ? (
+            <div style={{ marginTop: '2rem' }}>
+              <SkeletonLoader count={6} />
+            </div>
+          ) : (
+            <>
+              <div className="events-count">
+                <p>Showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}</p>
+              </div>
+              
+              <div className="events-grid">
+                {filteredEvents.map(event => (
+                  <div 
+                    key={event.id} 
+                    className={`event-card-poster flip-card ${expandedEventId === event.id ? 'expanded' : ''} ${event.videoUrl ? 'has-video' : ''}`}
+                  >
+                    <div className="flip-card-inner">
+                      {/* Front Side - Poster Image */}
+                      <div className="flip-card-front">
+                        <div className="event-poster-image">
+                          <img 
+                            src={event.imageUrl || '/events/art poster.png'} 
+                            alt={event.title}
+                            className="poster-img"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              const placeholder = e.target.parentNode.querySelector('.poster-placeholder');
+                              if (placeholder) {
+                                placeholder.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div className="poster-placeholder" style={{ display: 'none' }}>
+                            <div className="kalakritam-logo-text">Kalakritam</div>
+                            <div className="image-not-available">Image not available</div>
+                          </div>
                         </div>
                       </div>
                       
-                      {/* Tap indicator on video */}
-                      <div className="tap-indicator">
-                        <span>Click to see the complete information</span>
-                      </div>
-                      
-                      {/* Details Panel - Shows on click */}
-                      {expandedEventId === event.id && (
-                        <div className="event-details-panel" onClick={(e) => e.stopPropagation()}>
-                          <button 
-                            className="close-details-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setExpandedEventId(null);
-                            }}
-                          >
-                            ×
-                          </button>
-                          
-                          <h3 className="event-detail-title">{event.title}</h3>
-                          <p className="event-detail-venue">{event.venue}</p>
-                          <p className="event-detail-description">{event.description}</p>
-                          
-                          <div className="event-detail-specs">
-                            <div className="spec-row">
-                              <span className="spec-label">DATE:</span>
-                              <span className="spec-value">
-                                {event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { 
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric'
-                                }) : 'TBA'}
-                              </span>
-                            </div>
-                            <div className="spec-row">
-                              <span className="spec-label">TIME:</span>
-                              <span className="spec-value">
-                                {event.startDate ? new Date(event.startDate).toLocaleTimeString('en-US', { 
-                                  hour: 'numeric', 
-                                  minute: '2-digit', 
-                                  hour12: true 
-                                }) : 'TBA'}
-                              </span>
-                            </div>
-                            <div className="spec-row">
-                              <span className="spec-label">LOCATION:</span>
-                              <span className="spec-value">{event.venue || 'TBA'}</span>
-                            </div>
-                            <div className="spec-row">
-                              <span className="spec-label">MAX ATTENDEES:</span>
-                              <span className="spec-value">{event.maxAttendees || 'No limit'}</span>
-                            </div>
-                            <div className="spec-row price-row">
-                              <span className="spec-label">PRICE:</span>
-                              <span className="spec-value price">₹{event.ticketPrice || '0'}</span>
+                      {/* Back Side - Video with Details */}
+                      {event.videoUrl ? (
+                        <div className="flip-card-back" onClick={(e) => handleCardClick(event, e)}>
+                          <div className="event-video-container">
+                            <video 
+                              className="event-video"
+                              src={event.videoUrl}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              preload="metadata"
+                              onError={(e) => {
+                                console.error('Video failed to load:', event.videoUrl);
+                                e.target.style.display = 'none';
+                                const fallback = e.target.parentNode.querySelector('.video-fallback');
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                            <div className="video-fallback" style={{ display: 'none' }}>
+                              <div className="kalakritam-logo-text">Kalakritam</div>
+                              <div className="image-not-available">Video unavailable</div>
                             </div>
                           </div>
                           
-                          <button 
-                            className="view-full-details-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleViewDetails(event);
-                            }}
-                          >
-                            View Full Details →
-                          </button>
+                          {/* Tap indicator on video */}
+                          <div className="tap-indicator">
+                            <span>Click to see the complete information</span>
+                          </div>
+                          
+                          {/* Details Panel - Shows on click */}
+                          {expandedEventId === event.id && (
+                            <div className="event-details-panel" onClick={(e) => e.stopPropagation()}>
+                              <button 
+                                className="close-details-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedEventId(null);
+                                }}
+                              >
+                                ×
+                              </button>
+                              
+                              <h3 className="event-detail-title">{event.title}</h3>
+                              <p className="event-detail-venue">{event.venue}</p>
+                              <p className="event-detail-description">{event.description}</p>
+                              
+                              <div className="event-detail-specs">
+                                <div className="spec-item">
+                                  <span className="spec-label">Date</span>
+                                  <span className="spec-val">
+                                    {event.startDate ? new Date(event.startDate).toLocaleDateString() : 'TBD'}
+                                  </span>
+                                </div>
+                                <div className="spec-item">
+                                  <span className="spec-label">Time</span>
+                                  <span className="spec-val">{event.time || 'TBD'}</span>
+                                </div>
+                                <div className="spec-item">
+                                  <span className="spec-label">Entry</span>
+                                  <span className="spec-val">{event.price || 'Free'}</span>
+                                </div>
+                              </div>
+                              
+                              <button 
+                                className="register-event-btn"
+                                onClick={() => handleRegister(event)}
+                              >
+                                Book Now
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flip-card-back fallback-no-video" onClick={(e) => handleCardClick(event, e)}>
+                          <div className="event-info-panel-static">
+                            <h3 className="event-static-title">{event.title}</h3>
+                            <p className="event-static-venue">{event.venue}</p>
+                            <p className="event-static-desc">{event.description}</p>
+                            
+                            <div className="event-static-specs">
+                              <div><strong>Date:</strong> {event.startDate ? new Date(event.startDate).toLocaleDateString() : 'TBD'}</div>
+                              <div><strong>Time:</strong> {event.time || 'TBD'}</div>
+                              <div><strong>Entry:</strong> {event.price || 'Free'}</div>
+                            </div>
+                            
+                            <button 
+                              className="register-event-btn-static"
+                              onClick={(e) => { e.stopPropagation(); handleRegister(event); }}
+                            >
+                              Book Now
+                            </button>
+                          </div>
+                          <div className="tap-indicator">
+                            <span>Click to see information</span>
+                          </div>
                         </div>
                       )}
                     </div>
-                  ) : (
-                    <div className="flip-card-back" onClick={(e) => handleCardClick(event, e)}>
-                      <div className="event-poster-image">
-                        <div className="poster-placeholder" style={{ display: 'flex' }}>
-                          <div className="kalakritam-logo-text">Kalakritam</div>
-                          <div className="image-not-available">No video available</div>
-                        </div>
-                      </div>
-                      
-                      {/* Tap indicator */}
-                      <div className="tap-indicator">
-                        <span>Click to see the complete information</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {filteredEvents.length === 0 && (
-            <div className="no-results">
-              <div className="no-results-content">
-                <h3>No events found</h3>
-                <p>Check back soon for upcoming art events and cultural experiences.</p>
-              </div>
-            </div>
-          )}
-          
-          {/* Load More Button */}
-          {currentPage < totalPages && (
-            <div className="load-more-container" style={{ 
-                textAlign: 'center', 
-                margin: '4rem 0 3rem 0',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1rem'
-              }}>
-                <button 
-                  className="load-more-btn"
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                  style={{
-                    position: 'relative',
-                    padding: '1rem 2.5rem',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    color: '#1a1a1a',
-                    background: loadingMore 
-                      ? 'linear-gradient(135deg, #8a6a15 0%, #b89560 100%)'
-                      : 'linear-gradient(135deg, #c38f21 0%, #d4af85 100%)',
-                    border: '2px solid rgba(195, 143, 33, 0.3)',
-                    borderRadius: '50px',
-                    cursor: loadingMore ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    boxShadow: loadingMore 
-                      ? '0 4px 15px rgba(195, 143, 33, 0.2)'
-                      : '0 6px 25px rgba(195, 143, 33, 0.4)',
-                    transform: loadingMore ? 'scale(0.98)' : 'scale(1)',
-                    overflow: 'hidden',
-                    letterSpacing: '0.5px',
-                    textTransform: 'uppercase'
-                  }}
-                  onMouseEnter={(e) => !loadingMore && (e.target.style.transform = 'scale(1.05)', e.target.style.boxShadow = '0 8px 30px rgba(195, 143, 33, 0.5)')}
-                  onMouseLeave={(e) => !loadingMore && (e.target.style.transform = 'scale(1)', e.target.style.boxShadow = '0 6px 25px rgba(195, 143, 33, 0.4)')}
-                >
-                  {loadingMore ? (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{
-                        display: 'inline-block',
-                        width: '16px',
-                        height: '16px',
-                        border: '3px solid #1a1a1a',
-                        borderTopColor: 'transparent',
-                        borderRadius: '50%',
-                        animation: 'spin 0.8s linear infinite'
-                      }}></span>
-                      Loading...
-                    </span>
-                  ) : (
-                    `Load More Events`
-                  )}
-                </button>
-                {!loadingMore && (
-                  <div style={{
-                    fontSize: '0.9rem',
-                    color: '#d4af85',
-                    fontWeight: '500',
-                    opacity: 0.8
-                  }}>
-                  Showing {events.length} of {totalItems} events • Page {currentPage} of {totalPages}
+              {filteredEvents.length === 0 && (
+                <div className="no-results">
+                  <div className="no-results-content">
+                    <h3>No events found</h3>
+                    <p>Check back soon for upcoming art events and cultural experiences.</p>
+                  </div>
                 </div>
               )}
-            </div>
+              
+              {/* Load More Button */}
+              {currentPage < totalPages && (
+                <div className="load-more-container" style={{ 
+                    textAlign: 'center', 
+                    margin: '4rem 0 3rem 0',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '1rem'
+                  }}>
+                    <button 
+                      className="load-more-btn"
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      style={{
+                        position: 'relative',
+                        padding: '1rem 2.5rem',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: '#1a1a1a',
+                        background: loadingMore 
+                          ? 'linear-gradient(135deg, #8a6a15 0%, #b89560 100%)'
+                          : 'linear-gradient(135deg, #c38f21 0%, #d4af85 100%)',
+                        border: '2px solid rgba(195, 143, 33, 0.3)',
+                        borderRadius: '50px',
+                        cursor: loadingMore ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: loadingMore 
+                          ? '0 4px 15px rgba(195, 143, 33, 0.2)'
+                          : '0 6px 25px rgba(195, 143, 33, 0.4)',
+                        transform: loadingMore ? 'scale(0.98)' : 'scale(1)',
+                        overflow: 'hidden',
+                        letterSpacing: '0.5px',
+                        textTransform: 'uppercase'
+                      }}
+                      onMouseEnter={(e) => !loadingMore && (e.target.style.transform = 'scale(1.05)', e.target.style.boxShadow = '0 8px 30px rgba(195, 143, 33, 0.5)')}
+                      onMouseLeave={(e) => !loadingMore && (e.target.style.transform = 'scale(1)', e.target.style.boxShadow = '0 6px 25px rgba(195, 143, 33, 0.4)')}
+                    >
+                      {loadingMore ? (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            width: '16px',
+                            height: '16px',
+                            border: '3px solid #1a1a1a',
+                            borderTopColor: 'transparent',
+                            borderRadius: '50%',
+                            animation: 'spin 0.8s linear infinite'
+                          }}></span>
+                          Loading...
+                        </span>
+                      ) : (
+                        `Load More Events`
+                      )}
+                    </button>
+                    {!loadingMore && (
+                      <div style={{
+                        fontSize: '0.9rem',
+                        color: '#d4af85',
+                        fontWeight: '500',
+                        opacity: 0.8
+                      }}>
+                        Showing {events.length} of {totalItems} events • Page {currentPage} of {totalPages}
+                      </div>
+                    )}
+                </div>
+              )}
+            </>
           )}
         </main>
 

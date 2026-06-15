@@ -15,7 +15,10 @@ import { updateSpeculationRules } from './utils/pageOptimizationScript.js'
 import { isMobile } from './utils/mobileOptimizations.js'
 import { preloadRouteChunks } from './utils/chunkPreloader.js'
 import './App.css'
+import MuiToastContainer from './components/MuiToastContainer'
 import ScrollToTop from './components/ScrollToTop.jsx'
+import { initCardTilt } from './utils/cardTilt.js'
+
 
 // Lazy load all components for better performance with performance tracking
 const IntroVideo = React.lazy(() => {
@@ -37,6 +40,14 @@ const Home = React.lazy(() => {
 const Gallery = React.lazy(() => {
   const measure = measureLazyLoadTime('Gallery');
   return import('./components/Gallery').then(module => {
+    measure();
+    return module;
+  });
+});
+
+const VirtualGallery = React.lazy(() => {
+  const measure = measureLazyLoadTime('VirtualGallery');
+  return import('./components/VirtualGallery').then(module => {
     measure();
     return module;
   });
@@ -399,6 +410,14 @@ const AppContent = () => {
   const [homeBlurred, setHomeBlurred] = useState(true);
   const [showHome, setShowHome] = useState(false);
 
+  // Initialize dynamic 3D card tilt delegation
+  useEffect(() => {
+    const cleanup = initCardTilt();
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, []);
+
   // Initialize server connection monitoring
   const serverConnection = useServerConnection({
     checkInterval: 30000, // Check every 30 seconds
@@ -479,6 +498,7 @@ const AppContent = () => {
   return (
     <>
       {isLoading && <Loading message={loadingMessage} />}
+      <MuiToastContainer />
       <Router>
         <PageOptimizer />
         <div className="app">
@@ -496,6 +516,7 @@ const AppContent = () => {
                   <Route path="/intro" element={<IntroVideo />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/gallery/virtual" element={<VirtualGallery />} />
                   <Route path="/gallery/:slug" element={<ArtworkDetail />} />
                   <Route path="/workshops" element={<Workshops />} />
                   <Route path="/workshops/:slug" element={<WorkshopDetail />} />
@@ -543,6 +564,7 @@ const AppContent = () => {
                   <Route path="/u/:username/home" element={<RequireAuth><Home /></RequireAuth>} />
                   <Route path="/u/:username/dashboard" element={<RequireAuth><UserDashboard /></RequireAuth>} />
                   <Route path="/u/:username/gallery" element={<RequireAuth><Gallery /></RequireAuth>} />
+                  <Route path="/u/:username/gallery/virtual" element={<RequireAuth><VirtualGallery /></RequireAuth>} />
                   <Route path="/u/:username/gallery/:slug" element={<RequireAuth><ArtworkDetail /></RequireAuth>} />
                   <Route path="/u/:username/workshops" element={<RequireAuth><Workshops /></RequireAuth>} />
                   <Route path="/u/:username/workshops/:slug" element={<RequireAuth><WorkshopDetail /></RequireAuth>} />

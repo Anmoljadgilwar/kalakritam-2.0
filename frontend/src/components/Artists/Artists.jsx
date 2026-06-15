@@ -3,7 +3,6 @@ import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
 import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
-import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -11,6 +10,7 @@ import OptimizedParticles from '../OptimizedParticles';
 import { config } from '../../config/environment';
 import './Artists.css';
 import '../Gallery/Gallery.css'; // Import Gallery CSS for modal styles
+import { SkeletonLoader } from '../Loading';
 
 const Artists = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
@@ -30,8 +30,7 @@ const Artists = () => {
   const itemsPerPage = 6;
   
   // Mobile optimizations
-  const { particleConfig, networkOptimizations, getOptimizedImageUrl, trackImageLoad, setTotalImages } = useMobileOptimizations('artists');
-  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
+  const { particleConfig, blurConfig, networkOptimizations, getOptimizedImageUrl, trackImageLoad, setTotalImages } = useMobileOptimizations('artists');
 
   useEffect(() => {
     if (!fetchCalled.current) {
@@ -117,8 +116,8 @@ const Artists = () => {
             <p className="artists-subtitle">Meet Our Master Creators</p>
           </header>
           
-          <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', color: '#c38f21' }}>
-            <p style={{ fontSize: '1.2rem' }}>Loading artists...</p>
+          <div style={{ marginTop: '2rem' }}>
+            <SkeletonLoader count={6} />
           </div>
         </div>
         <Footer />
