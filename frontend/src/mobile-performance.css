@@ -171,15 +171,14 @@
    MEMORY OPTIMIZATION
    ============================================ */
 @media (max-width: 768px) {
-  /* Keep particle backgrounds crisp and visible on top of background blurs on mobile too */
+  /* Hide offscreen decorative elements */
   .home-particles-background,
   .gallery-particles-background,
   .events-particles-background,
   .workshops-particles-background,
-  .contact-particles-background,
-  .moments-particles-background {
+  .contact-particles-background {
     pointer-events: none;
-    z-index: 3 !important;
+    z-index: 0;
   }
 }
 

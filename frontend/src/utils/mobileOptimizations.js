@@ -43,15 +43,44 @@ export const shouldOptimizeForMobile = () => {
 
 // Performance optimization for mobile
 export const getMobileParticleConfig = () => {
-  // Return a single, unified, constant configuration across all pages, devices, and network states
-  // to prevent automatic increasing/decreasing of particle counts and sizes.
+  const slowConnection = isSlowConnection();
+  
+  // Disable particles completely on slow connections
+  if (slowConnection) {
+    return {
+      particleCount: 0, // Disabled on slow connections
+      particleSpread: 0,
+      speed: 0,
+      particleBaseSize: 0,
+      moveParticlesOnHover: false,
+      particleHoverFactor: 1,
+      alphaParticles: false,
+      disableRotation: true,
+      disabled: true
+    };
+  }
+  
+  if (isMobile()) {
+    // Completely disable particles on mobile for optimal performance
+    return {
+      particleCount: 0,
+      particleSpread: 0,
+      speed: 0,
+      particleBaseSize: 0,
+      moveParticlesOnHover: false,
+      particleHoverFactor: 1,
+      alphaParticles: false,
+      disableRotation: true,
+      disabled: true // Particles completely disabled on mobile for professional experience
+    };
+  }
   return {
-    particleCount: 800,
-    particleSpread: 11,
-    speed: 0.12,
-    particleBaseSize: 220,     // ← Beautiful, clearly visible fireflies/starfield
+    particleCount: 1000,
+    particleSpread: 10,
+    speed: 0.2,
+    particleBaseSize: 200,
     moveParticlesOnHover: true,
-    particleHoverFactor: 1.5,
+    particleHoverFactor: 2,
     alphaParticles: true,
     disableRotation: false,
     disabled: false
@@ -69,13 +98,13 @@ export const getOptimizedImageUrl = (url, isMobile = false) => {
 export const getMobileBlurConfig = () => {
   if (isMobile()) {
     return {
-      backdropFilter: 'none', // No blur — keeps particles crisp
-      background: 'rgba(0, 0, 0, 0.08)'
+      backdropFilter: 'blur(4px)', // Reduced from 8px
+      background: 'rgba(0, 0, 0, 0.3)' // Slightly more opaque to compensate for less blur
     };
   }
   return {
-    backdropFilter: 'none', // No blur — keeps particles fully visible
-    background: 'rgba(0, 0, 0, 0.05)'
+    backdropFilter: 'blur(8px)',
+    background: 'rgba(0, 0, 0, 0.2)'
   };
 };
 

@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import OptimizedParticles from '../OptimizedParticles';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
+import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
 import './PrivacyPolicy.css';
 
 const PrivacyPolicy = () => {
-  const { particleConfig, blurConfig, networkOptimizations } = useMobileOptimizations('privacy');
+  const { particleConfig, networkOptimizations } = useMobileOptimizations('privacy');
+  const [blurConfig] = useState(getMobileBlurConfig());
 
   useEffect(() => {
     document.title = 'Privacy Policy - Kalakritam | Hyderabad';

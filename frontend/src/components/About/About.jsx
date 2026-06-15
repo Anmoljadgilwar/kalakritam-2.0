@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
 import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
-import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
+import { 
+  getMobileBlurConfig,
+  shouldOptimizeForMobile
+} from '../../utils/mobileOptimizations';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -25,8 +28,8 @@ const About = () => {
   useUsernameValidation('about'); // Validate username in URL
   const toastShown = useRef(false);
   
-  // Mobile optimization configurations
-  const { particleConfig, blurConfig } = useMobileOptimizations('about');
+  // Mobile optimization states
+  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
 
   useEffect(() => {
     // SEO meta tags for About page
@@ -69,14 +72,14 @@ const About = () => {
       <div className="about-particles-background">
         <Particles
           particleColors={['#c38f21', '#ffffff', '#c38f21']}
-          particleCount={particleConfig.particleCount}
-          particleSpread={particleConfig.particleSpread}
-          speed={particleConfig.speed}
-          particleBaseSize={particleConfig.particleBaseSize}
-          moveParticlesOnHover={particleConfig.moveParticlesOnHover}
-          particleHoverFactor={particleConfig.particleHoverFactor}
-          alphaParticles={particleConfig.alphaParticles}
-          disableRotation={particleConfig.disableRotation}
+          particleCount={1000}
+          particleSpread={10}
+          speed={0.2}
+          particleBaseSize={200}
+          moveParticlesOnHover={true}
+          particleHoverFactor={2}
+          alphaParticles={true}
+          disableRotation={false}
         />
       </div>
       

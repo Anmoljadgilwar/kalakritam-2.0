@@ -261,23 +261,6 @@ const AdminFinancials = () => {
 
   return (
     <div className="admin-gallery-container admin-financials-container" style={{ background: palette.dark, color: palette.white, minHeight: '100vh' }}>
-      <svg style={{ height: 0, width: 0, position: 'absolute' }}>
-        <defs>
-          <linearGradient id="chart-gold-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#c38f21" stopOpacity={0.6} />
-            <stop offset="100%" stopColor="#c38f21" stopOpacity={0.05} />
-          </linearGradient>
-          <linearGradient id="chart-teal-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00a3a3" stopOpacity={0.5} />
-            <stop offset="100%" stopColor="#002f2f" stopOpacity={0.0} />
-          </linearGradient>
-          <linearGradient id="chart-teal-gold-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#c38f21" stopOpacity={0.5} />
-            <stop offset="50%" stopColor="#002f2f" stopOpacity={0.2} />
-            <stop offset="100%" stopColor="#001818" stopOpacity={0.0} />
-          </linearGradient>
-        </defs>
-      </svg>
       <VideoLogo />
       <AdminHeader currentPage="financials" />
       <main className="admin-gallery-content" style={{ padding: '2rem' }}>
@@ -317,7 +300,6 @@ const AdminFinancials = () => {
                       Profit Trend (Line)
                     </Typography>
                     <LineChart
-                      className="glowing-line-chart"
                       xAxis={[{ 
                         data: sortedRecords.map((_, idx) => idx + 1),
                         scaleType: 'linear',
@@ -331,20 +313,15 @@ const AdminFinancials = () => {
                           const marketingCost = parseFloat(r.marketing_cost) || 0;
                           return income - (eventExp + materialCost + marketingCost);
                         }),
-                        color: palette.gold,
-                        curve: 'catmullRom',
-                        area: true
+                        color: '#8884d8',
+                        curve: 'linear'
                       }]}
                       height={120}
                       margin={{ top: 10, right: 10, bottom: 20, left: 40 }}
                       sx={{
                         '& .MuiChartsAxis-line': { stroke: palette.goldLight },
                         '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
-                        '& .MuiChartsAxis-tickLabel': { fill: palette.text },
-                        '& .MuiAreaElement-root': {
-                          fill: 'url(#chart-gold-gradient)',
-                          opacity: 0.3
-                        }
+                        '& .MuiChartsAxis-tickLabel': { fill: palette.text }
                       }}
                     />
                   </Box>
@@ -353,7 +330,6 @@ const AdminFinancials = () => {
                       Profit Trend (Bar)
                     </Typography>
                     <BarChart
-                      className="glowing-bar-chart"
                       xAxis={[{ 
                         data: sortedRecords.map((_, idx) => idx + 1),
                         scaleType: 'band'
@@ -366,15 +342,10 @@ const AdminFinancials = () => {
                           const marketingCost = parseFloat(r.marketing_cost) || 0;
                           return income - (eventExp + materialCost + marketingCost);
                         }),
-                        color: '#00a3a3'
+                        color: '#00C49F'
                       }]}
                       height={120}
                       margin={{ top: 10, right: 10, bottom: 20, left: 40 }}
-                      sx={{
-                        '& .MuiChartsAxis-line': { stroke: palette.goldLight },
-                        '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
-                        '& .MuiChartsAxis-tickLabel': { fill: palette.text }
-                      }}
                     />
                   </Box>
                 </Stack>
@@ -667,7 +638,6 @@ const AdminFinancials = () => {
               </Box>
             ) : (
               <LineChart
-                className="glowing-line-chart"
                 xAxis={[{ 
                   data: monthly.map(m => {
                     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -675,31 +645,24 @@ const AdminFinancials = () => {
                   }),
                   scaleType: 'band',
                   label: 'Month',
-                  tickLabelStyle: { fill: palette.text, fontSize: 12 },
-                  labelStyle: { fill: palette.goldLight, fontSize: 14 }
+                  tickLabelStyle: { fill: palette.text, fontSize: 12 }
                 }]}
                 series={[
                   {
                     data: monthly.map(m => parseFloat(m.total_profit) || 0),
                     label: 'Profit (₹)',
-                    color: palette.gold,
+                    color: '#8884d8',
                     curve: 'catmullRom',
-                    showMark: true,
-                    area: true
+                    showMark: true
                   }
                 ]}
                 height={400}
                 margin={{ top: 20, right: 30, bottom: 60, left: 80 }}
-                grid={{ vertical: true, horizontal: true }}
                 sx={{
                   '& .MuiChartsAxis-line': { stroke: palette.goldLight },
                   '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
                   '& .MuiChartsAxis-tickLabel': { fill: palette.text },
-                  '& .MuiChartsLegend-series text': { fill: `${palette.text} !important` },
-                  '& .MuiAreaElement-root': {
-                    fill: 'url(#chart-teal-gold-gradient)',
-                    opacity: 0.45
-                  }
+                  '& .MuiChartsLegend-series text': { fill: `${palette.text} !important` }
                 }}
               />
             )}
@@ -728,7 +691,6 @@ const AdminFinancials = () => {
                   Showing {eventChartData.labels.length} event(s)
                 </Typography>
                 <BarChart
-                  className="glowing-bar-chart"
                   xAxis={[{ 
                     data: eventChartData.labels,
                     scaleType: 'band',
@@ -743,49 +705,49 @@ const AdminFinancials = () => {
                     }
                   }}
                   series={[
-                    { 
-                      data: eventChartData.income,
-                      label: 'Income (₹)',
-                      color: '#00a3a3',
-                      valueFormatter: (value, { dataIndex }) => {
-                        const date = eventChartData.dates[dataIndex] 
-                          ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-                          : 'No Date';
-                        return `₹${value.toLocaleString()} - ${date}`;
-                      }
-                    },
-                    { 
-                      data: eventChartData.investment,
-                      label: 'Investment (₹)',
-                      color: palette.goldLight,
-                      valueFormatter: (value, { dataIndex }) => {
-                        const date = eventChartData.dates[dataIndex] 
-                          ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-                          : 'No Date';
-                        return `₹${value.toLocaleString()} - ${date}`;
-                      }
-                    },
-                    { 
-                      data: eventChartData.profit,
-                      label: 'Profit (₹)',
-                      color: palette.gold,
-                      valueFormatter: (value, { dataIndex }) => {
-                        const date = eventChartData.dates[dataIndex] 
-                          ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-                          : 'No Date';
-                        return `₹${value.toLocaleString()} - ${date}`;
-                      }
+                  { 
+                    data: eventChartData.income,
+                    label: 'Income',
+                    color: '#00C49F',
+                    valueFormatter: (value, { dataIndex }) => {
+                      const date = eventChartData.dates[dataIndex] 
+                        ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+                        : 'No Date';
+                      return `₹${value.toLocaleString()} - ${date}`;
                     }
-                  ]}
-                  height={400}
-                  margin={{ top: 20, right: 30, bottom: 100, left: 80 }}
-                  sx={{
-                    '& .MuiChartsAxis-line': { stroke: palette.goldLight },
-                    '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
-                    '& .MuiChartsAxis-tickLabel': { fill: palette.text },
-                    '& .MuiChartsLegend-series text': { fill: `${palette.text} !important` }
-                  }}
-                />
+                  },
+                  { 
+                    data: eventChartData.investment,
+                    label: 'Investment',
+                    color: '#FF8042',
+                    valueFormatter: (value, { dataIndex }) => {
+                      const date = eventChartData.dates[dataIndex] 
+                        ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+                        : 'No Date';
+                      return `₹${value.toLocaleString()} - ${date}`;
+                    }
+                  },
+                  { 
+                    data: eventChartData.profit,
+                    label: 'Profit',
+                    color: '#FFBB28',
+                    valueFormatter: (value, { dataIndex }) => {
+                      const date = eventChartData.dates[dataIndex] 
+                        ? new Date(eventChartData.dates[dataIndex]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+                        : 'No Date';
+                      return `₹${value.toLocaleString()} - ${date}`;
+                    }
+                  }
+                ]}
+                height={400}
+                margin={{ top: 20, right: 30, bottom: 100, left: 80 }}
+                sx={{
+                  '& .MuiChartsAxis-line': { stroke: palette.goldLight },
+                  '& .MuiChartsAxis-tick': { stroke: palette.goldLight },
+                  '& .MuiChartsAxis-tickLabel': { fill: palette.text },
+                  '& .MuiChartsLegend-series text': { fill: `${palette.text} !important` }
+                }}
+              />
               </>
             )}
           </CardContent>

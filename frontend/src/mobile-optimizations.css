@@ -226,8 +226,11 @@
     animation-fill-mode: none !important;
   }
   
-  /* DISABLE unused global particles on mobile (page-specific particles are dynamically throttled by JS) */
-  .app-particles-background {
+  /* COMPLETELY DISABLE all particles on mobile for performance */
+  .gallery-particles-background,
+  .app-particles-background,
+  [class*="particles-background"],
+  [class*="Particles"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;

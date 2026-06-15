@@ -63,8 +63,10 @@ const EventDetail = () => {
       setNetworkOptimizations(networkOpts);
       setBatteryOptimizations(batteryOpts);
       
-      // particle config is already tuned per device in getMobileParticleConfig()
-      // No override needed — all pages use global standard from mobileOptimizations.js
+      // Update particle config based on optimizations
+      if (batteryOpts.disableParticles || networkOpts.delayNonCritical) {
+        setParticleConfig({ ...particleConfig, particleCount: 0 });
+      }
     };
     
     initializeOptimizations();

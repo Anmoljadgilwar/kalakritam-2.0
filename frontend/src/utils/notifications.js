@@ -1,4 +1,5 @@
-import { muiToastService } from '../components/MuiToastContainer/muiToastService.js';
+// Notifications disabled - all functions are no-ops
+// This file maintains API compatibility with existing code
 
 export const NOTIFICATION_TYPES = {
   SUCCESS: 'success',
@@ -17,116 +18,123 @@ export const NOTIFICATION_POSITIONS = {
   BOTTOM_CENTER: 'bottom-center'
 };
 
-// Dynamic notification manager connecting to MUI Toast Service
+// No-op notification manager for compatibility
 class NotificationManager {
-  subscribe(listener) {
-    return muiToastService.subscribe(listener);
+  constructor() {
+    this.activeToasts = new Map();
   }
 
-  add(notification) {
-    const severity = notification.type === 'error' ? 'error' :
-                     notification.type === 'success' ? 'success' :
-                     notification.type === 'warning' ? 'warning' : 'info';
-    return muiToastService.show(severity, notification.message, {
-      duration: notification.duration,
-      ...notification
-    });
-  }
+  // All methods return a fake ID and do nothing
+  success() { return 'noop'; }
+  error() { return 'noop'; }
+  warning() { return 'noop'; }
+  info() { return 'noop'; }
+  loading() { return 'noop'; }
+  promise(promise) { return promise; }
+  update() {}
+  remove() {}
+  dismiss() {}
+  clear() {}
 
-  remove(id) {
-    muiToastService.dismiss(id);
-  }
+  // Server connection notifications (no-ops)
+  serverConnecting() { return 'noop'; }
+  serverConnected() { return 'noop'; }
+  serverDisconnected() { return 'noop'; }
+  serverError() { return 'noop'; }
 
-  dismiss(id) {
-    muiToastService.dismiss(id);
-  }
+  // API notifications (no-ops)
+  apiRequest() { return 'noop'; }
+  apiSuccess() { return 'noop'; }
+  apiError() { return 'noop'; }
 
-  clear() {
-    muiToastService.clear();
-  }
+  // Data operations (no-ops)
+  dataSaving() { return 'noop'; }
+  dataSaved() { return 'noop'; }
+  dataLoading() { return 'noop'; }
+  dataLoaded() { return 'noop'; }
 
-  success(msg, opts) { return muiToastService.success(msg, opts); }
-  error(msg, opts) { return muiToastService.error(msg, opts); }
-  warning(msg, opts) { return muiToastService.warning(msg, opts); }
-  info(msg, opts) { return muiToastService.info(msg, opts); }
-  loading(msg, opts) { return muiToastService.loading(msg, opts); }
-  promise(promise, msgs, opts) { return muiToastService.promise(promise, msgs, opts); }
-  update(id, opts) { muiToastService.update(id, opts); }
+  // File operations (no-ops)
+  fileUploading() { return 'noop'; }
+  fileUploaded() { return 'noop'; }
+  fileDeleting() { return 'noop'; }
+  fileDeleted() { return 'noop'; }
 
-  // Semantic connection & operation wrappers
-  serverConnecting(msg, opts) { return muiToastService.show('info', msg || 'Connecting to server...', { duration: 0, loading: true, ...opts }); }
-  serverConnected(msg, opts) { return muiToastService.success(msg || 'Server connected!', opts); }
-  serverDisconnected(msg, opts) { return muiToastService.error(msg || 'Server connection lost', opts); }
-  serverError(msg, opts) { return muiToastService.error(msg || 'Server error occurred', opts); }
+  // Authentication (no-ops)
+  authLoading() { return 'noop'; }
+  authSuccess() { return 'noop'; }
+  authError() { return 'noop'; }
 
-  apiRequest(msg, opts) { return muiToastService.loading(msg || 'Making API request...', opts); }
-  apiSuccess(msg, opts) { return muiToastService.success(msg || 'API request completed!', opts); }
-  apiError(msg, opts) { return muiToastService.error(msg || 'API request failed', opts); }
+  // Form operations (no-ops)
+  formSubmitting() { return 'noop'; }
+  formSubmitted() { return 'noop'; }
+  formError() { return 'noop'; }
 
-  dataSaving(msg, opts) { return muiToastService.loading(msg || 'Saving data...', opts); }
-  dataSaved(msg, opts) { return muiToastService.success(msg || 'Data saved successfully!', opts); }
-  dataLoading(msg, opts) { return muiToastService.loading(msg || 'Loading data...', opts); }
-  dataLoaded(msg, opts) { return muiToastService.success(msg || 'Data loaded successfully!', opts); }
+  // Validation (no-ops)
+  validationError() { return 'noop'; }
 
-  fileUploading(msg, opts) { return muiToastService.loading(msg || 'Uploading file...', opts); }
-  fileUploaded(msg, opts) { return muiToastService.success(msg || 'File uploaded successfully!', opts); }
-  fileDeleting(msg, opts) { return muiToastService.loading(msg || 'Deleting file...', opts); }
-  fileDeleted(msg, opts) { return muiToastService.success(msg || 'File deleted successfully!', opts); }
+  // Utility (no-ops)
+  copied() { return 'noop'; }
 
-  authLoading(msg, opts) { return muiToastService.loading(msg || 'Authenticating...', opts); }
-  authSuccess(msg, opts) { return muiToastService.success(msg || 'Authenticated successfully!', opts); }
-  authError(msg, opts) { return muiToastService.error(msg || 'Authentication failed', opts); }
-
-  formSubmitting(msg, opts) { return muiToastService.loading(msg || 'Submitting form...', opts); }
-  formSubmitted(msg, opts) { return muiToastService.success(msg || 'Form submitted successfully!', opts); }
-  formError(msg, opts) { return muiToastService.error(msg || 'Form submission failed', opts); }
-
-  validationError(msg, opts) { return muiToastService.warning(msg || 'Validation failed', opts); }
-  copied(msg, opts) { return muiToastService.success(msg || 'Copied to clipboard!', { duration: 2000, ...opts }); }
+  // Legacy methods (no-ops)
+  add() { return 'noop'; }
+  subscribe() { return () => {}; }
 }
 
+// Create global instance
 export const notificationManager = new NotificationManager();
 
+// Export convenience methods (all no-ops)
 export const toast = {
-  success: (msg, opts) => muiToastService.success(msg, opts),
-  error: (msg, opts) => muiToastService.error(msg, opts),
-  warning: (msg, opts) => muiToastService.warning(msg, opts),
-  info: (msg, opts) => muiToastService.info(msg, opts),
-  loading: (msg, opts) => muiToastService.loading(msg, opts),
-  promise: (promise, msgs, opts) => muiToastService.promise(promise, msgs, opts),
-  dismiss: (id) => muiToastService.dismiss(id),
-  update: (id, opts) => muiToastService.update(id, opts),
-  clear: () => muiToastService.clear(),
+  success: () => 'noop',
+  error: () => 'noop',
+  warning: () => 'noop',
+  info: () => 'noop',
+  loading: () => 'noop',
+  promise: (promise) => promise,
 
-  serverConnecting: (msg, opts) => muiToastService.show('info', msg || 'Connecting to server...', { duration: 0, loading: true, ...opts }),
-  serverConnected: (msg, opts) => muiToastService.success(msg || 'Server connected!', opts),
-  serverDisconnected: (msg, opts) => muiToastService.error(msg || 'Server connection lost', opts),
-  serverError: (msg, opts) => muiToastService.error(msg || 'Server error occurred', opts),
+  // Server connection methods
+  serverConnecting: () => 'noop',
+  serverConnected: () => 'noop',
+  serverDisconnected: () => 'noop',
+  serverError: () => 'noop',
 
-  apiRequest: (msg, opts) => muiToastService.loading(msg || 'Making API request...', opts),
-  apiSuccess: (msg, opts) => muiToastService.success(msg || 'API request completed!', opts),
-  apiError: (msg, opts) => muiToastService.error(msg || 'API request failed', opts),
+  // API methods
+  apiRequest: () => 'noop',
+  apiSuccess: () => 'noop',
+  apiError: () => 'noop',
 
-  dataSaving: (msg, opts) => muiToastService.loading(msg || 'Saving data...', opts),
-  dataSaved: (msg, opts) => muiToastService.success(msg || 'Data saved successfully!', opts),
-  dataLoading: (msg, opts) => muiToastService.loading(msg || 'Loading data...', opts),
-  dataLoaded: (msg, opts) => muiToastService.success(msg || 'Data loaded successfully!', opts),
+  // Data operations
+  dataSaving: () => 'noop',
+  dataSaved: () => 'noop',
+  dataLoading: () => 'noop',
+  dataLoaded: () => 'noop',
 
-  fileUploading: (msg, opts) => muiToastService.loading(msg || 'Uploading file...', opts),
-  fileUploaded: (msg, opts) => muiToastService.success(msg || 'File uploaded successfully!', opts),
-  fileDeleting: (msg, opts) => muiToastService.loading(msg || 'Deleting file...', opts),
-  fileDeleted: (msg, opts) => muiToastService.success(msg || 'File deleted successfully!', opts),
+  // File operations
+  fileUploading: () => 'noop',
+  fileUploaded: () => 'noop',
+  fileDeleting: () => 'noop',
+  fileDeleted: () => 'noop',
 
-  authLoading: (msg, opts) => muiToastService.loading(msg || 'Authenticating...', opts),
-  authSuccess: (msg, opts) => muiToastService.success(msg || 'Authenticated successfully!', opts),
-  authError: (msg, opts) => muiToastService.error(msg || 'Authentication failed', opts),
+  // Authentication
+  authLoading: () => 'noop',
+  authSuccess: () => 'noop',
+  authError: () => 'noop',
 
-  formSubmitting: (msg, opts) => muiToastService.loading(msg || 'Submitting form...', opts),
-  formSubmitted: (msg, opts) => muiToastService.success(msg || 'Form submitted successfully!', opts),
-  formError: (msg, opts) => muiToastService.error(msg || 'Form submission failed', opts),
+  // Form operations
+  formSubmitting: () => 'noop',
+  formSubmitted: () => 'noop',
+  formError: () => 'noop',
 
-  validationError: (msg, opts) => muiToastService.warning(msg || 'Validation failed', opts),
-  copied: (msg, opts) => muiToastService.success(msg || 'Copied to clipboard!', { duration: 2000, ...opts }),
+  // Validation
+  validationError: () => 'noop',
+
+  // Utility
+  copied: () => 'noop',
+
+  // Utility methods
+  dismiss: () => {},
+  update: () => {},
+  clear: () => {},
 };
 
 export default notificationManager;
