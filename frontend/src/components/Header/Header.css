@@ -9,19 +9,24 @@
 }
 
 .shared-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0%, transparent 50%, rgba(255, 255, 255, 0.01) 100%);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
   pointer-events: none;
 }
 
 .header-content {
   max-width: 1400px;
-  margin: 0 auto;   
+  margin: 0 auto;
   padding: clamp(1rem, 3vw, 1.5rem) clamp(1rem, 5vw, 3rem);
   display: flex;
   justify-content: space-between;
@@ -47,7 +52,7 @@
 }
 
 .kalakritam-title {
-  font-family: 'Samarkan', 'Cinzel', serif !important;
+  font-family: "Samarkan", "Cinzel", serif !important;
   font-weight: 700 !important;
   letter-spacing: 0px !important;
   text-transform: uppercase;
@@ -62,7 +67,7 @@
 }
 
 .kalakritam-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -4px;
   left: 50%;
@@ -78,7 +83,7 @@
 }
 
 .header-subtitle {
-  font-family: 'The Seasons', 'Cinzel', serif !important;
+  font-family: "The Seasons", "Cinzel", serif !important;
   font-size: clamp(0.6rem, 2vw, 0.75rem) !important;
   color: #d4af85 !important;
   font-style: normal !important;
@@ -118,7 +123,7 @@
   cursor: pointer;
   font-size: clamp(0.75rem, 2.5vw, 0.9rem);
   font-weight: 500;
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   text-decoration: none;
@@ -144,13 +149,18 @@
 }
 
 .nav-link::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(195, 143, 33, 0.2),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
@@ -176,12 +186,13 @@
     align-items: center;
     flex-wrap: nowrap;
   }
-  
+
   .header-brand {
     align-self: center;
     flex-shrink: 0;
+    padding-left: clamp(76px, 8vw, 92px);
   }
-  
+
   .header-navigation {
     align-self: center;
     margin-bottom: 0;
@@ -195,12 +206,12 @@
     padding: clamp(1rem, 3vw, 1.25rem) clamp(1rem, 4vw, 2rem);
     gap: var(--space-sm);
   }
-  
+
   .nav-links {
     gap: clamp(0.5rem, 2vw, 0.75rem);
     flex-wrap: nowrap;
   }
-  
+
   .nav-link {
     padding: clamp(0.5rem, 2vw, 0.65rem) clamp(0.65rem, 2.5vw, 0.9rem);
     font-size: clamp(0.7rem, 2vw, 0.8rem);
@@ -215,21 +226,21 @@
     align-items: center;
     text-align: center;
   }
-  
+
   .header-brand {
     order: 1;
     width: 100%;
     text-align: center;
   }
-  
+
   .kalakritam-title {
     text-align: center;
   }
-  
+
   .header-subtitle {
     text-align: center;
   }
-  
+
   .header-navigation {
     order: 2;
     width: 100%;
@@ -237,14 +248,14 @@
     align-items: center;
     margin-top: 0;
   }
-  
+
   .nav-links {
     flex-wrap: wrap;
     justify-content: center;
     gap: clamp(0.5rem, 2vw, 0.8rem);
     width: 100%;
   }
-  
+
   .nav-link {
     padding: clamp(0.5rem, 2vw, 0.6rem) clamp(0.75rem, 3vw, 1rem);
     font-size: clamp(0.7rem, 2.5vw, 0.8rem);
@@ -257,25 +268,25 @@
     gap: var(--space-sm);
     align-items: center;
   }
-  
+
   .header-brand {
     text-align: center;
     width: 100%;
   }
-  
+
   .kalakritam-title {
     text-align: center;
   }
-  
+
   .header-subtitle {
     text-align: center;
   }
-  
+
   .nav-links {
     gap: clamp(0.25rem, 1.5vw, 0.5rem);
     padding: 0;
   }
-  
+
   .nav-link {
     padding: clamp(0.4rem, 2vw, 0.5rem) clamp(0.6rem, 2.5vw, 0.8rem);
     font-size: clamp(0.65rem, 2.5vw, 0.75rem);
@@ -415,9 +426,10 @@
   -webkit-backdrop-filter: blur(25px);
   border-left: 1px solid rgba(195, 143, 33, 0.25);
   z-index: 1000;
-  box-shadow: -15px 0 50px rgba(0, 0, 0, 0.7), 
-              -5px 0 20px rgba(0, 0, 0, 0.4),
-              inset 1px 0 0 rgba(255, 255, 255, 0.03);
+  box-shadow:
+    -15px 0 50px rgba(0, 0, 0, 0.7),
+    -5px 0 20px rgba(0, 0, 0, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.03);
   transition: right 0.4s cubic-bezier(0.32, 0.72, 0, 1);
   overflow: hidden;
   display: flex;
@@ -429,21 +441,31 @@
 }
 
 .sidebar-header {
-  padding: clamp(0.875rem, 3vw, 1.25rem) clamp(1rem, 4vw, 1.5rem) clamp(0.625rem, 2vw, 0.875rem);
+  padding: clamp(0.875rem, 3vw, 1.25rem) clamp(1rem, 4vw, 1.5rem)
+    clamp(0.625rem, 2vw, 0.875rem);
   border-bottom: 1px solid rgba(195, 143, 33, 0.15);
-  background: linear-gradient(180deg, rgba(195, 143, 33, 0.06) 0%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(195, 143, 33, 0.06) 0%,
+    transparent 100%
+  );
   position: relative;
   flex-shrink: 0;
 }
 
 .sidebar-header::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: clamp(1rem, 4vw, 1.5rem);
   right: clamp(1rem, 4vw, 1.5rem);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.35), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(195, 143, 33, 0.35),
+    transparent
+  );
 }
 
 .sidebar-brand {
@@ -454,7 +476,7 @@
 
 .sidebar-header h3 {
   color: #c38f21;
-  font-family: 'Samarkan', 'Cinzel', serif !important;
+  font-family: "Samarkan", "Cinzel", serif !important;
   font-size: clamp(1.1rem, 4vw, 1.35rem);
   margin: 0;
   font-weight: 600;
@@ -467,7 +489,7 @@
 }
 
 .sidebar-tagline {
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   font-size: clamp(0.6rem, 2vw, 0.7rem);
   color: #d4af85;
   opacity: 0.6;
@@ -510,7 +532,7 @@
 }
 
 .sidebar-section-title {
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   font-size: clamp(0.55rem, 1.8vw, 0.65rem);
   color: rgba(195, 143, 33, 0.6);
   text-transform: uppercase;
@@ -526,7 +548,7 @@
 }
 
 .sidebar-section-title::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, rgba(195, 143, 33, 0.3), transparent);
@@ -541,7 +563,7 @@
   cursor: pointer;
   font-size: clamp(0.78rem, 2.5vw, 0.88rem);
   font-weight: 500;
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   transition: all 0.2s ease;
   text-decoration: none;
   display: flex;
@@ -609,7 +631,11 @@
 }
 
 .sidebar-nav-link.active {
-  background: linear-gradient(135deg, rgba(195, 143, 33, 0.12) 0%, rgba(195, 143, 33, 0.08) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(195, 143, 33, 0.12) 0%,
+    rgba(195, 143, 33, 0.08) 100%
+  );
   color: #e0a82e;
 }
 
@@ -626,22 +652,32 @@
 }
 
 .sidebar-footer {
-  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 3vw, 1rem) clamp(0.625rem, 2.5vw, 1rem);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 3vw, 1rem)
+    clamp(0.625rem, 2.5vw, 1rem);
   border-top: 1px solid rgba(195, 143, 33, 0.15);
   text-align: center;
-  background: linear-gradient(180deg, transparent 0%, rgba(195, 143, 33, 0.04) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(195, 143, 33, 0.04) 100%
+  );
   position: relative;
   flex-shrink: 0;
 }
 
 .sidebar-footer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -1px;
   left: clamp(1rem, 4vw, 1.5rem);
   right: clamp(1rem, 4vw, 1.5rem);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(195, 143, 33, 0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(195, 143, 33, 0.3),
+    transparent
+  );
 }
 
 .sidebar-user-info {
@@ -683,7 +719,7 @@
 
 .sidebar-user-name {
   color: #d4af85;
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   font-size: 0.9rem;
   font-weight: 500;
   margin: 0;
@@ -696,7 +732,7 @@
 
 .sidebar-footer p {
   color: #c38f21;
-  font-family: 'Samarkan', 'Cinzel', serif !important;
+  font-family: "Samarkan", "Cinzel", serif !important;
   font-size: 1rem;
   margin: 0 0 0.15rem 0;
   font-weight: 600;
@@ -772,13 +808,16 @@
     padding-top: max(0px, env(safe-area-inset-top));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
-  
+
   .sidebar-header {
     padding-top: max(clamp(0.875rem, 3vw, 1.25rem), env(safe-area-inset-top));
   }
-  
+
   .sidebar-footer {
-    padding-bottom: max(clamp(0.625rem, 2.5vw, 1rem), env(safe-area-inset-bottom));
+    padding-bottom: max(
+      clamp(0.625rem, 2.5vw, 1rem),
+      env(safe-area-inset-bottom)
+    );
   }
 }
 
@@ -835,11 +874,11 @@
     flex: none;
     text-align: center;
   }
-  
+
   .kalakritam-title {
     text-align: center;
   }
-  
+
   .header-subtitle {
     text-align: center;
   }
@@ -867,7 +906,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   min-height: 44px;
@@ -975,9 +1014,10 @@
   background: linear-gradient(180deg, #001818 0%, #002020 100%);
   border: 1px solid rgba(195, 143, 33, 0.3);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 
-              0 0 0 1px rgba(195, 143, 33, 0.1),
-              0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(195, 143, 33, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
   overflow: hidden;
   z-index: 1001;
@@ -987,7 +1027,7 @@
 }
 
 .dropdown-menu::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1012,8 +1052,12 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  font-family: 'The Seasons', 'Cinzel', serif;
-  transition: background 0.3s ease, color 0.3s ease, padding-left 0.3s ease, letter-spacing 0.3s ease;
+  font-family: "The Seasons", "Cinzel", serif;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    padding-left 0.3s ease,
+    letter-spacing 0.3s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
@@ -1035,7 +1079,7 @@
 }
 
 .dropdown-menu-item::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -1056,10 +1100,14 @@
 }
 
 .dropdown-menu-item::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at left, rgba(195, 143, 33, 0.15) 0%, transparent 70%);
+  background: radial-gradient(
+    circle at left,
+    rgba(195, 143, 33, 0.15) 0%,
+    transparent 70%
+  );
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -1090,7 +1138,7 @@
 }
 
 .dropdown-item-bullet::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -4px;
   border-radius: 50%;
@@ -1103,17 +1151,20 @@
 .dropdown-menu-item:not(:focus):not(:active):hover .dropdown-item-bullet {
   background: #c38f21;
   transform: scale(1.3);
-  box-shadow: 0 0 12px rgba(195, 143, 33, 0.6), 
-              0 0 24px rgba(195, 143, 33, 0.3);
+  box-shadow:
+    0 0 12px rgba(195, 143, 33, 0.6),
+    0 0 24px rgba(195, 143, 33, 0.3);
 }
 
-.dropdown-menu-item:not(:focus):not(:active):hover .dropdown-item-bullet::before {
+.dropdown-menu-item:not(:focus):not(:active):hover
+  .dropdown-item-bullet::before {
   transform: scale(1);
   animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes pulse-ring {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.3;
   }
@@ -1139,7 +1190,8 @@
 }
 
 @keyframes arrow-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0) scale(1);
   }
   50% {
@@ -1169,7 +1221,8 @@
 }
 
 @keyframes pulse-ring {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.3;
   }
@@ -1180,7 +1233,8 @@
 }
 
 @keyframes arrow-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0) scale(1);
   }
   50% {
@@ -1198,7 +1252,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 5px rgba(195, 143, 33, 0.3);
   }
   50% {
@@ -1219,7 +1274,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  font-family: 'The Seasons', 'Cinzel', serif;
+  font-family: "The Seasons", "Cinzel", serif;
   transition: all 0.3s ease;
   text-align: left;
 }
@@ -1331,30 +1386,30 @@
     transform: scale(0) !important;
     clip: rect(0, 0, 0, 0) !important;
   }
-  
+
   /* Improved header layout on mobile */
   .shared-header {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
-  
+
   .header-content {
     padding: 0.875rem 1rem;
     min-height: auto;
     justify-content: center;
     padding-right: 4rem;
   }
-  
+
   /* Better brand sizing on mobile */
   .kalakritam-title {
     font-size: clamp(1.4rem, 6vw, 2rem);
   }
-  
+
   .header-subtitle {
     font-size: clamp(0.55rem, 2.5vw, 0.7rem);
     letter-spacing: 1px;
   }
-  
+
   /* Improved mobile menu button */
   .mobile-menu-button {
     width: 44px;
@@ -1364,19 +1419,19 @@
     justify-content: center;
     border-radius: 10px;
   }
-  
+
   /* Better sidebar styling */
   .mobile-sidebar {
     width: min(300px, 85vw);
     max-width: 320px;
   }
-  
+
   .sidebar-nav-link {
     padding: 1rem 1.25rem;
     min-height: 52px;
     font-size: 1rem;
   }
-  
+
   .sidebar-nav-link:active {
     background: rgba(195, 143, 33, 0.3);
     transform: scale(0.98);
@@ -1389,52 +1444,52 @@
     left: 50%;
     transform: translateX(-50%) translateY(-10px);
   }
-  
+
   .mobile-navigation.open {
     transform: translateX(-50%) translateY(0);
   }
-  
+
   .mobile-navigation::before,
   .mobile-navigation::after {
     left: 50%;
     transform: translateX(-50%);
   }
-  
+
   .mobile-nav-links {
     padding: 0.75rem;
     gap: 0.5rem;
   }
-  
+
   .mobile-nav-link {
     padding: 0.6rem 1rem;
     font-size: 0.85rem;
     min-height: 44px;
   }
-  
+
   .mobile-menu-container {
     right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
   }
-  
+
   .header-content {
     padding: 0.75rem;
     padding-right: 3.5rem;
   }
-  
+
   .kalakritam-title {
     font-size: clamp(1.3rem, 7vw, 1.6rem);
   }
-  
+
   .header-subtitle {
     font-size: 0.55rem;
   }
-  
+
   /* Smaller sidebar on very small screens */
   .mobile-sidebar {
     width: min(280px, 90vw);
   }
-  
+
   .sidebar-nav-link {
     padding: 0.875rem 1rem;
     min-height: 48px;
@@ -1448,31 +1503,49 @@
     padding: 0.625rem 0.5rem;
     padding-right: 3rem;
   }
-  
+
   .kalakritam-title {
     font-size: 1.2rem;
   }
-  
+
   .header-subtitle {
     font-size: 0.5rem;
     margin-top: 0.1rem;
   }
-  
+
   .mobile-menu-button {
     width: 40px;
     height: 40px;
     padding: 10px;
   }
-  
+
   .mobile-sidebar {
     width: 100vw;
     max-width: 100vw;
     right: -100vw;
     border-left: none;
   }
-  
+
   .mobile-sidebar.open {
     right: 0;
   }
 }
 
+/* Push header content right of the fixed VideoLogo (85px circle at left: 15px) */
+@media (max-width: 768px) {
+  .header-content {
+    padding-left: clamp(68px, 13vw, 84px);
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding-left: clamp(57px, 16vw, 68px);
+  }
+}
+
+@media (max-width: 360px) {
+  .header-content {
+    padding-left: clamp(49px, 18vw, 60px);
+  }
+}

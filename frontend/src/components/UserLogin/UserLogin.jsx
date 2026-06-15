@@ -4,8 +4,7 @@ import { useUserAuth } from '../../contexts/UserAuthContext';
 import { userAuthApi } from '../../lib/adminApi';
 import { getUserPath } from '../../utils/userHelpers';
 import { toast } from '../../utils/notifications.js';
-import VideoLogo from '../VideoLogo';
-import Orb from '../Orb';
+import CosmicOrbit from '../CosmicOrbit';
 import './UserLogin.css';
 
 const UserLogin = () => {
@@ -664,32 +663,32 @@ const UserLogin = () => {
 
   return (
     <div className="user-login-container">
-      {/* Orb Background */}
-      <Orb 
-        hue={45} 
-        hoverIntensity={0.2} 
-        rotateOnHover={true} 
-        forceHoverState={false} 
-      />
+      {/* 3D Cosmic Planetary Background */}
+      <CosmicOrbit />
       
-      {/* Video Logo */}
-      <VideoLogo />
+      {/* Top Left Spinning Logo */}
+      <div className="top-left-logo-container" onClick={() => navigate('/home')}>
+        <img src="/images/logo.png" alt="Kalakritam Logo" className="top-left-logo" />
+      </div>
       
       <div className="user-login-content">
         <div className="user-login-card">
           <div className="user-login-header">
-            <h1 className="user-title">Kalakritam</h1>
+            <div className="login-logo-wrapper">
+              <img src="/images/logo.png" alt="Kalakritam Logo" className="login-card-logo" />
+            </div>
+            <h1 className="user-title">kalakritam</h1>
             <h2 className="user-subtitle">
-              {authMode === 'forgot-password' ? 'Reset Password' :
-               authMode === 'reset-password' ? 'Create New Password' :
-               authMode === 'otp' ? 'OTP Login' :
-               isSignUp ? 'Create Account' : 'Welcome Back'}
+              {authMode === 'forgot-password' ? 'RESET PASSWORD' :
+               authMode === 'reset-password' ? 'CREATE NEW PASSWORD' :
+               authMode === 'otp' ? 'OTP LOGIN' :
+               isSignUp ? 'CREATE ACCOUNT' : 'WELCOME BACK'}
             </h2>
             <p className="user-description">
-              {authMode === 'forgot-password' ? 'Enter your email to receive a reset link' :
-               authMode === 'reset-password' ? 'Enter your new password below' :
-               authMode === 'otp' ? (otpStep === 'email' ? 'Enter your email to receive OTP' : 'Enter the 6-digit code sent to your email') :
-               isSignUp ? 'Join our community of art enthusiasts' : 'Sign in to access your account'}
+              {authMode === 'forgot-password' ? 'ENTER YOUR EMAIL TO RECEIVE A RESET LINK' :
+               authMode === 'reset-password' ? 'ENTER YOUR NEW PASSWORD BELOW' :
+               authMode === 'otp' ? (otpStep === 'email' ? 'ENTER YOUR EMAIL TO RECEIVE OTP' : 'ENTER THE 6-DIGIT CODE SENT TO YOUR EMAIL') :
+               isSignUp ? 'JOIN OUR COMMUNITY OF ART ENTHUSIASTS' : 'SIGN IN TO ACCESS YOUR ACCOUNT'}
             </p>
           </div>
 
@@ -1229,7 +1228,18 @@ const UserLogin = () => {
               <span>OR</span>
             </div>
 
-            <div id="google-signin-button" className="google-signin-wrapper"></div>
+            <div className="google-signin-wrapper">
+              <button type="button" className="custom-google-btn" disabled={isLoading}>
+                <svg className="google-icon" width="20" height="20" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                </svg>
+                {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
+              </button>
+              <div id="google-signin-button" className="google-signin-overlay"></div>
+            </div>
 
             {!isSignUp && (
               <>
@@ -1278,6 +1288,26 @@ const UserLogin = () => {
               Back to Website
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Curved Bottom Wave Accent & Sparkling Star (Matching reference image) */}
+      <div className="bottom-wave-accent">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0,80 C360,120 720,120 1080,80 C1260,60 1350,60 1440,80 L1440,120 L0,120 Z" fill="#001817" />
+          <path d="M0,80 C360,120 720,120 1080,80 C1260,60 1350,60 1440,80" stroke="url(#gold-wave-gradient)" strokeWidth="3.5" />
+          <defs>
+            <linearGradient id="gold-wave-gradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#c38f21" />
+              <stop offset="50%" stopColor="#ffe066" />
+              <stop offset="100%" stopColor="#d4af85" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="bottom-sparkle-star">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12,0 L14.8,9.2 L24,12 L14.8,14.8 L12,24 L9.2,14.8 L0,12 L9.2,9.2 Z" fill="#ffe066" />
+          </svg>
         </div>
       </div>
     </div>

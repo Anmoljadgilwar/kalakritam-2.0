@@ -33,16 +33,8 @@ export const useMobileOptimizations = (pageName = 'page') => {
       setNetworkOptimizations(networkOpts);
       setBatteryOptimizations(batteryOpts);
       
-      // Update particle config based on optimizations
-      const optimizedParticleConfig = getMobileParticleConfig();
-      if (batteryOpts.disableParticles || networkOpts.delayNonCritical || optimizedParticleConfig.disabled) {
-        setParticleConfig({ ...optimizedParticleConfig, particleCount: 0, disabled: true });
-        if (mobilePerformanceMonitor.shouldMonitor()) {
-          console.log(`⚡ Particles disabled for ${pageName} due to battery/network optimization`);
-        }
-      } else {
-        setParticleConfig(optimizedParticleConfig);
-      }
+      // particle config is already tuned per device in getMobileParticleConfig()
+      // No override needed — all pages use global standard from mobileOptimizations.js
       
       if (isMobile) {
         mobilePerformanceMonitor.endLoadTime();

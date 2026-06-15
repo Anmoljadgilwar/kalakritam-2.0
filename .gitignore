@@ -1,32 +1,115 @@
+# =====================
+# Dependencies
+# =====================
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# =====================
+# Build Output
+# =====================
+dist/
+dist-ssr/
+build/
+*.local
+.output/
+
+# =====================
+# Environment Variables
+# NEVER commit secrets!
+# =====================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+.dev.vars
+backend/.dev.vars
+
+# =====================
 # Logs
-logs
+# =====================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# =====================
+# Cloudflare / Wrangler
+# =====================
+.wrangler/
+backend/.wrangler/
+functions/.wrangler/
+.cloudflare/
 
-# Editor directories and files
+# =====================
+# OS & System Files
+# =====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# =====================
+# Editor & IDE
+# =====================
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
+*.tmp
+.history/
 
+# =====================
+# TypeScript
+# =====================
+*.tsbuildinfo
 
-.env
-.env.production
-.dev.vars
+# =====================
+# Testing
+# =====================
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+cypress/screenshots/
+cypress/videos/
 
-.wrangler/
-backend/.wrangler/
+# =====================
+# Cache
+# =====================
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+*.cache
+
+# =====================
+# Project-specific
+# =====================
+# Large production data file (not needed in repo)
+KALAKRITAM_PRODUCTION_NO_SAMPLE_DATA.js
+
+# PDF assets (large binary files)
+ui_ux_executive_proposal.pdf
+
+# Deployment lock files
+.deploy_lock

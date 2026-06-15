@@ -3,7 +3,6 @@ import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
 import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
-import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -23,8 +22,7 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Mobile optimizations
-  const { particleConfig, networkOptimizations } = useMobileOptimizations('contact');
-  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
+  const { particleConfig, blurConfig, networkOptimizations } = useMobileOptimizations('contact');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

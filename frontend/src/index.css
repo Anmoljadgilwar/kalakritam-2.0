@@ -9,6 +9,13 @@
   color: rgba(255, 255, 255, 0.95);
   background-color: #000000;
 
+  /* Brand Theme Colors */
+  --gold-primary: #c38f21;
+  --gold-light: #d4af85;
+  --gold-hover: #ffe066;
+  --teal-dark: #002f2f;
+  --bg-black: #000000;
+
   /* Font rendering */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -222,5 +229,28 @@ button:focus-visible {
 @media (min-width: 1024px) {
   .grid-lg-4 {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Global premium focus glow for inputs and textareas */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input:not([type]):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #c38f21 !important;
+  box-shadow: 0 0 0 3px rgba(195, 143, 33, 0.4) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Accessibility - Ensure touch targets are at least 44px on mobile for all interactive elements */
+@media (max-width: 768px) {
+  input, select, textarea, .filter-btn, .view-toggle-btn, .btn-view, .universal-card-btn, .vg-pill, .vg-nav-btn, .load-more-btn {
+    min-height: 44px !important;
   }
 }

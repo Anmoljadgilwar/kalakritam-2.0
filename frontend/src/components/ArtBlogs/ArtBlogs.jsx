@@ -3,7 +3,6 @@ import { useNavigationWithLoading } from '../../hooks/useNavigationWithLoading';
 import { useUsernameValidation } from '../ValidateUsername/ValidateUsername';
 import { toast } from '../../utils/notifications.js';
 import { useMobileOptimizations } from '../../hooks/useMobileOptimizations';
-import { getMobileBlurConfig } from '../../utils/mobileOptimizations';
 import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
@@ -11,6 +10,10 @@ import OptimizedParticles from '../OptimizedParticles';
 import { config } from '../../config/environment';
 import '../Gallery/Gallery.css';
 import './ArtBlogs.css';
+import { SkeletonLoader } from '../Loading';
+
+// Newsletter API Endpoint
+const NEWSLETTER_API_URL = `${config.apiBaseUrl}/newsletter/subscribe`;
 
 const ArtBlogs = () => {
   const { navigateWithLoading } = useNavigationWithLoading();
@@ -19,8 +22,7 @@ const ArtBlogs = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
   
   // Mobile optimizations
-  const { particleConfig, networkOptimizations } = useMobileOptimizations('artblogs');
-  const [blurConfig, setBlurConfig] = useState(getMobileBlurConfig());
+  const { particleConfig, blurConfig, networkOptimizations } = useMobileOptimizations('artblogs');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,8 +77,8 @@ const ArtBlogs = () => {
             <p className="artblogs-subtitle">Stories & Insights from the Art World</p>
           </header>
           
-          <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', color: '#c38f21' }}>
-            <p style={{ fontSize: '1.2rem' }}>Loading blogs...</p>
+          <div style={{ marginTop: '2rem' }}>
+            <SkeletonLoader count={6} />
           </div>
         </div>
         <Footer />

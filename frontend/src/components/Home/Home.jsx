@@ -86,10 +86,8 @@ const Home = () => {
       setNetworkOptimizations(networkOpts);
       setBatteryOptimizations(batteryOpts);
       
-      // Update particle config based on optimizations
-      if (batteryOpts.disableParticles || networkOpts.delayNonCritical) {
-        setParticleConfig({ ...particleConfig, particleCount: 0 });
-      }
+      // particle config is already tuned per device in getMobileParticleConfig()
+      // No override needed — desktop gets 700, mobile 350, slow conn 200
       
       if (currentIsMobile) {
         mobilePerformanceMonitor.endLoadTime();

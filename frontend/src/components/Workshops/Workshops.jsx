@@ -18,6 +18,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
+import { SkeletonLoader } from '../Loading';
 import { config } from '../../config/environment';
 import './Workshops.css';
 import '../Gallery/Gallery.css';
@@ -59,9 +60,8 @@ const Workshops = () => {
       setNetworkOptimizations(networkOpts);
       setBatteryOptimizations(batteryOpts);
       
-      if (batteryOpts.disableParticles || networkOpts.delayNonCritical) {
-        setParticleConfig({ ...particleConfig, particleCount: 0 });
-      }
+      // particle config is already tuned per device in getMobileParticleConfig()
+      // No override needed — all pages use global standard from mobileOptimizations.js
     };
     
     initializeOptimizations();
@@ -236,25 +236,7 @@ const Workshops = () => {
         return workshopEndDate ? workshopEndDate < now : false;
       });
 
-  if (loading) {
-    return (
-      <div className="workshops-container">
-        <VideoLogo />
-        <Header currentPage="workshops" />
-        <div className="workshops-page-content">
-          <header className="workshops-page-header">
-            <h1 className="workshops-title">Workshops</h1>
-            <p className="workshops-subtitle">Learn from Expert Artists</p>
-          </header>
-          
-          <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', color: '#c38f21' }}>
-            <p style={{ fontSize: '1.2rem' }}>Loading workshops...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+
 
   if (error) {
     return (
@@ -334,165 +316,156 @@ const Workshops = () => {
         </header>
 
         <main className="workshops-content">
-          <div className="workshops-count">
-            <p>Showing {filteredWorkshops.length} workshop{filteredWorkshops.length !== 1 ? 's' : ''}</p>
-          </div>
-          
-          <div className="workshops-grid">
-            {filteredWorkshops.map(workshop => (
-              <div key={workshop.id} className="workshop-card universal-card">
-                <div className="workshop-image-container universal-card-image-container">
-                  <img 
-                    src={workshop.imageUrl} 
-                    alt={workshop.title}
-                    className="workshop-image universal-card-image"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      const placeholder = e.target.parentNode.querySelector('.workshop-image-placeholder');
-                      if (placeholder) {
-                        placeholder.style.display = 'flex';
-                      }
-                    }}
-                  />
-                  <div className="workshop-image-placeholder universal-card-image-placeholder" style={{ display: 'none' }}>
-                    <div className="universal-card-logo-text">Kalakritam</div>
-                    <div className="universal-card-image-not-available">Image not available</div>
-                  </div>
-                  <div className="workshop-overlay universal-card-overlay">
-                    <div className="workshop-overlay-content universal-card-overlay-content">
-                      <h3>{workshop.title}</h3>
-                      <p>by {workshop.instructor}</p>
-                      <span className="highlight-text">₹{workshop.price}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="workshop-info universal-card-content">
-                  <h4 className="workshop-title universal-card-title">{workshop.title}</h4>
-                  <p className="workshop-instructor universal-card-subtitle">by {workshop.instructor}</p>
-                  <p className="workshop-description universal-card-description">{workshop.description}</p>
-                  
-                  <div className="workshop-details universal-card-details">
-                    <div className="detail-row universal-card-detail-row">
-                      <span className="detail-label universal-card-detail-label">Duration:</span>
-                      <span className="detail-value universal-card-detail-value">{workshop.duration}</span>
-                    </div>
-                    <div className="detail-row universal-card-detail-row">
-                      <span className="detail-label universal-card-detail-label">Start Date:</span>
-                      <span className="detail-value universal-card-detail-value">{new Date(workshop.startDate).toLocaleDateString('en-US', { 
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}</span>
-                    </div>
-                    <div className="detail-row universal-card-detail-row">
-                      <span className="detail-label universal-card-detail-label">End Date:</span>
-                      <span className="detail-value universal-card-detail-value">{new Date(workshop.endDate).toLocaleDateString('en-US', { 
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}</span>
-                    </div>
-                    <div className="detail-row universal-card-detail-row">
-                      <span className="detail-label universal-card-detail-label">Max Participants:</span>
-                      <span className="detail-value universal-card-detail-value">{workshop.maxParticipants}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="workshop-actions universal-card-actions">
-                    <button 
-                      className="btn-details universal-card-btn"
-                      onClick={() => handleViewDetails(workshop)}
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredWorkshops.length === 0 && (
-            <div className="no-results">
-              <div className="no-results-content">
-                <h3>No workshops found</h3>
-                <p>Try selecting a different category to explore more workshops.</p>
-                <button 
-                  className="reset-filter-btn"
-                  onClick={() => setSelectedCategory('all')}
-                >
-                  Show All Workshops
-                </button>
-              </div>
+          {loading ? (
+            <div style={{ marginTop: '2rem' }}>
+              <SkeletonLoader count={6} />
             </div>
-          )}
-          
-          {/* Load More Button */}
-          {currentPage < totalPages && (
-            <div className="load-more-container" style={{ 
-              textAlign: 'center', 
-              margin: '4rem 0 3rem 0',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '1rem'
-            }}>
-              <button 
-                className="load-more-btn"
-                onClick={loadMore}
-                disabled={loadingMore}
-                style={{
-                  position: 'relative',
-                  padding: '1rem 2.5rem',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  color: '#1a1a1a',
-                  background: loadingMore 
-                    ? 'linear-gradient(135deg, #8a6a15 0%, #b89560 100%)'
-                    : 'linear-gradient(135deg, #c38f21 0%, #d4af85 100%)',
-                  border: '2px solid rgba(195, 143, 33, 0.3)',
-                  borderRadius: '50px',
-                  cursor: loadingMore ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: loadingMore 
-                    ? '0 4px 15px rgba(195, 143, 33, 0.2)'
-                    : '0 6px 25px rgba(195, 143, 33, 0.4)',
-                  transform: loadingMore ? 'scale(0.98)' : 'scale(1)',
-                  overflow: 'hidden',
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase'
-                }}
-                onMouseEnter={(e) => !loadingMore && (e.target.style.transform = 'scale(1.05)', e.target.style.boxShadow = '0 8px 30px rgba(195, 143, 33, 0.5)')}
-                onMouseLeave={(e) => !loadingMore && (e.target.style.transform = 'scale(1)', e.target.style.boxShadow = '0 6px 25px rgba(195, 143, 33, 0.4)')}
-              >
-                {loadingMore ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      width: '16px',
-                      height: '16px',
-                      border: '3px solid #1a1a1a',
-                      borderTopColor: 'transparent',
-                      borderRadius: '50%',
-                      animation: 'spin 0.8s linear infinite'
-                    }}></span>
-                    Loading...
-                  </span>
-                ) : (
-                  `Load More Workshops`
-                )}
-              </button>
-              {!loadingMore && (
-                <div style={{
-                  fontSize: '0.9rem',
-                  color: '#d4af85',
-                  fontWeight: '500',
-                  opacity: 0.8
-                }}>
-                  Showing {workshops.length} of {totalItems} workshops • Page {currentPage} of {totalPages}
+          ) : (
+            <>
+              <div className="workshops-count">
+                <p>Showing {filteredWorkshops.length} workshop{filteredWorkshops.length !== 1 ? 's' : ''}</p>
+              </div>
+              
+              <div className="workshops-grid">
+                {filteredWorkshops.map(workshop => (
+                  <div key={workshop.id} className="workshop-card universal-card">
+                    <div className="workshop-image-container universal-card-image-container">
+                      <img 
+                        src={workshop.imageUrl} 
+                        alt={workshop.title}
+                        className="workshop-image universal-card-image"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          const placeholder = e.target.parentNode.querySelector('.workshop-image-placeholder');
+                          if (placeholder) {
+                            placeholder.style.display = 'flex';
+                          }
+                        }}
+                      />
+                      <div className="workshop-image-placeholder universal-card-image-placeholder" style={{ display: 'none' }}>
+                        <div className="kalakritam-logo-text">Kalakritam</div>
+                        <div className="image-not-available">Image not available</div>
+                      </div>
+                      <div className="workshop-overlay universal-card-overlay">
+                        <div className="workshop-overlay-content universal-card-overlay-content">
+                          <h3>{workshop.title}</h3>
+                          <p>by {workshop.instructor}</p>
+                          <span className="highlight-text">₹{workshop.price}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="workshop-info universal-card-content">
+                      <h4 className="workshop-title universal-card-title">{workshop.title}</h4>
+                      <p className="workshop-instructor universal-card-subtitle">by {workshop.instructor}</p>
+                      
+                      <div className="workshop-details universal-card-details">
+                        <div className="detail-row universal-card-detail-row">
+                          <span className="detail-label universal-card-detail-label">Date:</span>
+                          <span className="detail-value universal-card-detail-value">
+                            {new Date(workshop.startDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="detail-row universal-card-detail-row">
+                          <span className="detail-label universal-card-detail-label">Duration:</span>
+                          <span className="detail-value universal-card-detail-value">{workshop.duration}</span>
+                        </div>
+                        <div className="detail-row universal-card-detail-row">
+                          <span className="detail-label universal-card-detail-label">Venue:</span>
+                          <span className="detail-value universal-card-detail-value">{workshop.venue}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="workshop-actions universal-card-actions">
+                        <button 
+                          className="btn-view universal-card-btn"
+                          onClick={() => handleViewDetails(workshop)}
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filteredWorkshops.length === 0 && (
+                <div className="no-results">
+                  <div className="no-results-content">
+                    <h3>No workshops found</h3>
+                    <p>Try selecting a different view to explore more workshops.</p>
+                  </div>
                 </div>
               )}
-            </div>
+              
+              {/* Load More Button */}
+              {selectedView === 'upcoming' && currentPage < totalPages && (
+                <div className="load-more-container" style={{ 
+                  textAlign: 'center', 
+                  margin: '4rem 0 3rem 0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '1rem'
+                }}>
+                  <button 
+                    className="load-more-btn"
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    style={{
+                      position: 'relative',
+                      padding: '1rem 2.5rem',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      color: '#1a1a1a',
+                      background: loadingMore 
+                        ? 'linear-gradient(135deg, #8a6a15 0%, #b89560 100%)'
+                        : 'linear-gradient(135deg, #c38f21 0%, #d4af85 100%)',
+                      border: '2px solid rgba(195, 143, 33, 0.3)',
+                      borderRadius: '50px',
+                      cursor: loadingMore ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: loadingMore 
+                        ? '0 4px 15px rgba(195, 143, 33, 0.2)'
+                        : '0 6px 25px rgba(195, 143, 33, 0.4)',
+                      transform: loadingMore ? 'scale(0.98)' : 'scale(1)',
+                      overflow: 'hidden',
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase'
+                    }}
+                    onMouseEnter={(e) => !loadingMore && (e.target.style.transform = 'scale(1.05)', e.target.style.boxShadow = '0 8px 30px rgba(195, 143, 33, 0.5)')}
+                    onMouseLeave={(e) => !loadingMore && (e.target.style.transform = 'scale(1)', e.target.style.boxShadow = '0 6px 25px rgba(195, 143, 33, 0.4)')}
+                  >
+                    {loadingMore ? (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{
+                          display: 'inline-block',
+                          width: '16px',
+                          height: '16px',
+                          border: '3px solid #1a1a1a',
+                          borderTopColor: 'transparent',
+                          borderRadius: '50%',
+                          animation: 'spin 0.8s linear infinite'
+                        }}></span>
+                        Loading...
+                      </span>
+                    ) : (
+                      `Load More Workshops`
+                    )}
+                  </button>
+                  {!loadingMore && (
+                    <div style={{
+                      fontSize: '0.9rem',
+                      color: '#d4af85',
+                      fontWeight: '500',
+                      opacity: 0.8
+                    }}>
+                      Showing {workshops.length} of {totalItems} workshops • Page {currentPage} of {totalPages}
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </main>
 

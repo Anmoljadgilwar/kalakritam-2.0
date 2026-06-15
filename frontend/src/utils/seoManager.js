@@ -206,10 +206,10 @@ export class SEOManager {
 
   // Performance optimization
   preloadCriticalResources() {
-    const criticalResources = [
-      { href: 'https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev/intro-video.mp4', as: 'video' },
-      { href: '/images/og-image.jpg', as: 'image' }
-    ];
+    // Disabled preloading of video and og-image.jpg to prevent browser console warnings:
+    // 1. Chrome does not support video preloading via link preload (triggers "unsupported as value").
+    // 2. Preloading og-image.jpg triggers "preloaded but not used" warning since it is only metadata.
+    const criticalResources = [];
 
     criticalResources.forEach(resource => {
       try {

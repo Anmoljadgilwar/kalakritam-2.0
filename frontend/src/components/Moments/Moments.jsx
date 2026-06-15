@@ -17,6 +17,7 @@ import VideoLogo from '../VideoLogo';
 import Particles from '../Particles';
 import LazyImage from '../LazyImage';
 import './Moments.css';
+import { SkeletonLoader } from '../Loading';
 
 const Moments = () => {
   const [moments, setMoments] = useState([]);
@@ -87,9 +88,8 @@ const Moments = () => {
       setNetworkOptimizations(networkOpts);
       setBatteryOptimizations(batteryOpts);
       
-      if (batteryOpts.disableParticles || networkOpts.delayNonCritical) {
-        setParticleConfig({ ...particleConfig, particleCount: 0 });
-      }
+      // particle config is already tuned per device in getMobileParticleConfig()
+      // No override needed — all pages use global standard from mobileOptimizations.js
     };
     
     initializeOptimizations();
@@ -267,8 +267,8 @@ const Moments = () => {
             <p className="moments-subtitle">Captured Memories from Our Events</p>
           </header>
           
-          <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', color: '#c38f21' }}>
-            <p style={{ fontSize: '1.2rem' }}>Loading moments...</p>
+          <div style={{ marginTop: '2rem' }}>
+            <SkeletonLoader count={6} />
           </div>
         </div>
         <Footer />

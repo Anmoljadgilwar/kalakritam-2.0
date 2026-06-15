@@ -55,12 +55,13 @@ export default defineConfig({
       'react-dom',
       'react-router-dom',
       'react/jsx-runtime',
-      'gsap'
+      'gsap',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three'
     ],
     exclude: [
-      'ogl',
-      '@react-three/fiber',
-      '@react-three/drei'
+      'ogl'
     ]
   },
   // Ensure single React instance
@@ -76,7 +77,25 @@ export default defineConfig({
       overlay: false
     },
     // Enable pre-bundling for faster dev server
-    force: false
+    force: false,
+
+    // ── R2 CDN proxy: eliminates CORS for Three.js WebGL texture loads ──
+    // In dev, image URLs are rewritten to /r2-proxy/... which proxies to the
+    // R2 CDN with CORS headers, making them same-origin.
+    proxy: {
+      '/r2-proxy': {
+        target: 'https://pub-9cdd84716e0341ba9fa9c0b6875b5572.r2.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/r2-proxy/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyRes', (proxyRes) => {
+            proxyRes.headers['access-control-allow-origin'] = '*';
+            proxyRes.headers['access-control-allow-methods'] = 'GET, OPTIONS';
+            proxyRes.headers['cross-origin-resource-policy'] = 'cross-origin';
+          });
+        }
+      }
+    }
   },
   // Enable experimental features for better performance
   esbuild: {

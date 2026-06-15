@@ -5,40 +5,44 @@
 }
 
 .MuiAlert-root {
-  animation: slideInRight 0.3s ease-out;
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 @keyframes slideInRight {
   from {
-    transform: translateX(100%);
+    transform: translateX(110%) scale(0.9);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
     opacity: 1;
   }
 }
 
 .MuiAlert-outlined {
-  background: rgba(0, 0, 0, 0.85) !important;
+  background: linear-gradient(135deg, rgba(0, 24, 24, 0.95) 0%, rgba(0, 8, 8, 0.95) 100%) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
 
 .MuiAlert-outlinedSuccess {
-  border-color: #4caf50 !important;
+  border-color: rgba(195, 143, 33, 0.85) !important; /* Premium Gold border */
+  box-shadow: 0 8px 32px rgba(195, 143, 33, 0.25), 0 0 20px rgba(195, 143, 33, 0.15) !important;
 }
 
 .MuiAlert-outlinedError {
-  border-color: #f44336 !important;
+  border-color: rgba(239, 68, 68, 0.8) !important; /* Red border */
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2), 0 0 15px rgba(239, 68, 68, 0.1) !important;
 }
 
 .MuiAlert-outlinedWarning {
-  border-color: #ff9800 !important;
+  border-color: rgba(245, 158, 11, 0.8) !important; /* Warning/Orange border */
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.2), 0 0 15px rgba(245, 158, 11, 0.1) !important;
 }
 
 .MuiAlert-outlinedInfo {
-  border-color: #2196f3 !important;
+  border-color: rgba(0, 163, 163, 0.85) !important; /* Premium Teal border */
+  box-shadow: 0 8px 32px rgba(0, 163, 163, 0.25), 0 0 20px rgba(0, 163, 163, 0.15) !important;
 }
 
 /* Mobile responsive */

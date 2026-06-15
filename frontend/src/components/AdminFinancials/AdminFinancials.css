@@ -1,10 +1,10 @@
-/* Admin Financials Mobile Responsiveness */
+/* Admin Financials — Premium Dark Dashboard Styles */
 
-/* Override Material-UI defaults for better mobile experience */
 .admin-financials-container {
   min-height: 100vh;
   width: 100%;
   overflow-x: clip;
+  background: #001818;
 }
 
 /* Ensure cards don't overflow on mobile */
@@ -26,40 +26,166 @@
   max-width: 100% !important;
 }
 
-/* Responsive Design */
+/* ====== PREMIUM GOLD LINE CHART ====== */
+.glowing-line-chart .MuiLineElement-root {
+  stroke: #c38f21 !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0px 0px 8px rgba(195, 143, 33, 0.9)) drop-shadow(0px 0px 16px rgba(195, 143, 33, 0.5));
+}
+
+.glowing-line-chart .MuiMarkElement-root {
+  stroke: #ffe066 !important;
+  fill: #001818 !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0px 0px 6px rgba(255, 224, 102, 0.8));
+}
+
+.glowing-line-chart .MuiAreaElement-root {
+  fill: url(#chart-gold-gradient) !important;
+  opacity: 0.5 !important;
+}
+
+/* ====== PREMIUM TEAL BAR CHART ====== */
+.glowing-bar-chart .MuiBarElement-root {
+  rx: 6;
+  transition: filter 0.2s ease;
+  filter: drop-shadow(0px 0px 4px rgba(0, 163, 163, 0.5));
+}
+
+.glowing-bar-chart .MuiBarElement-root:hover {
+  filter: brightness(1.35) drop-shadow(0px 0px 12px rgba(195, 143, 33, 0.7));
+}
+
+/* ====== CHART AXIS STYLING ====== */
+.MuiChartsAxis-line {
+  stroke: rgba(212, 175, 133, 0.4) !important;
+}
+
+.MuiChartsAxis-tick {
+  stroke: rgba(212, 175, 133, 0.4) !important;
+}
+
+.MuiChartsAxis-tickLabel text {
+  fill: #d4af85 !important;
+  font-size: 11px !important;
+}
+
+/* ====== GRID LINES ====== */
+.MuiChartsGrid-line {
+  stroke: rgba(212, 175, 133, 0.08) !important;
+  stroke-dasharray: 4 4;
+}
+
+/* ====== PREMIUM GLASSMORPHIC TOOLTIP ====== */
+.MuiChartsTooltip-root {
+  background: rgba(0, 24, 24, 0.92) !important;
+  border: 1px solid rgba(195, 143, 33, 0.6) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(195, 143, 33, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #ffffff !important;
+}
+
+.MuiChartsTooltip-table {
+  background: transparent !important;
+}
+
+.MuiChartsTooltip-cell {
+  color: #d4af85 !important;
+  border-color: rgba(195, 143, 33, 0.2) !important;
+}
+
+.MuiChartsTooltip-labelCell {
+  color: #ffe066 !important;
+  font-weight: 600 !important;
+}
+
+/* ====== PIE CHART ====== */
+.MuiChartsLegend-series text {
+  fill: #d4af85 !important;
+}
+
+/* ====== MUI FORM INPUTS ====== */
+.MuiTextField-root,
+.MuiSelect-root {
+  font-size: 16px !important;
+}
+
+.MuiInputBase-input {
+  font-size: 16px !important;
+}
+
+.MuiInputLabel-root {
+  font-size: 0.9rem !important;
+}
+
+/* ====== TABLE STYLING ====== */
+.MuiTable-root {
+  border-collapse: separate !important;
+  border-spacing: 0 4px !important;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  background: rgba(195, 143, 33, 0.1) !important;
+  color: #c38f21 !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid rgba(195, 143, 33, 0.4) !important;
+  text-transform: uppercase;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.05em;
+}
+
+.MuiTableBody-root .MuiTableRow-root {
+  transition: background 0.2s ease;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background: rgba(195, 143, 33, 0.06) !important;
+}
+
+.MuiTableCell-root {
+  border-bottom: 1px solid rgba(195, 143, 33, 0.08) !important;
+  color: #e0e0e0 !important;
+}
+
+/* ====== MUI BUTTON OVERRIDES ====== */
+.MuiButton-root {
+  transition: all 0.3s ease !important;
+}
+
+/* ====== SCROLL INDICATOR ====== */
+@media (max-width: 768px) {
+  .MuiTableContainer-root {
+    box-shadow: inset -1px 0 0 rgba(195, 143, 33, 0.3) !important;
+  }
+}
+
+/* ====== TOUCH TARGETS ====== */
+@media (hover: none) and (pointer: coarse) {
+  .MuiButton-root,
+  .MuiIconButton-root {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  .MuiTableCell-root {
+    min-height: 44px !important;
+  }
+}
+
+/* ====== RESPONSIVE ====== */
 @media (max-width: 1024px) {
   .admin-gallery-content {
     padding: 1.5rem 1rem !important;
   }
-  
   .admin-gallery-title {
     font-size: 2rem !important;
   }
-  
-  .admin-gallery-subtitle {
-    font-size: 1rem !important;
-  }
-  
-  /* Make Material-UI Grid items stack properly */
   .MuiGrid-item {
     padding: 8px !important;
   }
-  
-  /* Adjust card padding */
   .MuiCardContent-root {
     padding: 1.5rem !important;
-  }
-  
-  /* Make buttons full width on tablet */
-  .MuiButton-root {
-    width: 100%;
-    margin: 0.25rem 0 !important;
-  }
-  
-  /* Stack buttons vertically */
-  .MuiStack-root {
-    flex-direction: column !important;
-    gap: 0.5rem !important;
   }
 }
 
@@ -67,108 +193,36 @@
   .admin-gallery-content {
     padding: 1rem 0.75rem !important;
   }
-  
   .admin-gallery-header {
     margin-bottom: 1.5rem !important;
     padding: 0 0.5rem;
   }
-  
   .admin-gallery-title {
     font-size: 1.75rem !important;
-    margin-bottom: 0.5rem !important;
   }
-  
-  .admin-gallery-subtitle {
-    font-size: 0.95rem !important;
-  }
-  
-  /* Card adjustments */
   .MuiCard-root {
     margin-bottom: 1.5rem !important;
     border-radius: 8px !important;
   }
-  
   .MuiCardContent-root {
     padding: 1.25rem !important;
   }
-  
-  /* Typography adjustments */
-  .MuiTypography-h6 {
-    font-size: 1.1rem !important;
-  }
-  
-  .MuiTypography-body1 {
-    font-size: 0.9rem !important;
-  }
-  
-  .MuiTypography-body2 {
-    font-size: 0.85rem !important;
-  }
-  
-  /* Form controls */
-  .MuiFormControl-root {
-    margin-bottom: 1rem !important;
-  }
-  
-  .MuiTextField-root,
-  .MuiSelect-root {
-    font-size: 16px !important; /* Prevents iOS zoom on focus */
-  }
-  
-  .MuiInputBase-input {
-    font-size: 16px !important;
-    padding: 12px 14px !important;
-  }
-  
-  .MuiInputLabel-root {
-    font-size: 0.9rem !important;
-  }
-  
-  /* Table adjustments */
   .MuiTable-root {
     min-width: 650px !important;
   }
-  
   .MuiTableCell-root {
     padding: 8px 4px !important;
     font-size: 0.8rem !important;
   }
-  
-  .MuiTableCell-head {
-    font-weight: 600 !important;
+  .MuiStack-root {
+    flex-direction: column !important;
+    gap: 1rem !important;
   }
-  
-  /* Chart adjustments */
-  .recharts-wrapper {
-    font-size: 0.75rem !important;
-  }
-  
-  .recharts-legend-wrapper {
-    font-size: 0.7rem !important;
-  }
-  
-  /* Button adjustments */
-  .MuiButton-root {
-    padding: 10px 16px !important;
-    font-size: 0.875rem !important;
-  }
-  
-  .MuiIconButton-root {
-    padding: 8px !important;
-  }
-  
-  /* Grid spacing */
   .MuiGrid-container {
     margin: -8px !important;
   }
-  
   .MuiGrid-item {
     padding: 8px !important;
-  }
-  
-  /* Stack spacing */
-  .MuiStack-root {
-    gap: 1rem !important;
   }
 }
 
@@ -176,143 +230,31 @@
   .admin-gallery-content {
     padding: 1rem 0.5rem !important;
   }
-  
-  .admin-gallery-header {
-    padding: 0 0.25rem;
-  }
-  
   .admin-gallery-title {
     font-size: 1.5rem !important;
     line-height: 1.2;
   }
-  
-  .admin-gallery-subtitle {
-    font-size: 0.875rem !important;
-  }
-  
-  /* Card adjustments for small screens */
   .MuiCard-root {
     border-radius: 6px !important;
     margin-bottom: 1rem !important;
   }
-  
   .MuiCardContent-root {
     padding: 1rem !important;
   }
-  
-  /* Typography */
-  .MuiTypography-h6 {
-    font-size: 1rem !important;
-  }
-  
-  .MuiTypography-body1 {
-    font-size: 0.85rem !important;
-  }
-  
-  .MuiTypography-body2 {
-    font-size: 0.8rem !important;
-  }
-  
-  /* Form controls */
-  .MuiInputBase-input {
-    padding: 10px 12px !important;
-  }
-  
-  .MuiInputLabel-root {
-    font-size: 0.85rem !important;
-  }
-  
-  /* Table for very small screens */
   .MuiTable-root {
     min-width: 600px !important;
   }
-  
   .MuiTableCell-root {
     padding: 6px 2px !important;
     font-size: 0.75rem !important;
   }
-  
-  /* Charts */
-  .recharts-wrapper {
-    font-size: 0.7rem !important;
-  }
-  
-  .recharts-legend-item {
-    font-size: 0.65rem !important;
-  }
-  
-  /* Buttons */
-  .MuiButton-root {
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
-  }
-  
-  /* Grid adjustments */
   .MuiGrid-container {
     margin: -6px !important;
   }
-  
   .MuiGrid-item {
     padding: 6px !important;
   }
-  
-  /* Stack adjustments */
   .MuiStack-root {
     gap: 0.75rem !important;
-  }
-  
-  /* Select dropdown */
-  .MuiSelect-select {
-    padding-right: 32px !important;
-  }
-  
-  /* Icon buttons */
-  .MuiIconButton-root {
-    padding: 6px !important;
-  }
-}
-
-/* Ensure horizontal scrolling for wide tables */
-@media (max-width: 768px) {
-  .MuiTableContainer-root {
-    box-shadow: inset -1px 0 0 rgba(195, 143, 33, 0.3) !important;
-  }
-  
-  /* Add scroll indicator */
-  .MuiTableContainer-root::after {
-    content: '→';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(195, 143, 33, 0.6);
-    font-size: 1.5rem;
-    padding: 0.5rem;
-    pointer-events: none;
-    animation: scrollHint 2s ease-in-out infinite;
-  }
-  
-  @keyframes scrollHint {
-    0%, 100% {
-      opacity: 0.3;
-      transform: translateY(-50%) translateX(0);
-    }
-    50% {
-      opacity: 1;
-      transform: translateY(-50%) translateX(5px);
-    }
-  }
-}
-
-/* Touch-friendly interactions */
-@media (hover: none) and (pointer: coarse) {
-  .MuiButton-root,
-  .MuiIconButton-root {
-    min-height: 44px !important;
-    min-width: 44px !important;
-  }
-  
-  .MuiTableCell-root {
-    min-height: 44px !important;
   }
 }

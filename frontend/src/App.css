@@ -69,6 +69,44 @@ html, body {
   pointer-events: none;
 }
 
+/* Global override to keep particles crisp and visible on top of background blurs (desktop only) */
+@media (min-width: 769px) {
+  .app-particles-background,
+  [class*="-particles-background"],
+  [class*="particles-background"] {
+    z-index: 3 !important;
+  }
+}
+
+/* Ensure all page content containers render above background particles */
+.home-content,
+.about-content,
+.artparty-content,
+.gallery-page-content,
+.gallery-content,
+.events-page-content,
+.events-content,
+.workshops-page-content,
+.workshops-content,
+.moments-page-content,
+.artists-page-content,
+.artists-content,
+.artblogs-content,
+.contact-content,
+.artwork-detail-content,
+.event-detail-content,
+.workshop-detail-content,
+.user-login-content,
+.admin-login-content,
+.user-dashboard-content,
+.not-found-content,
+.policy-content,
+.terms-content,
+.ticket-verification-content {
+  position: relative;
+  z-index: 10 !important;
+}
+
 /* Background Home page during intro video */
 .app-background-home {
   position: fixed;

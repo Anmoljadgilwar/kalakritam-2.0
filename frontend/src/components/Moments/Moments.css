@@ -385,8 +385,8 @@
 }
 
 .retry-btn {
-  background: linear-gradient(135deg, #c38f21, #f4d03f);
-  color: #000;
+  background: linear-gradient(135deg, #c38f21, #d4af85);
+  color: #001818;
   border: none;
   padding: 12px 30px;
   font-size: 1rem;
@@ -513,7 +513,7 @@
 
 .modal-close-btn:hover {
   transform: rotate(90deg) scale(1.1);
-  background: #f4d03f;
+  background: #d4af85;
 }
 
 .modal-event-name {

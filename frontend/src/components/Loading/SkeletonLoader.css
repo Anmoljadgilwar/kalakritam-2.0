@@ -1,0 +1,181 @@
+.skeletons-container {
+  display: grid;
+  gap: var(--space-md, 1.5rem);
+  width: 100%;
+}
+
+.skeletons-container.grid-layout {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+@media (min-width: 768px) {
+  .skeletons-container.grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeletons-container.grid-layout {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.skeleton-card {
+  position: relative;
+  background: rgba(0, 47, 47, 0.45) !important;
+  border: 1px solid rgba(195, 143, 33, 0.3) !important;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(195, 143, 33, 0.1);
+}
+
+/* Travelling light beam across the whole card */
+.skeleton-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(195, 143, 33, 0.08) 40%,
+    rgba(255, 224, 102, 0.18) 50%,
+    rgba(195, 143, 33, 0.08) 60%,
+    transparent 80%
+  );
+  animation: skeleton-beam 2.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.skeleton-image-container {
+  height: 220px;
+  background: linear-gradient(135deg, rgba(0, 24, 24, 0.8) 0%, rgba(0, 47, 47, 0.5) 100%);
+  position: relative;
+  border-bottom: 1px solid rgba(195, 143, 33, 0.2);
+  overflow: hidden;
+}
+
+/* Floating shimmer in image area */
+.skeleton-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(195, 143, 33, 0.04) 0%,
+    rgba(195, 143, 33, 0.15) 40%,
+    rgba(255, 224, 102, 0.12) 50%,
+    rgba(195, 143, 33, 0.04) 100%
+  );
+  background-size: 300% 300%;
+  animation: shimmer-float 3s ease-in-out infinite;
+}
+
+.skeleton-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(0, 24, 24, 0.3);
+}
+
+.skeleton-line {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(195, 143, 33, 0.08) 0%,
+    rgba(195, 143, 33, 0.25) 30%,
+    rgba(255, 224, 102, 0.2) 50%,
+    rgba(195, 143, 33, 0.25) 70%,
+    rgba(195, 143, 33, 0.08) 100%
+  );
+  background-size: 300% 100%;
+  animation: skeleton-sweep 1.8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-title {
+  height: 1.4rem;
+  width: 72%;
+  margin-bottom: 0.15rem;
+}
+
+.skeleton-subtitle {
+  height: 1rem;
+  width: 48%;
+}
+
+.skeleton-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0.25rem 0;
+}
+
+.skeleton-detail-row {
+  height: 0.7rem;
+  width: 88%;
+}
+
+.skeleton-detail-row:last-child {
+  width: 65%;
+}
+
+.skeleton-actions {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(195, 143, 33, 0.1);
+}
+
+.skeleton-btn {
+  height: 42px;
+  border-radius: 50px;
+  background: linear-gradient(
+    90deg,
+    rgba(195, 143, 33, 0.1) 0%,
+    rgba(195, 143, 33, 0.3) 30%,
+    rgba(255, 224, 102, 0.2) 50%,
+    rgba(195, 143, 33, 0.3) 70%,
+    rgba(195, 143, 33, 0.1) 100%
+  );
+  background-size: 300% 100%;
+  animation: skeleton-sweep 1.8s ease-in-out infinite 0.2s;
+  width: 100%;
+  border: 1px solid rgba(195, 143, 33, 0.2);
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(195, 143, 33, 0.1);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(195, 143, 33, 0.12), 0 0 0 1px rgba(195, 143, 33, 0.3);
+  }
+}
+
+@keyframes skeleton-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeleton-beam {
+  0% { left: -100%; }
+  100% { left: 150%; }
+}
+
+@keyframes shimmer-float {
+  0%, 100% { background-position: 0% 0%; opacity: 0.7; }
+  50% { background-position: 100% 100%; opacity: 1; }
+}
